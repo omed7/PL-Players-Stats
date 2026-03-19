@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Erling Haaland",
+    "team": "Manchester City",
+    "season_xG": 22.5,
+    "season_xA": 4.1,
+    "last_5_xG": 4.2,
+    "last_5_xA": 0.5
+  },
+  {
+    "name": "Mohamed Salah",
+    "team": "Liverpool",
+    "season_xG": 18.2,
+    "season_xA": 9.5,
+    "last_5_xG": 3.8,
+    "last_5_xA": 2.1
+  },
+  {
+    "name": "Ollie Watkins",
+    "team": "Aston Villa",
+    "season_xG": 16.4,
+    "season_xA": 8.0,
+    "last_5_xG": 2.5,
+    "last_5_xA": 1.5
+  },
+  {
+    "name": "Bukayo Saka",
+    "team": "Arsenal",
+    "season_xG": 14.1,
+    "season_xA": 10.2,
+    "last_5_xG": 2.1,
+    "last_5_xA": 1.8
+  },
+  {
+    "name": "Son Heung-min",
+    "team": "Tottenham Hotspur",
+    "season_xG": 12.8,
+    "season_xA": 7.5,
+    "last_5_xG": 1.9,
+    "last_5_xA": 1.0
+  },
+  {
+    "name": "Cole Palmer",
+    "team": "Chelsea",
+    "season_xG": 15.0,
+    "season_xA": 8.5,
+    "last_5_xG": 3.0,
+    "last_5_xA": 2.0
+  },
+  {
+    "name": "Alexander Isak",
+    "team": "Newcastle United",
+    "season_xG": 17.5,
+    "season_xA": 2.0,
+    "last_5_xG": 3.5,
+    "last_5_xA": 0.2
+  },
+  {
+    "name": "Bruno Fernandes",
+    "team": "Manchester United",
+    "season_xG": 8.5,
+    "season_xA": 11.2,
+    "last_5_xG": 1.5,
+    "last_5_xA": 2.5
+  },
+  {
+    "name": "Martin Ødegaard",
+    "team": "Arsenal",
+    "season_xG": 7.2,
+    "season_xA": 9.8,
+    "last_5_xG": 1.2,
+    "last_5_xA": 1.9
+  },
+  {
+    "name": "Kevin De Bruyne",
+    "team": "Manchester City",
+    "season_xG": 4.5,
+    "season_xA": 12.0,
+    "last_5_xG": 0.8,
+    "last_5_xA": 3.5
+  }
+]
