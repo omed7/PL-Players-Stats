@@ -2,20 +2,26 @@ const state = {
     players: [],
     filteredPlayers: [],
     timeframe: 'season', // 'season' or 'last5'
-    sortColumn: 'xG', // 'name', 'team', 'xG', 'xA'
+    sortColumn: 'xG', // 'name', 'team', 'xG', 'xA', 'npxG', 'creativity', 'points'
     sortDirection: 'desc', // 'asc' or 'desc'
     searchQuery: '',
-    selectedTeam: ''
+    selectedTeams: [], // Array of selected team strings
+    currentPage: 1,
+    itemsPerPage: 15
 };
 
 const elements = {
     btnSeason: document.getElementById('btn-season'),
     btnLast5: document.getElementById('btn-last5'),
     searchInput: document.getElementById('search-input'),
-    teamFilter: document.getElementById('team-filter'),
+    teamFilterBtn: document.getElementById('team-filter-btn'),
+    teamFilterDropdown: document.getElementById('team-filter-dropdown'),
     tableHeaders: document.querySelectorAll('th'),
     tableBody: document.getElementById('table-body'),
-    errorMessage: document.getElementById('error-message')
+    errorMessage: document.getElementById('error-message'),
+    btnPrev: document.getElementById('btn-prev'),
+    btnNext: document.getElementById('btn-next'),
+    pageInfo: document.getElementById('page-info')
 };
 
 async function fetchPlayers() {
@@ -26,6 +32,8 @@ async function fetchPlayers() {
         }
         state.players = await response.json();
 
+        populateTeamFilter();
+
         // Initial render
         applyFiltersAndSort();
     } catch (error) {
@@ -35,11 +43,60 @@ async function fetchPlayers() {
     }
 }
 
+function populateTeamFilter() {
+    // Extract unique teams and their logos
+    const teamsMap = new Map();
+    state.players.forEach(player => {
+        if (!teamsMap.has(player.team)) {
+            teamsMap.set(player.team, player.logo);
+        }
+    });
+
+    const sortedTeams = Array.from(teamsMap.keys()).sort();
+
+    elements.teamFilterDropdown.innerHTML = '';
+    sortedTeams.forEach(team => {
+        const logo = teamsMap.get(team);
+        const label = document.createElement('label');
+        label.className = 'checkbox-label';
+        label.innerHTML = `
+            <input type="checkbox" value="${team}">
+            <img src="${logo}" alt="${team} logo" class="team-logo">
+            <span>${team}</span>
+        `;
+
+        const checkbox = label.querySelector('input');
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                state.selectedTeams.push(team);
+            } else {
+                state.selectedTeams = state.selectedTeams.filter(t => t !== team);
+            }
+            updateTeamFilterText();
+            state.currentPage = 1;
+            applyFiltersAndSort();
+        });
+
+        elements.teamFilterDropdown.appendChild(label);
+    });
+}
+
+function updateTeamFilterText() {
+    const textSpan = elements.teamFilterBtn.querySelector('.select-text');
+    if (state.selectedTeams.length === 0) {
+        textSpan.textContent = 'All Teams';
+    } else if (state.selectedTeams.length === 1) {
+        textSpan.textContent = state.selectedTeams[0];
+    } else {
+        textSpan.textContent = `${state.selectedTeams.length} Teams Selected`;
+    }
+}
+
 function applyFiltersAndSort() {
     // 1. Filter
     state.filteredPlayers = state.players.filter(player => {
         const matchesSearch = player.name.toLowerCase().includes(state.searchQuery.toLowerCase());
-        const matchesTeam = state.selectedTeam === '' || player.team === state.selectedTeam;
+        const matchesTeam = state.selectedTeams.length === 0 || state.selectedTeams.includes(player.team);
         return matchesSearch && matchesTeam;
     });
 
@@ -51,7 +108,7 @@ function applyFiltersAndSort() {
             valA = a[state.sortColumn].toLowerCase();
             valB = b[state.sortColumn].toLowerCase();
         } else {
-            // It's xG or xA, need to determine based on timeframe
+            // It's a metric, need to determine based on timeframe
             const prefix = state.timeframe === 'season' ? 'season_' : 'last_5_';
             valA = a[`${prefix}${state.sortColumn}`];
             valB = b[`${prefix}${state.sortColumn}`];
@@ -62,8 +119,22 @@ function applyFiltersAndSort() {
         return 0;
     });
 
-    // 3. Render
+    // 3. Update Pagination and Render
+    updatePagination();
     renderTable();
+}
+
+function updatePagination() {
+    const totalPages = Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
+
+    // Ensure current page is within bounds
+    if (state.currentPage > totalPages) {
+        state.currentPage = totalPages;
+    }
+
+    elements.pageInfo.textContent = `Page ${state.currentPage} of ${totalPages}`;
+    elements.btnPrev.disabled = state.currentPage === 1;
+    elements.btnNext.disabled = state.currentPage === totalPages;
 }
 
 function renderTable() {
@@ -71,23 +142,36 @@ function renderTable() {
 
     if (state.filteredPlayers.length === 0) {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="4" style="text-align: center; color: var(--text-secondary);">No players found matching criteria.</td>`;
+        tr.innerHTML = `<td colspan="7" style="text-align: center; color: var(--text-secondary);">No players found matching criteria.</td>`;
         elements.tableBody.appendChild(tr);
         return;
     }
 
     const prefix = state.timeframe === 'season' ? 'season_' : 'last_5_';
 
-    state.filteredPlayers.forEach(player => {
+    const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+    const endIndex = startIndex + state.itemsPerPage;
+    const playersToRender = state.filteredPlayers.slice(startIndex, endIndex);
+
+    playersToRender.forEach(player => {
         const xG = player[`${prefix}xG`].toFixed(2);
+        const npxG = player[`${prefix}npxG`].toFixed(2);
         const xA = player[`${prefix}xA`].toFixed(2);
+        const creativity = player[`${prefix}creativity`].toFixed(1);
+        const points = player[`${prefix}points`];
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${player.name}</td>
-            <td>${player.team}</td>
+            <td class="team-cell">
+                <img src="${player.logo}" alt="${player.team} logo" class="team-logo">
+                ${player.team}
+            </td>
             <td>${xG}</td>
+            <td>${npxG}</td>
             <td>${xA}</td>
+            <td>${creativity}</td>
+            <td>${points}</td>
         `;
         elements.tableBody.appendChild(tr);
     });
@@ -120,8 +204,20 @@ function handleSort(column) {
 }
 
 // Event Listeners
+elements.teamFilterBtn.addEventListener('click', () => {
+    elements.teamFilterDropdown.classList.toggle('hidden');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (!elements.teamFilterBtn.contains(e.target) && !elements.teamFilterDropdown.contains(e.target)) {
+        elements.teamFilterDropdown.classList.add('hidden');
+    }
+});
+
 elements.btnSeason.addEventListener('click', () => {
     state.timeframe = 'season';
+    state.currentPage = 1;
     elements.btnSeason.classList.add('active');
     elements.btnLast5.classList.remove('active');
     applyFiltersAndSort();
@@ -129,6 +225,7 @@ elements.btnSeason.addEventListener('click', () => {
 
 elements.btnLast5.addEventListener('click', () => {
     state.timeframe = 'last5';
+    state.currentPage = 1;
     elements.btnLast5.classList.add('active');
     elements.btnSeason.classList.remove('active');
     applyFiltersAndSort();
@@ -136,19 +233,33 @@ elements.btnLast5.addEventListener('click', () => {
 
 elements.searchInput.addEventListener('input', (e) => {
     state.searchQuery = e.target.value;
-    applyFiltersAndSort();
-});
-
-elements.teamFilter.addEventListener('change', (e) => {
-    state.selectedTeam = e.target.value;
+    state.currentPage = 1;
     applyFiltersAndSort();
 });
 
 elements.tableHeaders.forEach(th => {
     th.addEventListener('click', () => {
         const column = th.getAttribute('data-sort');
+        state.currentPage = 1;
         handleSort(column);
     });
+});
+
+elements.btnPrev.addEventListener('click', () => {
+    if (state.currentPage > 1) {
+        state.currentPage--;
+        updatePagination();
+        renderTable();
+    }
+});
+
+elements.btnNext.addEventListener('click', () => {
+    const totalPages = Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
+    if (state.currentPage < totalPages) {
+        state.currentPage++;
+        updatePagination();
+        renderTable();
+    }
 });
 
 // Init
