@@ -41,7 +41,6 @@ def get_fpl_data():
     print("Scraping pure Last 5 Matches data (This will take about 3 minutes)...")
     
     for player in response['elements']:
-        # Skip inactive players to save massive amounts of time
         if player['minutes'] == 0:
             continue
             
@@ -49,7 +48,6 @@ def get_fpl_data():
         fpl_name = f"{player['first_name']} {player['second_name']}"
         team_info = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
         
-        # 1. Fuzzy Match FPL Name to Understat ID
         norm_full = normalize_name(fpl_name)
         norm_web = normalize_name(player['web_name'])
         
@@ -63,18 +61,24 @@ def get_fpl_data():
                 if matches_web:
                     u_id = understat_map[matches_web[0]]
 
-        # 2. Scrape Individual Understat Player Page for Chances Created (Key Passes)
+        # 2. Scrape Individual Understat Player Page for TRUE xG, npxG, and Chances Created
         last_5_chances_created = 0
+        u_last_5_xg = None
+        u_last_5_xa = None
+        u_last_5_npxg = None
+        
         if u_id:
             try:
                 u_html = requests.get(f'https://understat.com/player/{u_id}', headers=headers).text
                 u_match = re.search(r"matchesData\s*=\s*JSON\.parse\('(.*?)'\);", u_html)
                 if u_match:
                     matches_data = json.loads(u_match.group(1).encode('utf8').decode('unicode_escape'))
-                    # Grab their 5 most recent matches
                     recent_u_matches = matches_data[-5:]
+                    
                     last_5_chances_created = sum(int(m.get('key_passes', 0)) for m in recent_u_matches)
-                # Brief sleep to prevent Understat from blocking GitHub
+                    u_last_5_xg = sum(float(m.get('xG', 0)) for m in recent_u_matches)
+                    u_last_5_xa = sum(float(m.get('xA', 0)) for m in recent_u_matches)
+                    u_last_5_npxg = sum(float(m.get('npxG', 0)) for m in recent_u_matches)
                 time.sleep(0.5)
             except Exception:
                 pass
@@ -88,9 +92,11 @@ def get_fpl_data():
             if not recent_matches:
                 continue
 
-            last_5_xg = sum(float(match.get('expected_goals', 0)) for match in recent_matches)
-            last_5_xa = sum(float(match.get('expected_assists', 0)) for match in recent_matches)
-            last_5_npxg = sum(float(match.get('expected_goals_non_penalty', match.get('expected_goals', 0))) for match in recent_matches)
+            # Use Understat's superior data if we found it, otherwise fallback to FPL
+            last_5_xg = u_last_5_xg if u_last_5_xg is not None else sum(float(match.get('expected_goals', 0)) for match in recent_matches)
+            last_5_xa = u_last_5_xa if u_last_5_xa is not None else sum(float(match.get('expected_assists', 0)) for match in recent_matches)
+            last_5_npxg = u_last_5_npxg if u_last_5_npxg is not None else last_5_xg # FPL match history lacks npxG
+            
             last_5_creativity = sum(float(match.get('creativity', 0)) for match in recent_matches)
             last_5_points = sum(int(match.get('total_points', 0)) for match in recent_matches)
             last_5_bonus = sum(int(match.get('bonus', 0)) for match in recent_matches)
