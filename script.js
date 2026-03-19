@@ -2,7 +2,7 @@ const state = {
     players: [],
     filteredPlayers: [],
     timeframe: 'season', // 'season' or 'last5'
-    sortColumn: 'xG', // 'name', 'team', 'xG', 'xA', 'npxG', 'creativity', 'points'
+    sortColumn: 'xG', // 'name', 'xG', 'xA', 'npxG', 'creativity', 'points', 'bonus', 'bps', 'influence', 'threat', 'ict', 'chances_created'
     sortDirection: 'desc', // 'asc' or 'desc'
     searchQuery: '',
     selectedTeams: [], // Array of selected team strings
@@ -104,7 +104,7 @@ function applyFiltersAndSort() {
     state.filteredPlayers.sort((a, b) => {
         let valA, valB;
 
-        if (state.sortColumn === 'name' || state.sortColumn === 'team') {
+        if (state.sortColumn === 'name') {
             valA = a[state.sortColumn].toLowerCase();
             valB = b[state.sortColumn].toLowerCase();
         } else {
@@ -159,19 +159,30 @@ function renderTable() {
         const xA = player[`${prefix}xA`].toFixed(2);
         const creativity = player[`${prefix}creativity`].toFixed(1);
         const points = player[`${prefix}points`];
+        const bonus = player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0;
+        const bps = player[`${prefix}bps`] !== undefined ? player[`${prefix}bps`] : 0;
+        const influence = player[`${prefix}influence`] !== undefined ? player[`${prefix}influence`].toFixed(1) : "0.0";
+        const threat = player[`${prefix}threat`] !== undefined ? player[`${prefix}threat`].toFixed(1) : "0.0";
+        const ict = player[`${prefix}ict`] !== undefined ? player[`${prefix}ict`].toFixed(1) : "0.0";
+        const chances_created = player[`${prefix}chances_created`] !== undefined ? player[`${prefix}chances_created`] : 0;
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${player.name}</td>
-            <td class="team-cell">
+            <td class="player-name-cell">
                 <img src="${player.logo}" alt="${player.team} logo" class="team-logo">
-                ${player.team}
+                ${player.name}
             </td>
             <td>${xG}</td>
             <td>${npxG}</td>
             <td>${xA}</td>
             <td>${creativity}</td>
             <td>${points}</td>
+            <td>${bonus}</td>
+            <td>${bps}</td>
+            <td>${influence}</td>
+            <td>${threat}</td>
+            <td>${ict}</td>
+            <td>${chances_created}</td>
         `;
         elements.tableBody.appendChild(tr);
     });
@@ -196,7 +207,7 @@ function handleSort(column) {
     } else {
         state.sortColumn = column;
         // Default text columns to asc, number columns to desc
-        state.sortDirection = (column === 'name' || column === 'team') ? 'asc' : 'desc';
+        state.sortDirection = (column === 'name') ? 'asc' : 'desc';
     }
 
     updateSortHeaders();
