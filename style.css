@@ -181,7 +181,7 @@ h1 {
     vertical-align: middle;
 }
 
-.team-cell {
+.player-name-cell {
     display: flex;
     align-items: center;
 }
@@ -218,6 +218,24 @@ th, td {
     padding: 15px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+}
+
+th:first-child, td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+}
+
+th:first-child {
+    background-color: var(--table-header-bg);
+}
+
+td:first-child {
+    background-color: var(--bg-card);
+}
+
+tbody tr:hover td:first-child {
+    background-color: var(--hover-bg);
 }
 
 th {
