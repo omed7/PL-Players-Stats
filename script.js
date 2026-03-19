@@ -1,7 +1,6 @@
 const state = {
     players: [],
     filteredPlayers: [],
-    timeframe: 'season', // 'season' or 'last5'
     sortColumn: 'xG', // 'name', 'xG', 'xA', 'npxG', 'creativity', 'points', 'bonus', 'bps', 'influence', 'threat', 'ict', 'chances_created'
     sortDirection: 'desc', // 'asc' or 'desc'
     searchQuery: '',
@@ -11,8 +10,6 @@ const state = {
 };
 
 const elements = {
-    btnSeason: document.getElementById('btn-season'),
-    btnLast5: document.getElementById('btn-last5'),
     searchInput: document.getElementById('search-input'),
     teamFilterBtn: document.getElementById('team-filter-btn'),
     teamFilterDropdown: document.getElementById('team-filter-dropdown'),
@@ -109,7 +106,7 @@ function applyFiltersAndSort() {
             valB = b[state.sortColumn].toLowerCase();
         } else {
             // It's a metric, need to determine based on timeframe
-            const prefix = state.timeframe === 'season' ? 'season_' : 'last_5_';
+            const prefix = 'last_5_';
             valA = a[`${prefix}${state.sortColumn}`];
             valB = b[`${prefix}${state.sortColumn}`];
         }
@@ -147,7 +144,7 @@ function renderTable() {
         return;
     }
 
-    const prefix = state.timeframe === 'season' ? 'season_' : 'last_5_';
+    const prefix = 'last_5_';
 
     const startIndex = (state.currentPage - 1) * state.itemsPerPage;
     const endIndex = startIndex + state.itemsPerPage;
@@ -224,22 +221,6 @@ document.addEventListener('click', (e) => {
     if (!elements.teamFilterBtn.contains(e.target) && !elements.teamFilterDropdown.contains(e.target)) {
         elements.teamFilterDropdown.classList.add('hidden');
     }
-});
-
-elements.btnSeason.addEventListener('click', () => {
-    state.timeframe = 'season';
-    state.currentPage = 1;
-    elements.btnSeason.classList.add('active');
-    elements.btnLast5.classList.remove('active');
-    applyFiltersAndSort();
-});
-
-elements.btnLast5.addEventListener('click', () => {
-    state.timeframe = 'last5';
-    state.currentPage = 1;
-    elements.btnLast5.classList.add('active');
-    elements.btnSeason.classList.remove('active');
-    applyFiltersAndSort();
 });
 
 elements.searchInput.addEventListener('input', (e) => {
