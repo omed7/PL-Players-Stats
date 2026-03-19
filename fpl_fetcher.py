@@ -1,5 +1,14 @@
 import requests
 import json
+import re
+
+# Scrape the raw Understat HTML
+response = requests.get('https://understat.com/league/EPL')
+html = response.text
+
+# Extract the hidden JSON block using Regex
+json_data = re.search(r"playersData\s*=\s*JSON\.parse\('(.*?)'\);", html)
+understat_players = json.loads(json_data.group(1).encode('utf8').decode('unicode_escape'))
 
 def get_fpl_data():
     print("Fetching master list...")
