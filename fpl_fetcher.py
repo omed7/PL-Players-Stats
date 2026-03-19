@@ -10,7 +10,6 @@ def get_fpl_data():
     bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
     response = requests.get(bootstrap_url, headers=headers).json()
     
-    # Store the short_name and dynamically generate the official logo URL
     teams = {
         team['id']: {
             'short_name': team['short_name'], 
@@ -30,24 +29,40 @@ def get_fpl_data():
         name = f"{player['first_name']} {player['second_name']}"
         team_info = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
         
-        # Season stats
+        # Original Season stats
         season_xg = float(player.get('expected_goals', 0))
         season_xa = float(player.get('expected_assists', 0))
         season_npxg = float(player.get('expected_goals_non_penalty', season_xg)) 
         season_creativity = float(player.get('creativity', 0))
         season_points = int(player.get('total_points', 0))
         
+        # NEW Season stats from FPL App Menu
+        season_bonus = int(player.get('bonus', 0))
+        season_bps = int(player.get('bps', 0))
+        season_influence = float(player.get('influence', 0))
+        season_threat = float(player.get('threat', 0))
+        season_ict = float(player.get('ict_index', 0))
+        season_chances_created = 0 # Placeholder: FPL API does not provide this natively
+        
         history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
         try:
             history_resp = requests.get(history_url, headers=headers).json()
             recent_matches = history_resp.get('history', [])[-5:]
             
-            # Last 5 Matches stats
+            # Original Last 5 Matches stats
             last_5_xg = sum(float(match.get('expected_goals', 0)) for match in recent_matches)
             last_5_xa = sum(float(match.get('expected_assists', 0)) for match in recent_matches)
             last_5_npxg = sum(float(match.get('expected_goals_non_penalty', match.get('expected_goals', 0))) for match in recent_matches)
             last_5_creativity = sum(float(match.get('creativity', 0)) for match in recent_matches)
             last_5_points = sum(int(match.get('total_points', 0)) for match in recent_matches)
+            
+            # NEW Last 5 Matches stats
+            last_5_bonus = sum(int(match.get('bonus', 0)) for match in recent_matches)
+            last_5_bps = sum(int(match.get('bps', 0)) for match in recent_matches)
+            last_5_influence = sum(float(match.get('influence', 0)) for match in recent_matches)
+            last_5_threat = sum(float(match.get('threat', 0)) for match in recent_matches)
+            last_5_ict = sum(float(match.get('ict_index', 0)) for match in recent_matches)
+            last_5_chances_created = 0 # Placeholder
             
             players_data.append({
                 "name": name,
@@ -58,11 +73,23 @@ def get_fpl_data():
                 "season_npxG": round(season_npxg, 2),
                 "season_creativity": round(season_creativity, 2),
                 "season_points": season_points,
+                "season_bonus": season_bonus,
+                "season_bps": season_bps,
+                "season_influence": round(season_influence, 2),
+                "season_threat": round(season_threat, 2),
+                "season_ict": round(season_ict, 2),
+                "season_chances_created": season_chances_created,
                 "last_5_xG": round(last_5_xg, 2),
                 "last_5_xA": round(last_5_xa, 2),
                 "last_5_npxG": round(last_5_npxg, 2),
                 "last_5_creativity": round(last_5_creativity, 2),
-                "last_5_points": last_5_points
+                "last_5_points": last_5_points,
+                "last_5_bonus": last_5_bonus,
+                "last_5_bps": last_5_bps,
+                "last_5_influence": round(last_5_influence, 2),
+                "last_5_threat": round(last_5_threat, 2),
+                "last_5_ict": round(last_5_ict, 2),
+                "last_5_chances_created": last_5_chances_created
             })
         except Exception:
             continue
