@@ -3,29 +3,41 @@ import json
 import re
 import unicodedata
 import time
+import urllib.parse
 from difflib import get_close_matches
 
 def normalize_name(name):
     nfkd = unicodedata.normalize('NFKD', name)
     return u"".join([c for c in nfkd if not unicodedata.combining(c)]).lower()
 
-def get_fpl_data():
-    print("Fetching Understat master list for IDs...")
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'}
-    
+def fetch_understat_html(target_url):
+    # Use a free open proxy to bypass the Cloudflare block on GitHub Actions
+    encoded_url = urllib.parse.quote(target_url, safe='')
+    proxy_url = f"https://api.allorigins.win/get?url={encoded_url}"
     try:
-        html = requests.get('https://understat.com/league/EPL', headers=headers).text
-        match = re.search(r"playersData\s*=\s*JSON\.parse\('(.*?)'\);", html)
-        understat_players = json.loads(match.group(1).encode('utf8').decode('unicode_escape'))
-        
-        understat_map = {normalize_name(p['player_name']): p['id'] for p in understat_players}
+        resp = requests.get(proxy_url, timeout=15).json()
+        return resp.get('contents', '')
     except Exception as e:
-        print("Failed to get Understat master list:", e)
-        understat_map = {}
+        print(f"Proxy failed for {target_url}: {e}")
+        return ""
+
+def get_fpl_data():
+    print("Fetching Understat master list via proxy...")
+    html = fetch_understat_html('https://understat.com/league/EPL')
+    
+    understat_map = {}
+    try:
+        match = re.search(r"playersData\s*=\s*JSON\.parse\('(.*?)'\);", html)
+        if match:
+            understat_players = json.loads(match.group(1).encode('utf8').decode('unicode_escape'))
+            understat_map = {normalize_name(p['player_name']): p['id'] for p in understat_players}
+    except Exception as e:
+        print("Failed to parse Understat master list:", e)
 
     understat_names = list(understat_map.keys())
 
     print("Fetching FPL master list...")
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
     bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
     response = requests.get(bootstrap_url, headers=headers).json()
     
@@ -38,12 +50,12 @@ def get_fpl_data():
     }
     
     players_data = []
-    print("Scraping pure Last 5 Matches data (This will take about 3 minutes)...")
+    print("Scraping pure Last 5 Matches data (This will take a few minutes)...")
     
-    for player in response['elements']:
-        if player['minutes'] == 0:
-            continue
-            
+    # Filter out inactive players to speed up the loop
+    elements = [p for p in response['elements'] if p['minutes'] > 0]
+    
+    for player in elements:
         player_id = player['id']
         fpl_name = f"{player['first_name']} {player['second_name']}"
         team_info = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
@@ -61,7 +73,6 @@ def get_fpl_data():
                 if matches_web:
                     u_id = understat_map[matches_web[0]]
 
-        # 2. Scrape Individual Understat Player Page for TRUE xG, npxG, and Chances Created
         last_5_chances_created = 0
         u_last_5_xg = None
         u_last_5_xa = None
@@ -69,7 +80,10 @@ def get_fpl_data():
         
         if u_id:
             try:
-                u_html = requests.get(f'https://understat.com/player/{u_id}', headers=headers).text
+                # Add a timestamp to bypass any proxy caching
+                timestamp = int(time.time())
+                u_html = fetch_understat_html(f'https://understat.com/player/{u_id}?t={timestamp}')
+                
                 u_match = re.search(r"matchesData\s*=\s*JSON\.parse\('(.*?)'\);", u_html)
                 if u_match:
                     matches_data = json.loads(u_match.group(1).encode('utf8').decode('unicode_escape'))
@@ -79,11 +93,12 @@ def get_fpl_data():
                     u_last_5_xg = sum(float(m.get('xG', 0)) for m in recent_u_matches)
                     u_last_5_xa = sum(float(m.get('xA', 0)) for m in recent_u_matches)
                     u_last_5_npxg = sum(float(m.get('npxG', 0)) for m in recent_u_matches)
-                time.sleep(0.5)
+                # Sleep to prevent proxy throttling
+                time.sleep(1) 
             except Exception:
                 pass
 
-        # 3. Get the rest of the match history natively from FPL
+        # Grab the rest of the stats securely from FPL
         history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
         try:
             history_resp = requests.get(history_url, headers=headers).json()
@@ -92,10 +107,9 @@ def get_fpl_data():
             if not recent_matches:
                 continue
 
-            # Use Understat's superior data if we found it, otherwise fallback to FPL
             last_5_xg = u_last_5_xg if u_last_5_xg is not None else sum(float(match.get('expected_goals', 0)) for match in recent_matches)
             last_5_xa = u_last_5_xa if u_last_5_xa is not None else sum(float(match.get('expected_assists', 0)) for match in recent_matches)
-            last_5_npxg = u_last_5_npxg if u_last_5_npxg is not None else last_5_xg # FPL match history lacks npxG
+            last_5_npxg = u_last_5_npxg if u_last_5_npxg is not None else last_5_xg
             
             last_5_creativity = sum(float(match.get('creativity', 0)) for match in recent_matches)
             last_5_points = sum(int(match.get('total_points', 0)) for match in recent_matches)
