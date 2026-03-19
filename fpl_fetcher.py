@@ -3,21 +3,23 @@ import json
 
 def get_fpl_data():
     print("Fetching master list...")
-    # 1. Get the master list of players and teams
+    
+    # Disguise the script as a web browser to bypass FPL security blocks
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+    }
+    
+    # 1. Get the master list
     bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
-    response = requests.get(bootstrap_url).json()
+    response = requests.get(bootstrap_url, headers=headers).json()
     
-    # Create a dictionary to map team IDs to short names
     teams = {team['id']: team['short_name'] for team in response['teams']}
-    
     players_data = []
-    elements = response['elements']
     
     print("Processing players...")
     
     # 2. Loop through players
-    for player in elements:
-        # Skip players with 0 minutes this season to save processing time
+    for player in response['elements']:
         if player['minutes'] == 0:
             continue
             
@@ -27,19 +29,16 @@ def get_fpl_data():
         season_xg = float(player.get('expected_goals', 0))
         season_xa = float(player.get('expected_assists', 0))
         
-        # 3. Get individual player history
+        # 3. Get individual history
         history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
         
         try:
-            history_resp = requests.get(history_url).json()
-            # Grab only the last 5 matches from their history
+            history_resp = requests.get(history_url, headers=headers).json()
             recent_matches = history_resp.get('history', [])[-5:]
             
-            # Calculate the sum for the last 5 matches
             last_5_xg = sum(float(match.get('expected_goals', 0)) for match in recent_matches)
             last_5_xa = sum(float(match.get('expected_assists', 0)) for match in recent_matches)
             
-            # 4. Append the clean, formatted data to our list
             players_data.append({
                 "name": name,
                 "team": team_name,
@@ -48,11 +47,10 @@ def get_fpl_data():
                 "last_5_xG": round(last_5_xg, 2),
                 "last_5_xA": round(last_5_xa, 2)
             })
-            
-        except Exception as e:
+        except Exception:
             continue
-        
-    # 5. Save the calculated data to a JSON file
+            
+    # 5. Save the data
     with open("players.json", "w", encoding="utf-8") as f:
         json.dump(players_data, f, indent=2)
         
