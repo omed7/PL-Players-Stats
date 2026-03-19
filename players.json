@@ -1,82 +1,4170 @@
 [
   {
-    "name": "Erling Haaland",
-    "team": "Manchester City",
-    "season_xG": 22.5,
-    "season_xA": 4.1,
-    "last_5_xG": 4.2,
-    "last_5_xA": 0.5
+    "name": "David Raya Mart\u00edn",
+    "team": "ARS",
+    "season_xG": 0.0,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
   },
   {
-    "name": "Mohamed Salah",
-    "team": "Liverpool",
-    "season_xG": 18.2,
-    "season_xA": 9.5,
-    "last_5_xG": 3.8,
-    "last_5_xA": 2.1
+    "name": "Gabriel dos Santos Magalh\u00e3es",
+    "team": "ARS",
+    "season_xG": 1.9,
+    "season_xA": 1.65,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.78
   },
   {
-    "name": "Ollie Watkins",
-    "team": "Aston Villa",
-    "season_xG": 16.4,
-    "season_xA": 8.0,
-    "last_5_xG": 2.5,
-    "last_5_xA": 1.5
+    "name": "William Saliba",
+    "team": "ARS",
+    "season_xG": 0.88,
+    "season_xA": 0.7,
+    "last_5_xG": 0.5,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Riccardo Calafiori",
+    "team": "ARS",
+    "season_xG": 2.92,
+    "season_xA": 0.49,
+    "last_5_xG": 0.15,
+    "last_5_xA": 0.1
+  },
+  {
+    "name": "Jurri\u00ebn Timber",
+    "team": "ARS",
+    "season_xG": 4.71,
+    "season_xA": 1.53,
+    "last_5_xG": 0.41,
+    "last_5_xA": 0.32
+  },
+  {
+    "name": "Myles Lewis-Skelly",
+    "team": "ARS",
+    "season_xG": 0.05,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Benjamin White",
+    "team": "ARS",
+    "season_xG": 0.43,
+    "season_xA": 0.49,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
   },
   {
     "name": "Bukayo Saka",
-    "team": "Arsenal",
-    "season_xG": 14.1,
-    "season_xA": 10.2,
-    "last_5_xG": 2.1,
-    "last_5_xA": 1.8
+    "team": "ARS",
+    "season_xG": 6.99,
+    "season_xA": 5.75,
+    "last_5_xG": 1.41,
+    "last_5_xA": 0.64
   },
   {
-    "name": "Son Heung-min",
-    "team": "Tottenham Hotspur",
-    "season_xG": 12.8,
-    "season_xA": 7.5,
-    "last_5_xG": 1.9,
-    "last_5_xA": 1.0
+    "name": "Martin \u00d8degaard",
+    "team": "ARS",
+    "season_xG": 1.01,
+    "season_xA": 2.91,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Noni Madueke",
+    "team": "ARS",
+    "season_xG": 1.03,
+    "season_xA": 2.06,
+    "last_5_xG": 0.21,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Gabriel Martinelli Silva",
+    "team": "ARS",
+    "season_xG": 3.53,
+    "season_xA": 1.0,
+    "last_5_xG": 0.74,
+    "last_5_xA": 0.22
+  },
+  {
+    "name": "Leandro Trossard",
+    "team": "ARS",
+    "season_xG": 4.96,
+    "season_xA": 2.7,
+    "last_5_xG": 0.39,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Declan Rice",
+    "team": "ARS",
+    "season_xG": 3.05,
+    "season_xA": 6.43,
+    "last_5_xG": 0.13,
+    "last_5_xA": 1.07
+  },
+  {
+    "name": "Mikel Merino Zaz\u00f3n",
+    "team": "ARS",
+    "season_xG": 2.99,
+    "season_xA": 1.45,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Christian N\u00f8rgaard",
+    "team": "ARS",
+    "season_xG": 0.05,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Ethan Nwaneri",
+    "team": "ARS",
+    "season_xG": 0.23,
+    "season_xA": 0.08,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Mart\u00edn Zubimendi Ib\u00e1\u00f1ez",
+    "team": "ARS",
+    "season_xG": 2.77,
+    "season_xA": 2.19,
+    "last_5_xG": 0.21,
+    "last_5_xA": 0.37
+  },
+  {
+    "name": "Kai Havertz",
+    "team": "ARS",
+    "season_xG": 0.31,
+    "season_xA": 0.09,
+    "last_5_xG": 0.1,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Gabriel Fernando de Jesus",
+    "team": "ARS",
+    "season_xG": 1.75,
+    "season_xA": 0.19,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Eberechi Eze",
+    "team": "ARS",
+    "season_xG": 3.88,
+    "season_xA": 2.23,
+    "last_5_xG": 1.28,
+    "last_5_xA": 0.53
+  },
+  {
+    "name": "Cristhian Mosquera",
+    "team": "ARS",
+    "season_xG": 0.0,
+    "season_xA": 0.49,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Viktor Gy\u00f6keres",
+    "team": "ARS",
+    "season_xG": 9.23,
+    "season_xA": 1.76,
+    "last_5_xG": 1.35,
+    "last_5_xA": 0.44
+  },
+  {
+    "name": "Max Dowman",
+    "team": "ARS",
+    "season_xG": 1.11,
+    "season_xA": 0.04,
+    "last_5_xG": 0.97,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Piero Hincapi\u00e9",
+    "team": "ARS",
+    "season_xG": 0.33,
+    "season_xA": 1.39,
+    "last_5_xG": 0.33,
+    "last_5_xA": 0.48
+  },
+  {
+    "name": "Emiliano Mart\u00ednez Romero",
+    "team": "AVL",
+    "season_xG": 0.0,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Marco Bizot",
+    "team": "AVL",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Matty Cash",
+    "team": "AVL",
+    "season_xG": 1.04,
+    "season_xA": 2.44,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Lucas Digne",
+    "team": "AVL",
+    "season_xG": 0.54,
+    "season_xA": 2.52,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.31
+  },
+  {
+    "name": "Ezri Konsa Ngoyo",
+    "team": "AVL",
+    "season_xG": 1.01,
+    "season_xA": 0.55,
+    "last_5_xG": 0.28,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Ian Maatsen",
+    "team": "AVL",
+    "season_xG": 1.05,
+    "season_xA": 1.85,
+    "last_5_xG": 0.22,
+    "last_5_xA": 0.21
+  },
+  {
+    "name": "Tyrone Mings",
+    "team": "AVL",
+    "season_xG": 1.01,
+    "season_xA": 0.37,
+    "last_5_xG": 0.59,
+    "last_5_xA": 0.27
+  },
+  {
+    "name": "Pau Torres",
+    "team": "AVL",
+    "season_xG": 0.63,
+    "season_xA": 0.34,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Andr\u00e9s Garc\u00eda",
+    "team": "AVL",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Lamare Bogarde",
+    "team": "AVL",
+    "season_xG": 0.0,
+    "season_xA": 0.19,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Morgan Rogers",
+    "team": "AVL",
+    "season_xG": 5.33,
+    "season_xA": 3.33,
+    "last_5_xG": 0.67,
+    "last_5_xA": 0.46
+  },
+  {
+    "name": "Youri Tielemans",
+    "team": "AVL",
+    "season_xG": 0.97,
+    "season_xA": 2.53,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Leon Bailey",
+    "team": "AVL",
+    "season_xG": 0.31,
+    "season_xA": 1.15,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.84
+  },
+  {
+    "name": "Emiliano Buend\u00eda Stati",
+    "team": "AVL",
+    "season_xG": 2.9,
+    "season_xA": 1.86,
+    "last_5_xG": 0.35,
+    "last_5_xA": 0.44
+  },
+  {
+    "name": "Donyell Malen",
+    "team": "AVL",
+    "season_xG": 4.03,
+    "season_xA": 0.35,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "John McGinn",
+    "team": "AVL",
+    "season_xG": 2.58,
+    "season_xA": 2.21,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.25
+  },
+  {
+    "name": "Ross Barkley",
+    "team": "AVL",
+    "season_xG": 0.69,
+    "season_xA": 0.74,
+    "last_5_xG": 0.26,
+    "last_5_xA": 0.58
+  },
+  {
+    "name": "Boubacar Kamara",
+    "team": "AVL",
+    "season_xG": 0.53,
+    "season_xA": 0.84,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Amadou Onana",
+    "team": "AVL",
+    "season_xG": 1.24,
+    "season_xA": 0.41,
+    "last_5_xG": 0.81,
+    "last_5_xA": 0.17
+  },
+  {
+    "name": "Jamaldeen Jimoh-Aloba",
+    "team": "AVL",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Ollie Watkins",
+    "team": "AVL",
+    "season_xG": 10.0,
+    "season_xA": 1.02,
+    "last_5_xG": 0.55,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Harvey Elliott",
+    "team": "AVL",
+    "season_xG": 0.29,
+    "season_xA": 0.08,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jadon Sancho",
+    "team": "AVL",
+    "season_xG": 0.58,
+    "season_xA": 1.61,
+    "last_5_xG": 0.09,
+    "last_5_xA": 0.77
+  },
+  {
+    "name": "Douglas Luiz Soares de Paulo",
+    "team": "AVL",
+    "season_xG": 0.5,
+    "season_xA": 1.37,
+    "last_5_xG": 0.27,
+    "last_5_xA": 0.4
+  },
+  {
+    "name": "Bradley Burrowes",
+    "team": "AVL",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Victor Lindel\u00f6f",
+    "team": "AVL",
+    "season_xG": 0.03,
+    "season_xA": 0.07,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "George Hemmings",
+    "team": "AVL",
+    "season_xG": 0.04,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Alysson Edward Franco da Rocha dos Santos",
+    "team": "AVL",
+    "season_xG": 0.05,
+    "season_xA": 0.05,
+    "last_5_xG": 0.05,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Tammy Abraham",
+    "team": "AVL",
+    "season_xG": 1.24,
+    "season_xA": 0.36,
+    "last_5_xG": 0.6,
+    "last_5_xA": 0.28
+  },
+  {
+    "name": "Kyle Walker",
+    "team": "BUR",
+    "season_xG": 0.12,
+    "season_xA": 0.99,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Hjalmar Ekdal",
+    "team": "BUR",
+    "season_xG": 0.21,
+    "season_xA": 0.24,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Maxime Est\u00e8ve",
+    "team": "BUR",
+    "season_xG": 0.67,
+    "season_xA": 0.58,
+    "last_5_xG": 0.25,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Quilindschy Hartman",
+    "team": "BUR",
+    "season_xG": 0.19,
+    "season_xA": 1.52,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Bashir Humphreys",
+    "team": "BUR",
+    "season_xG": 0.32,
+    "season_xA": 0.62,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "Lucas Pires Silva",
+    "team": "BUR",
+    "season_xG": 0.33,
+    "season_xA": 1.2,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.25
+  },
+  {
+    "name": "Oliver Sonne",
+    "team": "BUR",
+    "season_xG": 0.55,
+    "season_xA": 0.08,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Axel Tuanzebe",
+    "team": "BUR",
+    "season_xG": 0.61,
+    "season_xA": 0.11,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Joe Worrall",
+    "team": "BUR",
+    "season_xG": 0.08,
+    "season_xA": 0.02,
+    "last_5_xG": 0.08,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jaidon Anthony",
+    "team": "BUR",
+    "season_xG": 3.87,
+    "season_xA": 2.08,
+    "last_5_xG": 0.88,
+    "last_5_xA": 0.52
+  },
+  {
+    "name": "Jacob Bruun Larsen",
+    "team": "BUR",
+    "season_xG": 1.35,
+    "season_xA": 1.06,
+    "last_5_xG": 0.17,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Josh Cullen",
+    "team": "BUR",
+    "season_xG": 0.94,
+    "season_xA": 1.36,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Marcus Edwards",
+    "team": "BUR",
+    "season_xG": 1.46,
+    "season_xA": 1.65,
+    "last_5_xG": 0.23,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Hannibal Mejbri",
+    "team": "BUR",
+    "season_xG": 0.56,
+    "season_xA": 1.33,
+    "last_5_xG": 0.25,
+    "last_5_xA": 0.32
+  },
+  {
+    "name": "Josh Laurent",
+    "team": "BUR",
+    "season_xG": 0.6,
+    "season_xA": 0.44,
+    "last_5_xG": 0.15,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "Loum Tchaouna",
+    "team": "BUR",
+    "season_xG": 0.86,
+    "season_xA": 0.68,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.23
+  },
+  {
+    "name": "Jaydon Banel",
+    "team": "BUR",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Mike Tr\u00e9sor Ndayishimiye",
+    "team": "BUR",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Zian Flemming",
+    "team": "BUR",
+    "season_xG": 5.25,
+    "season_xA": 0.28,
+    "last_5_xG": 1.46,
+    "last_5_xA": 0.1
+  },
+  {
+    "name": "Lyle Foster",
+    "team": "BUR",
+    "season_xG": 3.05,
+    "season_xA": 0.29,
+    "last_5_xG": 0.8,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Ashley Barnes",
+    "team": "BUR",
+    "season_xG": 0.11,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Martin D\u00fabravka",
+    "team": "BUR",
+    "season_xG": 0.0,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "James Ward-Prowse",
+    "team": "BUR",
+    "season_xG": 0.13,
+    "season_xA": 1.21,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.3
+  },
+  {
+    "name": "Lesley Ugochukwu",
+    "team": "BUR",
+    "season_xG": 2.25,
+    "season_xA": 0.27,
+    "last_5_xG": 0.13,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Armando Broja",
+    "team": "BUR",
+    "season_xG": 2.14,
+    "season_xA": 0.13,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Florentino Ibrain Morris Lu\u00eds",
+    "team": "BUR",
+    "season_xG": 0.55,
+    "season_xA": 0.39,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "\u0110or\u0111e Petrovi\u0107",
+    "team": "BOU",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Marcos Senesi Bar\u00f3n",
+    "team": "BOU",
+    "season_xG": 1.38,
+    "season_xA": 4.06,
+    "last_5_xG": 0.2,
+    "last_5_xA": 0.1
+  },
+  {
+    "name": "Adam Smith",
+    "team": "BOU",
+    "season_xG": 0.0,
+    "season_xA": 0.2,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.09
+  },
+  {
+    "name": "Adrien Truffert",
+    "team": "BOU",
+    "season_xG": 0.39,
+    "season_xA": 2.34,
+    "last_5_xG": 0.06,
+    "last_5_xA": 1.12
+  },
+  {
+    "name": "James Hill",
+    "team": "BOU",
+    "season_xG": 0.67,
+    "season_xA": 1.03,
+    "last_5_xG": 0.44,
+    "last_5_xA": 0.49
+  },
+  {
+    "name": "Julio Soler Barreto",
+    "team": "BOU",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Justin Kluivert",
+    "team": "BOU",
+    "season_xG": 2.24,
+    "season_xA": 1.54,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Marcus Tavernier",
+    "team": "BOU",
+    "season_xG": 6.95,
+    "season_xA": 3.12,
+    "last_5_xG": 1.83,
+    "last_5_xA": 0.69
+  },
+  {
+    "name": "Tyler Adams",
+    "team": "BOU",
+    "season_xG": 0.56,
+    "season_xA": 0.37,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "David Brooks",
+    "team": "BOU",
+    "season_xG": 4.87,
+    "season_xA": 3.13,
+    "last_5_xG": 0.46,
+    "last_5_xA": 0.33
+  },
+  {
+    "name": "Ryan Christie",
+    "team": "BOU",
+    "season_xG": 1.49,
+    "season_xA": 0.53,
+    "last_5_xG": 0.13,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Lewis Cook",
+    "team": "BOU",
+    "season_xG": 0.07,
+    "season_xA": 0.52,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Alex Scott",
+    "team": "BOU",
+    "season_xG": 3.28,
+    "season_xA": 1.68,
+    "last_5_xG": 0.84,
+    "last_5_xA": 0.47
+  },
+  {
+    "name": "Hamed Traor\u00e8",
+    "team": "BOU",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Ben Winterburn",
+    "team": "BOU",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Francisco Evanilson de Lima Barbosa",
+    "team": "BOU",
+    "season_xG": 8.24,
+    "season_xA": 1.13,
+    "last_5_xG": 1.01,
+    "last_5_xA": 0.22
+  },
+  {
+    "name": "Enes \u00dcnal",
+    "team": "BOU",
+    "season_xG": 1.85,
+    "season_xA": 0.06,
+    "last_5_xG": 0.89,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Junior Kroupi",
+    "team": "BOU",
+    "season_xG": 5.04,
+    "season_xA": 0.96,
+    "last_5_xG": 0.67,
+    "last_5_xA": 0.53
+  },
+  {
+    "name": "Ben Gannon-Doak",
+    "team": "BOU",
+    "season_xG": 0.09,
+    "season_xA": 0.09,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Bafod\u00e9 Diakit\u00e9",
+    "team": "BOU",
+    "season_xG": 0.02,
+    "season_xA": 0.19,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Amine Adli",
+    "team": "BOU",
+    "season_xG": 2.55,
+    "season_xA": 1.53,
+    "last_5_xG": 0.81,
+    "last_5_xA": 0.1
+  },
+  {
+    "name": "\u00c1lex Jim\u00e9nez S\u00e1nchez",
+    "team": "BOU",
+    "season_xG": 1.04,
+    "season_xA": 1.53,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.73
+  },
+  {
+    "name": "Veljko Milosavljevic",
+    "team": "BOU",
+    "season_xG": 0.15,
+    "season_xA": 0.19,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Alex T\u00f3th",
+    "team": "BOU",
+    "season_xG": 0.06,
+    "season_xA": 0.25,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.25
+  },
+  {
+    "name": "Rayan Vitor Simpl\u00edcio Rocha",
+    "team": "BOU",
+    "season_xG": 0.89,
+    "season_xA": 1.07,
+    "last_5_xG": 0.73,
+    "last_5_xA": 0.45
+  },
+  {
+    "name": "Reiss Nelson",
+    "team": "BRE",
+    "season_xG": 0.68,
+    "season_xA": 0.07,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Dango Ouattara",
+    "team": "BRE",
+    "season_xG": 5.39,
+    "season_xA": 3.28,
+    "last_5_xG": 0.56,
+    "last_5_xA": 1.87
+  },
+  {
+    "name": "Caoimh\u00edn Kelleher",
+    "team": "BRE",
+    "season_xG": 0.0,
+    "season_xA": 0.22,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.18
+  },
+  {
+    "name": "H\u00e1kon Rafn Valdimarsson",
+    "team": "BRE",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nathan Collins",
+    "team": "BRE",
+    "season_xG": 1.58,
+    "season_xA": 1.28,
+    "last_5_xG": 0.09,
+    "last_5_xA": 0.4
+  },
+  {
+    "name": "Keane Lewis-Potter",
+    "team": "BRE",
+    "season_xG": 2.1,
+    "season_xA": 1.27,
+    "last_5_xG": 0.68,
+    "last_5_xA": 0.3
+  },
+  {
+    "name": "Kristoffer Ajer",
+    "team": "BRE",
+    "season_xG": 0.69,
+    "season_xA": 0.72,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.12
+  },
+  {
+    "name": "Rico Henry",
+    "team": "BRE",
+    "season_xG": 0.18,
+    "season_xA": 0.54,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Michael Kayode",
+    "team": "BRE",
+    "season_xG": 0.63,
+    "season_xA": 2.6,
+    "last_5_xG": 0.44,
+    "last_5_xA": 0.3
+  },
+  {
+    "name": "Ethan Pinnock",
+    "team": "BRE",
+    "season_xG": 0.0,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Sepp van den Berg",
+    "team": "BRE",
+    "season_xG": 2.87,
+    "season_xA": 0.8,
+    "last_5_xG": 0.95,
+    "last_5_xA": 0.59
+  },
+  {
+    "name": "Aaron Hickey",
+    "team": "BRE",
+    "season_xG": 0.4,
+    "season_xA": 0.17,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Kevin Schade",
+    "team": "BRE",
+    "season_xG": 9.69,
+    "season_xA": 1.86,
+    "last_5_xG": 1.12,
+    "last_5_xA": 0.14
+  },
+  {
+    "name": "Mikkel Damsgaard",
+    "team": "BRE",
+    "season_xG": 1.85,
+    "season_xA": 4.13,
+    "last_5_xG": 0.72,
+    "last_5_xA": 0.47
+  },
+  {
+    "name": "Antoni Milambo",
+    "team": "BRE",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "F\u00e1bio Freitas Gouveia Carvalho",
+    "team": "BRE",
+    "season_xG": 0.7,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jordan Henderson",
+    "team": "BRE",
+    "season_xG": 0.33,
+    "season_xA": 2.25,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.22
+  },
+  {
+    "name": "Vitaly Janelt",
+    "team": "BRE",
+    "season_xG": 0.82,
+    "season_xA": 1.88,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Mathias Jensen",
+    "team": "BRE",
+    "season_xG": 1.93,
+    "season_xA": 3.96,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.95
+  },
+  {
+    "name": "Frank Onyeka",
+    "team": "BRE",
+    "season_xG": 0.0,
+    "season_xA": 0.36,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Yehor Yarmoliuk",
+    "team": "BRE",
+    "season_xG": 1.19,
+    "season_xA": 1.24,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "Romelle Donovan",
+    "team": "BRE",
+    "season_xG": 0.09,
+    "season_xA": 0.01,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Myles Peart-Harris",
+    "team": "BRE",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Igor Thiago Nascimento Rodrigues",
+    "team": "BRE",
+    "season_xG": 17.49,
+    "season_xA": 1.63,
+    "last_5_xG": 3.51,
+    "last_5_xA": 0.73
+  },
+  {
+    "name": "Bart Verbruggen",
+    "team": "BHA",
+    "season_xG": 0.0,
+    "season_xA": 0.05,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Olivier Boscagli",
+    "team": "BHA",
+    "season_xG": 0.05,
+    "season_xA": 0.31,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Diego Coppola",
+    "team": "BHA",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Maxim De Cuyper",
+    "team": "BHA",
+    "season_xG": 1.55,
+    "season_xA": 2.15,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Lewis Dunk",
+    "team": "BHA",
+    "season_xG": 1.3,
+    "season_xA": 0.5,
+    "last_5_xG": 0.1,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Ferdi Kad\u0131o\u011flu",
+    "team": "BHA",
+    "season_xG": 1.56,
+    "season_xA": 2.36,
+    "last_5_xG": 0.21,
+    "last_5_xA": 0.15
+  },
+  {
+    "name": "Igor Julio dos Santos de Paulo",
+    "team": "BHA",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jan Paul van Hecke",
+    "team": "BHA",
+    "season_xG": 2.13,
+    "season_xA": 1.14,
+    "last_5_xG": 0.08,
+    "last_5_xA": 0.24
+  },
+  {
+    "name": "Jo\u00ebl Veltman",
+    "team": "BHA",
+    "season_xG": 0.99,
+    "season_xA": 0.12,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Mitoma Kaoru",
+    "team": "BHA",
+    "season_xG": 3.17,
+    "season_xA": 2.12,
+    "last_5_xG": 1.04,
+    "last_5_xA": 0.27
+  },
+  {
+    "name": "Georginio Rutter",
+    "team": "BHA",
+    "season_xG": 2.26,
+    "season_xA": 2.2,
+    "last_5_xG": 0.21,
+    "last_5_xA": 0.14
+  },
+  {
+    "name": "Solly March",
+    "team": "BHA",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Yankuba Minteh",
+    "team": "BHA",
+    "season_xG": 2.93,
+    "season_xA": 3.51,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.73
+  },
+  {
+    "name": "Brajan Gruda",
+    "team": "BHA",
+    "season_xG": 1.86,
+    "season_xA": 0.88,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jack Hinshelwood",
+    "team": "BHA",
+    "season_xG": 2.18,
+    "season_xA": 0.78,
+    "last_5_xG": 1.48,
+    "last_5_xA": 0.44
+  },
+  {
+    "name": "Matt O'Riley",
+    "team": "BHA",
+    "season_xG": 1.21,
+    "season_xA": 0.18,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Yasin Ayari",
+    "team": "BHA",
+    "season_xG": 2.54,
+    "season_xA": 1.07,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Carlos Baleba",
+    "team": "BHA",
+    "season_xG": 0.56,
+    "season_xA": 0.28,
+    "last_5_xG": 0.2,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Diego G\u00f3mez Amarilla",
+    "team": "BHA",
+    "season_xG": 4.92,
+    "season_xA": 1.33,
+    "last_5_xG": 0.47,
+    "last_5_xA": 0.15
+  },
+  {
+    "name": "James Milner",
+    "team": "BHA",
+    "season_xG": 0.96,
+    "season_xA": 0.64,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.12
+  },
+  {
+    "name": "Tom Watson",
+    "team": "BHA",
+    "season_xG": 0.04,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Mats Wieffer",
+    "team": "BHA",
+    "season_xG": 1.5,
+    "season_xA": 1.78,
+    "last_5_xG": 0.3,
+    "last_5_xA": 0.31
+  },
+  {
+    "name": "Joe Knight",
+    "team": "BHA",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Danny Welbeck",
+    "team": "BHA",
+    "season_xG": 9.21,
+    "season_xA": 1.15,
+    "last_5_xG": 0.9,
+    "last_5_xA": 0.41
+  },
+  {
+    "name": "Stefanos Tzimas",
+    "team": "BHA",
+    "season_xG": 0.44,
+    "season_xA": 0.11,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Charalampos Kostoulas",
+    "team": "BHA",
+    "season_xG": 1.7,
+    "season_xA": 0.23,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Nehemiah Oriola",
+    "team": "BHA",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Pascal Gro\u00df",
+    "team": "BHA",
+    "season_xG": 0.78,
+    "season_xA": 2.13,
+    "last_5_xG": 0.29,
+    "last_5_xA": 1.01
+  },
+  {
+    "name": "Harry Howell",
+    "team": "BHA",
+    "season_xG": 0.0,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Robert Lynch S\u00e1nchez",
+    "team": "CHE",
+    "season_xG": 0.0,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Filip J\u00f6rgensen",
+    "team": "CHE",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Marc Cucurella Saseta",
+    "team": "CHE",
+    "season_xG": 1.64,
+    "season_xA": 2.94,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.23
+  },
+  {
+    "name": "Reece James",
+    "team": "CHE",
+    "season_xG": 1.02,
+    "season_xA": 3.15,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.85
+  },
+  {
+    "name": "Trevoh Chalobah",
+    "team": "CHE",
+    "season_xG": 1.3,
+    "season_xA": 1.01,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.3
+  },
+  {
+    "name": "Malo Gusto",
+    "team": "CHE",
+    "season_xG": 1.46,
+    "season_xA": 1.87,
+    "last_5_xG": 0.05,
+    "last_5_xA": 0.8
+  },
+  {
+    "name": "Beno\u00eet Badiashile Mukinayi",
+    "team": "CHE",
+    "season_xG": 0.0,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Wesley Fofana",
+    "team": "CHE",
+    "season_xG": 0.55,
+    "season_xA": 0.57,
+    "last_5_xG": 0.3,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Mamadou Sarr",
+    "team": "CHE",
+    "season_xG": 0.35,
+    "season_xA": 0.0,
+    "last_5_xG": 0.35,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tosin Adarabioyo",
+    "team": "CHE",
+    "season_xG": 0.11,
+    "season_xA": 0.4,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Josh Acheampong",
+    "team": "CHE",
+    "season_xG": 0.6,
+    "season_xA": 0.13,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.04
   },
   {
     "name": "Cole Palmer",
-    "team": "Chelsea",
-    "season_xG": 15.0,
-    "season_xA": 8.5,
-    "last_5_xG": 3.0,
-    "last_5_xA": 2.0
+    "team": "CHE",
+    "season_xG": 8.55,
+    "season_xA": 1.8,
+    "last_5_xG": 2.57,
+    "last_5_xA": 1.36
   },
   {
-    "name": "Alexander Isak",
-    "team": "Newcastle United",
-    "season_xG": 17.5,
-    "season_xA": 2.0,
-    "last_5_xG": 3.5,
+    "name": "Pedro Lomba Neto",
+    "team": "CHE",
+    "season_xG": 4.27,
+    "season_xA": 5.64,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.84
+  },
+  {
+    "name": "Enzo Fern\u00e1ndez",
+    "team": "CHE",
+    "season_xG": 10.02,
+    "season_xA": 5.79,
+    "last_5_xG": 0.37,
+    "last_5_xA": 1.35
+  },
+  {
+    "name": "Est\u00eav\u00e3o Almeida de Oliveira Gon\u00e7alves",
+    "team": "CHE",
+    "season_xG": 2.82,
+    "season_xA": 2.12,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Jamie Bynoe-Gittens",
+    "team": "CHE",
+    "season_xG": 0.81,
+    "season_xA": 0.94,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Mois\u00e9s Caicedo Corozo",
+    "team": "CHE",
+    "season_xG": 1.21,
+    "season_xA": 1.99,
+    "last_5_xG": 0.12,
+    "last_5_xA": 0.84
+  },
+  {
+    "name": "Rom\u00e9o Lavia",
+    "team": "CHE",
+    "season_xG": 0.0,
+    "season_xA": 0.09,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Andrey Nascimento dos Santos",
+    "team": "CHE",
+    "season_xG": 1.7,
+    "season_xA": 0.79,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.13
+  },
+  {
+    "name": "Jo\u00e3o Pedro Junqueira de Jesus",
+    "team": "CHE",
+    "season_xG": 13.41,
+    "season_xA": 1.74,
+    "last_5_xG": 5.66,
+    "last_5_xA": 0.24
+  },
+  {
+    "name": "Liam Delap",
+    "team": "CHE",
+    "season_xG": 3.97,
+    "season_xA": 0.18,
+    "last_5_xG": 0.53,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Marc Guiu Paz",
+    "team": "CHE",
+    "season_xG": 1.46,
+    "season_xA": 0.29,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Alejandro Garnacho Ferreyra",
+    "team": "CHE",
+    "season_xG": 3.1,
+    "season_xA": 3.54,
+    "last_5_xG": 0.61,
+    "last_5_xA": 0.97
+  },
+  {
+    "name": "Jorrel Hato",
+    "team": "CHE",
+    "season_xG": 0.3,
+    "season_xA": 0.42,
+    "last_5_xG": 0.08,
+    "last_5_xA": 0.33
+  },
+  {
+    "name": "Dean Henderson",
+    "team": "CRY",
+    "season_xG": 0.0,
+    "season_xA": 0.1,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Walter Ben\u00edtez",
+    "team": "CRY",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Daniel Mu\u00f1oz Mej\u00eda",
+    "team": "CRY",
+    "season_xG": 1.99,
+    "season_xA": 3.33,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.95
+  },
+  {
+    "name": "Maxence Lacroix",
+    "team": "CRY",
+    "season_xG": 2.14,
+    "season_xA": 0.74,
+    "last_5_xG": 0.5,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Tyrick Mitchell",
+    "team": "CRY",
+    "season_xG": 1.06,
+    "season_xA": 1.63,
+    "last_5_xG": 0.2,
+    "last_5_xA": 0.26
+  },
+  {
+    "name": "Borna Sosa",
+    "team": "CRY",
+    "season_xG": 0.0,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Chris Richards",
+    "team": "CRY",
+    "season_xG": 1.14,
+    "season_xA": 1.43,
+    "last_5_xG": 0.32,
+    "last_5_xA": 0.18
+  },
+  {
+    "name": "Chadi Riad Dnanou",
+    "team": "CRY",
+    "season_xG": 0.11,
+    "season_xA": 0.05,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Nathaniel Clyne",
+    "team": "CRY",
+    "season_xG": 0.43,
+    "season_xA": 0.6,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Isma\u00efla Sarr",
+    "team": "CRY",
+    "season_xG": 7.98,
+    "season_xA": 0.7,
+    "last_5_xG": 1.82,
+    "last_5_xA": 0.09
+  },
+  {
+    "name": "Romain Esse",
+    "team": "CRY",
+    "season_xG": 0.0,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Will Hughes",
+    "team": "CRY",
+    "season_xG": 1.11,
+    "season_xA": 1.68,
+    "last_5_xG": 0.09,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Daichi Kamada",
+    "team": "CRY",
+    "season_xG": 1.42,
+    "season_xA": 2.07,
+    "last_5_xG": 0.52,
+    "last_5_xA": 0.53
+  },
+  {
+    "name": "Jefferson Lerma Sol\u00eds",
+    "team": "CRY",
+    "season_xG": 1.05,
+    "season_xA": 0.95,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.12
+  },
+  {
+    "name": "Adam Wharton",
+    "team": "CRY",
+    "season_xG": 1.33,
+    "season_xA": 6.02,
+    "last_5_xG": 0.35,
+    "last_5_xA": 1.28
+  },
+  {
+    "name": "Justin Devenny",
+    "team": "CRY",
+    "season_xG": 2.38,
+    "season_xA": 0.36,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Kaden Rodney",
+    "team": "CRY",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jean-Philippe Mateta",
+    "team": "CRY",
+    "season_xG": 11.99,
+    "season_xA": 1.26,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Eddie Nketiah",
+    "team": "CRY",
+    "season_xG": 1.77,
+    "season_xA": 0.46,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Odsonne \u00c9douard",
+    "team": "CRY",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Brennan Johnson",
+    "team": "CRY",
+    "season_xG": 1.84,
+    "season_xA": 0.91,
+    "last_5_xG": 0.15,
+    "last_5_xA": 0.31
+  },
+  {
+    "name": "J\u00f8rgen Strand Larsen",
+    "team": "CRY",
+    "season_xG": 4.16,
+    "season_xA": 0.69,
+    "last_5_xG": 0.74,
     "last_5_xA": 0.2
   },
   {
-    "name": "Bruno Fernandes",
-    "team": "Manchester United",
-    "season_xG": 8.5,
-    "season_xA": 11.2,
-    "last_5_xG": 1.5,
-    "last_5_xA": 2.5
+    "name": "Evann Guessand",
+    "team": "CRY",
+    "season_xG": 1.56,
+    "season_xA": 0.75,
+    "last_5_xG": 0.37,
+    "last_5_xA": 0.27
   },
   {
-    "name": "Martin Ødegaard",
-    "team": "Arsenal",
-    "season_xG": 7.2,
-    "season_xA": 9.8,
-    "last_5_xG": 1.2,
-    "last_5_xA": 1.9
+    "name": "Y\u00e9remy Pino Santos",
+    "team": "CRY",
+    "season_xG": 3.96,
+    "season_xA": 4.78,
+    "last_5_xG": 0.38,
+    "last_5_xA": 0.09
   },
   {
-    "name": "Kevin De Bruyne",
-    "team": "Manchester City",
-    "season_xG": 4.5,
-    "season_xA": 12.0,
-    "last_5_xG": 0.8,
-    "last_5_xA": 3.5
+    "name": "Jaydee Canvot",
+    "team": "CRY",
+    "season_xG": 0.79,
+    "season_xA": 0.23,
+    "last_5_xG": 0.74,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Christantus Uche",
+    "team": "CRY",
+    "season_xG": 0.49,
+    "season_xA": 0.01,
+    "last_5_xG": 0.1,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jo\u00e9l Drakes-Thomas",
+    "team": "CRY",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Kiernan Dewsbury-Hall",
+    "team": "EVE",
+    "season_xG": 3.11,
+    "season_xA": 4.0,
+    "last_5_xG": 0.9,
+    "last_5_xA": 0.83
+  },
+  {
+    "name": "Tyrique George",
+    "team": "EVE",
+    "season_xG": 0.46,
+    "season_xA": 0.13,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Jordan Pickford",
+    "team": "EVE",
+    "season_xG": 0.0,
+    "season_xA": 0.15,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Jarrad Branthwaite",
+    "team": "EVE",
+    "season_xG": 0.28,
+    "season_xA": 0.09,
+    "last_5_xG": 0.26,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "James Tarkowski",
+    "team": "EVE",
+    "season_xG": 2.04,
+    "season_xA": 1.32,
+    "last_5_xG": 0.56,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Vitalii Mykolenko",
+    "team": "EVE",
+    "season_xG": 0.28,
+    "season_xA": 2.22,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.68
+  },
+  {
+    "name": "Jake O'Brien",
+    "team": "EVE",
+    "season_xG": 0.83,
+    "season_xA": 0.83,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "S\u00e9amus Coleman",
+    "team": "EVE",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Michael Keane",
+    "team": "EVE",
+    "season_xG": 1.97,
+    "season_xA": 0.2,
+    "last_5_xG": 0.12,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Nathan Patterson",
+    "team": "EVE",
+    "season_xG": 0.03,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Iliman Ndiaye",
+    "team": "EVE",
+    "season_xG": 4.89,
+    "season_xA": 4.15,
+    "last_5_xG": 1.48,
+    "last_5_xA": 1.07
+  },
+  {
+    "name": "Dwight McNeil",
+    "team": "EVE",
+    "season_xG": 1.07,
+    "season_xA": 0.77,
+    "last_5_xG": 0.61,
+    "last_5_xA": 0.09
+  },
+  {
+    "name": "Carlos Alcaraz Dur\u00e1n",
+    "team": "EVE",
+    "season_xG": 1.04,
+    "season_xA": 0.44,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Idrissa Gana Gueye",
+    "team": "EVE",
+    "season_xG": 1.49,
+    "season_xA": 1.0,
+    "last_5_xG": 0.27,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "James Garner",
+    "team": "EVE",
+    "season_xG": 1.81,
+    "season_xA": 4.74,
+    "last_5_xG": 0.13,
+    "last_5_xA": 0.97
+  },
+  {
+    "name": "Tim Iroegbunam",
+    "team": "EVE",
+    "season_xG": 0.37,
+    "season_xA": 0.61,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Harrison Armstrong",
+    "team": "EVE",
+    "season_xG": 0.79,
+    "season_xA": 0.21,
+    "last_5_xG": 0.42,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Thierno Barry",
+    "team": "EVE",
+    "season_xG": 6.13,
+    "season_xA": 0.37,
+    "last_5_xG": 1.77,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Norberto Bercique Gomes Betuncal",
+    "team": "EVE",
+    "season_xG": 6.56,
+    "season_xA": 0.16,
+    "last_5_xG": 1.51,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Jack Grealish",
+    "team": "EVE",
+    "season_xG": 2.05,
+    "season_xA": 3.37,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tyler Dibling",
+    "team": "EVE",
+    "season_xG": 0.2,
+    "season_xA": 0.14,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Merlin R\u00f6hl",
+    "team": "EVE",
+    "season_xG": 0.5,
+    "season_xA": 0.21,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Bernd Leno",
+    "team": "FUL",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Antonee Robinson",
+    "team": "FUL",
+    "season_xG": 0.22,
+    "season_xA": 1.29,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.18
+  },
+  {
+    "name": "Joachim Andersen",
+    "team": "FUL",
+    "season_xG": 1.26,
+    "season_xA": 1.55,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Calvin Bassey",
+    "team": "FUL",
+    "season_xG": 1.64,
+    "season_xA": 0.25,
+    "last_5_xG": 0.73,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Timothy Castagne",
+    "team": "FUL",
+    "season_xG": 1.1,
+    "season_xA": 0.51,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Issa Diop",
+    "team": "FUL",
+    "season_xG": 0.02,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Jorge Cuenca Barreno",
+    "team": "FUL",
+    "season_xG": 0.05,
+    "season_xA": 0.53,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Kenny Tete",
+    "team": "FUL",
+    "season_xG": 0.92,
+    "season_xA": 1.46,
+    "last_5_xG": 0.54,
+    "last_5_xA": 0.43
+  },
+  {
+    "name": "Alex Iwobi",
+    "team": "FUL",
+    "season_xG": 1.26,
+    "season_xA": 3.77,
+    "last_5_xG": 0.44,
+    "last_5_xA": 0.65
+  },
+  {
+    "name": "Emile Smith Rowe",
+    "team": "FUL",
+    "season_xG": 4.2,
+    "season_xA": 0.96,
+    "last_5_xG": 0.73,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Ryan Sessegnon",
+    "team": "FUL",
+    "season_xG": 1.16,
+    "season_xA": 1.71,
+    "last_5_xG": 0.24,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Harry Wilson",
+    "team": "FUL",
+    "season_xG": 4.84,
+    "season_xA": 4.12,
+    "last_5_xG": 0.68,
+    "last_5_xA": 0.66
+  },
+  {
+    "name": "Sander Berge",
+    "team": "FUL",
+    "season_xG": 1.29,
+    "season_xA": 1.12,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Tom Cairney",
+    "team": "FUL",
+    "season_xG": 0.95,
+    "season_xA": 0.36,
+    "last_5_xG": 0.1,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Sa\u0161a Luki\u0107",
+    "team": "FUL",
+    "season_xG": 1.82,
+    "season_xA": 1.35,
+    "last_5_xG": 0.08,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Josh King",
+    "team": "FUL",
+    "season_xG": 1.92,
+    "season_xA": 0.43,
+    "last_5_xG": 0.75,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Harrison Reed",
+    "team": "FUL",
+    "season_xG": 0.04,
+    "season_xA": 0.24,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Ra\u00fal Jim\u00e9nez Rodr\u00edguez",
+    "team": "FUL",
+    "season_xG": 10.18,
+    "season_xA": 0.87,
+    "last_5_xG": 2.18,
+    "last_5_xA": 0.17
+  },
+  {
+    "name": "Rodrigo Muniz Carvalho",
+    "team": "FUL",
+    "season_xG": 1.31,
+    "season_xA": 0.05,
+    "last_5_xG": 0.24,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Oscar Bobb",
+    "team": "FUL",
+    "season_xG": 0.5,
+    "season_xA": 1.5,
+    "last_5_xG": 0.1,
+    "last_5_xA": 0.35
+  },
+  {
+    "name": "Samuel Chukwueze",
+    "team": "FUL",
+    "season_xG": 1.63,
+    "season_xA": 2.91,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.47
+  },
+  {
+    "name": "Kevin Santos Lopes de Macedo",
+    "team": "FUL",
+    "season_xG": 1.12,
+    "season_xA": 1.4,
+    "last_5_xG": 0.15,
+    "last_5_xA": 0.09
+  },
+  {
+    "name": "Jonah Kusi-Asare",
+    "team": "FUL",
+    "season_xG": 0.0,
+    "season_xA": 0.07,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Facundo Buonanotte",
+    "team": "LEE",
+    "season_xG": 0.04,
+    "season_xA": 0.1,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Karl Darlow",
+    "team": "LEE",
+    "season_xG": 0.0,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Jayden Bogle",
+    "team": "LEE",
+    "season_xG": 2.02,
+    "season_xA": 1.57,
+    "last_5_xG": 0.23,
+    "last_5_xA": 0.46
+  },
+  {
+    "name": "Pascal Struijk",
+    "team": "LEE",
+    "season_xG": 2.52,
+    "season_xA": 0.54,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Jaka Bijol",
+    "team": "LEE",
+    "season_xG": 0.8,
+    "season_xA": 0.57,
+    "last_5_xG": 0.32,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Sebastiaan Bornauw",
+    "team": "LEE",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Sam Byram",
+    "team": "LEE",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Gabriel Gudmundsson",
+    "team": "LEE",
+    "season_xG": 1.1,
+    "season_xA": 2.04,
+    "last_5_xG": 0.12,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Joe Rodon",
+    "team": "LEE",
+    "season_xG": 1.2,
+    "season_xA": 0.31,
+    "last_5_xG": 0.24,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Brenden Aaronson",
+    "team": "LEE",
+    "season_xG": 4.08,
+    "season_xA": 3.0,
+    "last_5_xG": 0.72,
+    "last_5_xA": 0.18
+  },
+  {
+    "name": "Wilfried Gnonto",
+    "team": "LEE",
+    "season_xG": 0.29,
+    "season_xA": 0.56,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Jack Harrison",
+    "team": "LEE",
+    "season_xG": 0.28,
+    "season_xA": 0.23,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Daniel James",
+    "team": "LEE",
+    "season_xG": 0.71,
+    "season_xA": 0.59,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Ethan Ampadu",
+    "team": "LEE",
+    "season_xG": 1.77,
+    "season_xA": 1.68,
+    "last_5_xG": 0.15,
+    "last_5_xA": 0.35
+  },
+  {
+    "name": "Ilia Gruev",
+    "team": "LEE",
+    "season_xG": 0.46,
+    "season_xA": 0.85,
+    "last_5_xG": 0.08,
+    "last_5_xA": 0.1
+  },
+  {
+    "name": "Tanaka Ao",
+    "team": "LEE",
+    "season_xG": 0.83,
+    "season_xA": 0.61,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jo\u00ebl Piroe",
+    "team": "LEE",
+    "season_xG": 0.81,
+    "season_xA": 0.13,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Lukas Nmecha",
+    "team": "LEE",
+    "season_xG": 6.19,
+    "season_xA": 0.91,
+    "last_5_xG": 1.3,
+    "last_5_xA": 0.56
+  },
+  {
+    "name": "Sean Longstaff",
+    "team": "LEE",
+    "season_xG": 0.83,
+    "season_xA": 1.48,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Anton Stach",
+    "team": "LEE",
+    "season_xG": 2.4,
+    "season_xA": 4.18,
+    "last_5_xG": 0.27,
+    "last_5_xA": 0.89
+  },
+  {
+    "name": "Lucas Estella Perri",
+    "team": "LEE",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Dominic Calvert-Lewin",
+    "team": "LEE",
+    "season_xG": 11.21,
+    "season_xA": 0.98,
+    "last_5_xG": 2.18,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Noah Okafor",
+    "team": "LEE",
+    "season_xG": 4.2,
+    "season_xA": 0.98,
+    "last_5_xG": 0.61,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "James Justin",
+    "team": "LEE",
+    "season_xG": 0.94,
+    "season_xA": 0.9,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.13
+  },
+  {
+    "name": "Alisson Becker",
+    "team": "LIV",
+    "season_xG": 0.0,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Giorgi Mamardashvili",
+    "team": "LIV",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jeremie Frimpong",
+    "team": "LIV",
+    "season_xG": 0.43,
+    "season_xA": 1.2,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.18
+  },
+  {
+    "name": "Milos Kerkez",
+    "team": "LIV",
+    "season_xG": 0.95,
+    "season_xA": 0.64,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Andrew Robertson",
+    "team": "LIV",
+    "season_xG": 0.32,
+    "season_xA": 1.02,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.24
+  },
+  {
+    "name": "Virgil van Dijk",
+    "team": "LIV",
+    "season_xG": 2.65,
+    "season_xA": 1.18,
+    "last_5_xG": 1.55,
+    "last_5_xA": 0.43
+  },
+  {
+    "name": "Ibrahima Konat\u00e9",
+    "team": "LIV",
+    "season_xG": 1.05,
+    "season_xA": 0.9,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Conor Bradley",
+    "team": "LIV",
+    "season_xG": 0.18,
+    "season_xA": 0.84,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Joe Gomez",
+    "team": "LIV",
+    "season_xG": 0.23,
+    "season_xA": 0.62,
+    "last_5_xG": 0.05,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Mohamed Salah",
+    "team": "LIV",
+    "season_xG": 6.94,
+    "season_xA": 4.48,
+    "last_5_xG": 1.18,
+    "last_5_xA": 0.98
+  },
+  {
+    "name": "Florian Wirtz",
+    "team": "LIV",
+    "season_xG": 5.64,
+    "season_xA": 4.31,
+    "last_5_xG": 0.62,
+    "last_5_xA": 0.31
+  },
+  {
+    "name": "Cody Gakpo",
+    "team": "LIV",
+    "season_xG": 6.49,
+    "season_xA": 4.24,
+    "last_5_xG": 1.37,
+    "last_5_xA": 0.45
+  },
+  {
+    "name": "Federico Chiesa",
+    "team": "LIV",
+    "season_xG": 1.29,
+    "season_xA": 0.61,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Alexis Mac Allister",
+    "team": "LIV",
+    "season_xG": 3.14,
+    "season_xA": 1.31,
+    "last_5_xG": 1.02,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Dominik Szoboszlai",
+    "team": "LIV",
+    "season_xG": 3.72,
+    "season_xA": 5.0,
+    "last_5_xG": 0.18,
+    "last_5_xA": 1.24
+  },
+  {
+    "name": "Curtis Jones",
+    "team": "LIV",
+    "season_xG": 1.42,
+    "season_xA": 2.3,
+    "last_5_xG": 0.37,
+    "last_5_xA": 0.13
+  },
+  {
+    "name": "Ryan Gravenberch",
+    "team": "LIV",
+    "season_xG": 1.63,
+    "season_xA": 2.0,
+    "last_5_xG": 0.33,
+    "last_5_xA": 0.32
+  },
+  {
+    "name": "Endo Wataru",
+    "team": "LIV",
+    "season_xG": 0.04,
+    "season_xA": 0.05,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Trey Nyoni",
+    "team": "LIV",
+    "season_xG": 0.37,
+    "season_xA": 0.01,
+    "last_5_xG": 0.37,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Alexander Isak",
+    "team": "LIV",
+    "season_xG": 2.04,
+    "season_xA": 0.07,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Hugo Ekitik\u00e9",
+    "team": "LIV",
+    "season_xG": 10.1,
+    "season_xA": 2.45,
+    "last_5_xG": 1.9,
+    "last_5_xA": 0.7
+  },
+  {
+    "name": "Rio Ngumoha",
+    "team": "LIV",
+    "season_xG": 0.82,
+    "season_xA": 1.28,
+    "last_5_xG": 0.45,
+    "last_5_xA": 0.93
+  },
+  {
+    "name": "Antoine Semenyo",
+    "team": "MCI",
+    "season_xG": 9.93,
+    "season_xA": 2.33,
+    "last_5_xG": 2.08,
+    "last_5_xA": 0.3
+  },
+  {
+    "name": "James Trafford",
+    "team": "MCI",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Marc Gu\u00e9hi",
+    "team": "MCI",
+    "season_xG": 3.48,
+    "season_xA": 2.1,
+    "last_5_xG": 0.83,
+    "last_5_xA": 0.33
+  },
+  {
+    "name": "Rayan A\u00eft-Nouri",
+    "team": "MCI",
+    "season_xG": 0.41,
+    "season_xA": 1.6,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.91
+  },
+  {
+    "name": "Jo\u0161ko Gvardiol",
+    "team": "MCI",
+    "season_xG": 2.19,
+    "season_xA": 0.64,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nathan Ak\u00e9",
+    "team": "MCI",
+    "season_xG": 0.28,
+    "season_xA": 0.44,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Abdukodir Khusanov",
+    "team": "MCI",
+    "season_xG": 0.44,
+    "season_xA": 0.13,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Matheus Nunes",
+    "team": "MCI",
+    "season_xG": 0.34,
+    "season_xA": 1.83,
+    "last_5_xG": 0.09,
+    "last_5_xA": 0.43
+  },
+  {
+    "name": "R\u00faben dos Santos Gato Alves Dias",
+    "team": "MCI",
+    "season_xG": 0.57,
+    "season_xA": 0.63,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.14
+  },
+  {
+    "name": "John Stones",
+    "team": "MCI",
+    "season_xG": 0.0,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Rico Lewis",
+    "team": "MCI",
+    "season_xG": 0.11,
+    "season_xA": 1.31,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nico O'Reilly",
+    "team": "MCI",
+    "season_xG": 3.98,
+    "season_xA": 1.72,
+    "last_5_xG": 1.83,
+    "last_5_xA": 0.18
+  },
+  {
+    "name": "Omar Marmoush",
+    "team": "MCI",
+    "season_xG": 2.22,
+    "season_xA": 0.68,
+    "last_5_xG": 0.64,
+    "last_5_xA": 0.1
+  },
+  {
+    "name": "Phil Foden",
+    "team": "MCI",
+    "season_xG": 5.34,
+    "season_xA": 3.98,
+    "last_5_xG": 0.39,
+    "last_5_xA": 0.45
+  },
+  {
+    "name": "S\u00e1vio Moreira de Oliveira",
+    "team": "MCI",
+    "season_xG": 1.77,
+    "season_xA": 1.19,
+    "last_5_xG": 0.49,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Bernardo Mota Veiga de Carvalho e Silva",
+    "team": "MCI",
+    "season_xG": 1.63,
+    "season_xA": 3.37,
+    "last_5_xG": 0.39,
+    "last_5_xA": 0.68
+  },
+  {
+    "name": "Rayan Cherki",
+    "team": "MCI",
+    "season_xG": 2.55,
+    "season_xA": 6.88,
+    "last_5_xG": 0.39,
+    "last_5_xA": 1.09
+  },
+  {
+    "name": "J\u00e9r\u00e9my Doku",
+    "team": "MCI",
+    "season_xG": 1.88,
+    "season_xA": 4.57,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.32
+  },
+  {
+    "name": "Rodrigo 'Rodri' Hernandez Cascante",
+    "team": "MCI",
+    "season_xG": 0.75,
+    "season_xA": 2.14,
+    "last_5_xG": 0.52,
+    "last_5_xA": 0.98
+  },
+  {
+    "name": "Mateo Kova\u010di\u0107",
+    "team": "MCI",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nico Gonz\u00e1lez Iglesias",
+    "team": "MCI",
+    "season_xG": 0.56,
+    "season_xA": 1.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tijjani Reijnders",
+    "team": "MCI",
+    "season_xG": 3.96,
+    "season_xA": 2.27,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.29
+  },
+  {
+    "name": "Erling Haaland",
+    "team": "MCI",
+    "season_xG": 21.06,
+    "season_xA": 1.94,
+    "last_5_xG": 0.83,
+    "last_5_xA": 0.3
+  },
+  {
+    "name": "Gianluigi Donnarumma",
+    "team": "MCI",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Divine Mukasa",
+    "team": "MCI",
+    "season_xG": 0.0,
+    "season_xA": 0.21,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Max Alleyne",
+    "team": "MCI",
+    "season_xG": 0.26,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Bryan Mbeumo",
+    "team": "MUN",
+    "season_xG": 7.95,
+    "season_xA": 4.26,
+    "last_5_xG": 0.97,
+    "last_5_xA": 0.57
+  },
+  {
+    "name": "Altay Bay\u0131nd\u0131r",
+    "team": "MUN",
+    "season_xG": 0.0,
+    "season_xA": 0.05,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Matthijs de Ligt",
+    "team": "MUN",
+    "season_xG": 1.38,
+    "season_xA": 0.83,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Lisandro Mart\u00ednez",
+    "team": "MUN",
+    "season_xG": 0.06,
+    "season_xA": 0.5,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Noussair Mazraoui",
+    "team": "MUN",
+    "season_xG": 0.17,
+    "season_xA": 0.28,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Diogo Dalot Teixeira",
+    "team": "MUN",
+    "season_xG": 1.53,
+    "season_xA": 2.19,
+    "last_5_xG": 0.22,
+    "last_5_xA": 0.25
+  },
+  {
+    "name": "Patrick Dorgu",
+    "team": "MUN",
+    "season_xG": 1.86,
+    "season_xA": 1.42,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Harry Maguire",
+    "team": "MUN",
+    "season_xG": 0.78,
+    "season_xA": 0.15,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Luke Shaw",
+    "team": "MUN",
+    "season_xG": 0.51,
+    "season_xA": 1.5,
+    "last_5_xG": 0.21,
+    "last_5_xA": 0.2
+  },
+  {
+    "name": "Leny Yoro",
+    "team": "MUN",
+    "season_xG": 0.94,
+    "season_xA": 0.4,
+    "last_5_xG": 0.26,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "Tyler Fredricson",
+    "team": "MUN",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Ayden Heaven",
+    "team": "MUN",
+    "season_xG": 0.34,
+    "season_xA": 0.17,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tyrell Malacia",
+    "team": "MUN",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Bruno Borges Fernandes",
+    "team": "MUN",
+    "season_xG": 9.16,
+    "season_xA": 8.78,
+    "last_5_xG": 1.0,
+    "last_5_xA": 2.34
+  },
+  {
+    "name": "Matheus Santos Carneiro da Cunha",
+    "team": "MUN",
+    "season_xG": 5.73,
+    "season_xA": 2.44,
+    "last_5_xG": 0.6,
+    "last_5_xA": 0.15
+  },
+  {
+    "name": "Amad Diallo",
+    "team": "MUN",
+    "season_xG": 4.3,
+    "season_xA": 3.48,
+    "last_5_xG": 0.36,
+    "last_5_xA": 0.3
+  },
+  {
+    "name": "Mason Mount",
+    "team": "MUN",
+    "season_xG": 1.54,
+    "season_xA": 1.4,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Carlos Henrique Casimiro",
+    "team": "MUN",
+    "season_xG": 4.66,
+    "season_xA": 2.89,
+    "last_5_xG": 0.55,
+    "last_5_xA": 0.5
+  },
+  {
+    "name": "Kobbie Mainoo",
+    "team": "MUN",
+    "season_xG": 0.24,
+    "season_xA": 0.73,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.2
+  },
+  {
+    "name": "Manuel Ugarte Ribeiro",
+    "team": "MUN",
+    "season_xG": 0.5,
+    "season_xA": 0.15,
+    "last_5_xG": 0.19,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jack Fletcher",
+    "team": "MUN",
+    "season_xG": 0.03,
+    "season_xA": 0.02,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Joshua Zirkzee",
+    "team": "MUN",
+    "season_xG": 2.18,
+    "season_xA": 0.32,
+    "last_5_xG": 0.41,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Benjamin Sesko",
+    "team": "MUN",
+    "season_xG": 7.19,
+    "season_xA": 0.22,
+    "last_5_xG": 1.45,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Senne Lammens",
+    "team": "MUN",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Shea Lacey",
+    "team": "MUN",
+    "season_xG": 0.07,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Bendito Mantato",
+    "team": "MUN",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tyler Fletcher",
+    "team": "MUN",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jacob Ramsey",
+    "team": "NEW",
+    "season_xG": 1.02,
+    "season_xA": 0.88,
+    "last_5_xG": 0.62,
+    "last_5_xA": 0.22
+  },
+  {
+    "name": "Yoane Wissa",
+    "team": "NEW",
+    "season_xG": 1.95,
+    "season_xA": 0.53,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nick Pope",
+    "team": "NEW",
+    "season_xG": 0.16,
+    "season_xA": 0.0,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Lewis Hall",
+    "team": "NEW",
+    "season_xG": 0.73,
+    "season_xA": 2.02,
+    "last_5_xG": 0.13,
+    "last_5_xA": 0.22
+  },
+  {
+    "name": "Fabian Sch\u00e4r",
+    "team": "NEW",
+    "season_xG": 0.97,
+    "season_xA": 0.6,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Sven Botman",
+    "team": "NEW",
+    "season_xG": 1.28,
+    "season_xA": 0.28,
+    "last_5_xG": 0.69,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Dan Burn",
+    "team": "NEW",
+    "season_xG": 0.19,
+    "season_xA": 0.32,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Tino Livramento",
+    "team": "NEW",
+    "season_xG": 0.12,
+    "season_xA": 0.78,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.21
+  },
+  {
+    "name": "Kieran Trippier",
+    "team": "NEW",
+    "season_xG": 0.08,
+    "season_xA": 1.85,
+    "last_5_xG": 0.03,
+    "last_5_xA": 0.21
+  },
+  {
+    "name": "Emil Krafth",
+    "team": "NEW",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jamaal Lascelles",
+    "team": "NEW",
+    "season_xG": 0.04,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Alex Murphy",
+    "team": "NEW",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Anthony Gordon",
+    "team": "NEW",
+    "season_xG": 8.27,
+    "season_xA": 3.33,
+    "last_5_xG": 3.22,
+    "last_5_xA": 0.31
+  },
+  {
+    "name": "Anthony Elanga",
+    "team": "NEW",
+    "season_xG": 1.35,
+    "season_xA": 1.68,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.58
+  },
+  {
+    "name": "Harvey Barnes",
+    "team": "NEW",
+    "season_xG": 5.89,
+    "season_xA": 2.15,
+    "last_5_xG": 0.63,
+    "last_5_xA": 0.21
+  },
+  {
+    "name": "Bruno Guimar\u00e3es Rodriguez Moura",
+    "team": "NEW",
+    "season_xG": 4.82,
+    "season_xA": 3.62,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.4
+  },
+  {
+    "name": "Jacob Murphy",
+    "team": "NEW",
+    "season_xG": 2.89,
+    "season_xA": 2.39,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Joelinton C\u00e1ssio Apolin\u00e1rio de Lira",
+    "team": "NEW",
+    "season_xG": 2.04,
+    "season_xA": 1.13,
+    "last_5_xG": 0.29,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "Sandro Tonali",
+    "team": "NEW",
+    "season_xG": 1.56,
+    "season_xA": 2.35,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.75
+  },
+  {
+    "name": "Joe Willock",
+    "team": "NEW",
+    "season_xG": 0.81,
+    "season_xA": 0.63,
+    "last_5_xG": 0.21,
+    "last_5_xA": 0.46
+  },
+  {
+    "name": "Lewis Miley",
+    "team": "NEW",
+    "season_xG": 1.36,
+    "season_xA": 2.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "William Osula",
+    "team": "NEW",
+    "season_xG": 0.69,
+    "season_xA": 0.04,
+    "last_5_xG": 0.05,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Aaron Ramsdale",
+    "team": "NEW",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Malick Thiaw",
+    "team": "NEW",
+    "season_xG": 3.74,
+    "season_xA": 0.88,
+    "last_5_xG": 1.58,
+    "last_5_xA": 0.34
+  },
+  {
+    "name": "Nick Woltemade",
+    "team": "NEW",
+    "season_xG": 6.25,
+    "season_xA": 0.79,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Oleksandr Zinchenko",
+    "team": "NFO",
+    "season_xG": 0.07,
+    "season_xA": 0.36,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Stefan Ortega Moreno",
+    "team": "NFO",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "James McAtee",
+    "team": "NFO",
+    "season_xG": 0.02,
+    "season_xA": 0.18,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Matz Sels",
+    "team": "NFO",
+    "season_xG": 0.0,
+    "season_xA": 0.06,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nikola Milenkovi\u0107",
+    "team": "NFO",
+    "season_xG": 0.81,
+    "season_xA": 0.44,
+    "last_5_xG": 0.09,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Murillo Costa dos Santos",
+    "team": "NFO",
+    "season_xG": 0.6,
+    "season_xA": 0.46,
+    "last_5_xG": 0.12,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Ola Aina",
+    "team": "NFO",
+    "season_xG": 0.36,
+    "season_xA": 0.68,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.23
+  },
+  {
+    "name": "Neco Williams",
+    "team": "NFO",
+    "season_xG": 1.6,
+    "season_xA": 2.93,
+    "last_5_xG": 0.25,
+    "last_5_xA": 0.74
+  },
+  {
+    "name": "Jair Paula da Cunha Filho",
+    "team": "NFO",
+    "season_xG": 0.14,
+    "season_xA": 0.0,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Felipe Rodrigues da Silva",
+    "team": "NFO",
+    "season_xG": 0.83,
+    "season_xA": 0.08,
+    "last_5_xG": 0.37,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Zach Abbott",
+    "team": "NFO",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Morgan Gibbs-White",
+    "team": "NFO",
+    "season_xG": 7.69,
+    "season_xA": 2.12,
+    "last_5_xG": 1.6,
+    "last_5_xA": 0.23
+  },
+  {
+    "name": "Callum Hudson-Odoi",
+    "team": "NFO",
+    "season_xG": 2.69,
+    "season_xA": 2.35,
+    "last_5_xG": 0.74,
+    "last_5_xA": 0.66
+  },
+  {
+    "name": "Elliot Anderson",
+    "team": "NFO",
+    "season_xG": 2.52,
+    "season_xA": 3.4,
+    "last_5_xG": 0.62,
+    "last_5_xA": 1.03
+  },
+  {
+    "name": "Jo\u00e3o Pedro Ferreira da Silva",
+    "team": "NFO",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nicol\u00e1s Dom\u00ednguez",
+    "team": "NFO",
+    "season_xG": 1.15,
+    "season_xA": 0.44,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Ibrahim Sangar\u00e9",
+    "team": "NFO",
+    "season_xG": 1.16,
+    "season_xA": 1.66,
+    "last_5_xG": 0.13,
+    "last_5_xA": 0.45
+  },
+  {
+    "name": "Ryan Yates",
+    "team": "NFO",
+    "season_xG": 0.22,
+    "season_xA": 0.19,
+    "last_5_xG": 0.12,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Chris Wood",
+    "team": "NFO",
+    "season_xG": 2.81,
+    "season_xA": 0.11,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Igor Jesus Maciel da Cruz",
+    "team": "NFO",
+    "season_xG": 4.33,
+    "season_xA": 1.06,
+    "last_5_xG": 0.56,
+    "last_5_xA": 0.21
+  },
+  {
+    "name": "Taiwo Awoniyi",
+    "team": "NFO",
+    "season_xG": 1.59,
+    "season_xA": 0.39,
+    "last_5_xG": 0.74,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Dan Ndoye",
+    "team": "NFO",
+    "season_xG": 1.05,
+    "season_xA": 1.51,
+    "last_5_xG": 0.18,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Angus Gunn",
+    "team": "NFO",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Omari Hutchinson",
+    "team": "NFO",
+    "season_xG": 1.72,
+    "season_xA": 3.01,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.33
+  },
+  {
+    "name": "Arnaud Kalimuendo",
+    "team": "NFO",
+    "season_xG": 0.44,
+    "season_xA": 0.02,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "John Victor Maciel Furtado",
+    "team": "NFO",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Nicol\u00f2 Savona",
+    "team": "NFO",
+    "season_xG": 1.34,
+    "season_xA": 0.45,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Dilane Bakwa",
+    "team": "NFO",
+    "season_xG": 0.5,
+    "season_xA": 0.68,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Lorenzo Lucca",
+    "team": "NFO",
+    "season_xG": 0.72,
+    "season_xA": 0.01,
+    "last_5_xG": 0.56,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Luca Netz",
+    "team": "NFO",
+    "season_xG": 0.0,
+    "season_xA": 0.36,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Daniel Ballard",
+    "team": "SUN",
+    "season_xG": 2.42,
+    "season_xA": 0.58,
+    "last_5_xG": 0.24,
+    "last_5_xA": 0.07
+  },
+  {
+    "name": "Trai Hume",
+    "team": "SUN",
+    "season_xG": 1.64,
+    "season_xA": 1.02,
+    "last_5_xG": 0.28,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Dennis Cirkin",
+    "team": "SUN",
+    "season_xG": 0.08,
+    "season_xA": 0.02,
+    "last_5_xG": 0.08,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Luke O'Nien",
+    "team": "SUN",
+    "season_xG": 0.0,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Reinildo Mandava",
+    "team": "SUN",
+    "season_xG": 0.13,
+    "season_xA": 0.46,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.14
+  },
+  {
+    "name": "Jenson Seelt",
+    "team": "SUN",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Simon Adingra",
+    "team": "SUN",
+    "season_xG": 0.35,
+    "season_xA": 0.62,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Habib Diarra",
+    "team": "SUN",
+    "season_xG": 2.05,
+    "season_xA": 0.5,
+    "last_5_xG": 1.12,
+    "last_5_xA": 0.25
+  },
+  {
+    "name": "Patrick Roberts",
+    "team": "SUN",
+    "season_xG": 0.03,
+    "season_xA": 0.02,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Enzo Le F\u00e9e",
+    "team": "SUN",
+    "season_xG": 4.58,
+    "season_xA": 2.93,
+    "last_5_xG": 0.81,
+    "last_5_xA": 0.42
+  },
+  {
+    "name": "Romaine Mundle",
+    "team": "SUN",
+    "season_xG": 0.87,
+    "season_xA": 0.48,
+    "last_5_xG": 0.42,
+    "last_5_xA": 0.21
+  },
+  {
+    "name": "Dan Neil",
+    "team": "SUN",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Chris Rigg",
+    "team": "SUN",
+    "season_xG": 0.42,
+    "season_xA": 0.36,
+    "last_5_xG": 0.1,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Noah Sadiki",
+    "team": "SUN",
+    "season_xG": 0.46,
+    "season_xA": 0.95,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.13
+  },
+  {
+    "name": "Chemsdine Talbi",
+    "team": "SUN",
+    "season_xG": 1.45,
+    "season_xA": 0.92,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.36
+  },
+  {
+    "name": "Wilson Isidor",
+    "team": "SUN",
+    "season_xG": 3.73,
+    "season_xA": 0.17,
+    "last_5_xG": 0.15,
+    "last_5_xA": 0.1
+  },
+  {
+    "name": "Eliezer Mayenda Dossou",
+    "team": "SUN",
+    "season_xG": 2.13,
+    "season_xA": 0.22,
+    "last_5_xG": 1.08,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Granit Xhaka",
+    "team": "SUN",
+    "season_xG": 0.64,
+    "season_xA": 2.35,
+    "last_5_xG": 0.05,
+    "last_5_xA": 0.16
+  },
+  {
+    "name": "Robin Roefs",
+    "team": "SUN",
+    "season_xG": 0.0,
+    "season_xA": 0.1,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Arthur Masuaku",
+    "team": "SUN",
+    "season_xG": 0.07,
+    "season_xA": 0.08,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Omar Alderete",
+    "team": "SUN",
+    "season_xG": 1.37,
+    "season_xA": 0.85,
+    "last_5_xG": 0.14,
+    "last_5_xA": 0.11
+  },
+  {
+    "name": "Nordi Mukiele",
+    "team": "SUN",
+    "season_xG": 1.02,
+    "season_xA": 2.01,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.13
+  },
+  {
+    "name": "Lutsharel Geertruida",
+    "team": "SUN",
+    "season_xG": 0.5,
+    "season_xA": 0.72,
+    "last_5_xG": 0.13,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Brian Brobbey",
+    "team": "SUN",
+    "season_xG": 2.73,
+    "season_xA": 0.41,
+    "last_5_xG": 0.23,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Bertrand Traor\u00e9",
+    "team": "SUN",
+    "season_xG": 0.48,
+    "season_xA": 0.25,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Djiamgone Jocelin Ta Bi",
+    "team": "SUN",
+    "season_xG": 0.0,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Melker Ellborg",
+    "team": "SUN",
+    "season_xG": 0.0,
+    "season_xA": 0.02,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Nilson Angulo",
+    "team": "SUN",
+    "season_xG": 0.49,
+    "season_xA": 0.08,
+    "last_5_xG": 0.49,
+    "last_5_xA": 0.06
+  },
+  {
+    "name": "Guglielmo Vicario",
+    "team": "TOT",
+    "season_xG": 0.0,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Pedro Porro Sauceda",
+    "team": "TOT",
+    "season_xG": 0.59,
+    "season_xA": 2.93,
+    "last_5_xG": 0.11,
+    "last_5_xA": 0.12
+  },
+  {
+    "name": "Cristian Romero",
+    "team": "TOT",
+    "season_xG": 1.33,
+    "season_xA": 1.2,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Kevin Danso",
+    "team": "TOT",
+    "season_xG": 0.19,
+    "season_xA": 0.19,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Ben Davies",
+    "team": "TOT",
+    "season_xG": 0.49,
+    "season_xA": 0.07,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Radu Dr\u0103gu\u0219in",
+    "team": "TOT",
+    "season_xG": 0.31,
+    "season_xA": 0.01,
+    "last_5_xG": 0.25,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Djed Spence",
+    "team": "TOT",
+    "season_xG": 0.86,
+    "season_xA": 1.74,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.37
+  },
+  {
+    "name": "Destiny Udogie",
+    "team": "TOT",
+    "season_xG": 0.16,
+    "season_xA": 0.51,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Micky van de Ven",
+    "team": "TOT",
+    "season_xG": 2.79,
+    "season_xA": 0.34,
+    "last_5_xG": 0.17,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Mohammed Kudus",
+    "team": "TOT",
+    "season_xG": 1.92,
+    "season_xA": 2.41,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Mathys Tel",
+    "team": "TOT",
+    "season_xG": 1.95,
+    "season_xA": 1.18,
+    "last_5_xG": 0.83,
+    "last_5_xA": 0.64
+  },
+  {
+    "name": "Rodrigo Bentancur",
+    "team": "TOT",
+    "season_xG": 0.45,
+    "season_xA": 0.68,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Lucas Bergvall",
+    "team": "TOT",
+    "season_xG": 0.96,
+    "season_xA": 0.39,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Yves Bissouma",
+    "team": "TOT",
+    "season_xG": 0.36,
+    "season_xA": 0.08,
+    "last_5_xG": 0.08,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Wilson Odobert",
+    "team": "TOT",
+    "season_xG": 1.92,
+    "season_xA": 1.21,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Archie Gray",
+    "team": "TOT",
+    "season_xG": 1.3,
+    "season_xA": 1.26,
+    "last_5_xG": 0.62,
+    "last_5_xA": 1.1
+  },
+  {
+    "name": "Pape Matar Sarr",
+    "team": "TOT",
+    "season_xG": 1.41,
+    "season_xA": 1.04,
+    "last_5_xG": 0.33,
+    "last_5_xA": 0.5
+  },
+  {
+    "name": "Callum Olusesi",
+    "team": "TOT",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Dominic Solanke-Mitchell",
+    "team": "TOT",
+    "season_xG": 2.17,
+    "season_xA": 0.19,
+    "last_5_xG": 1.24,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Richarlison de Andrade",
+    "team": "TOT",
+    "season_xG": 6.25,
+    "season_xA": 1.24,
+    "last_5_xG": 1.45,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Dane Scarlett",
+    "team": "TOT",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jo\u00e3o Maria Lobo Alves Palhares Costa Palhinha Gon\u00e7alves",
+    "team": "TOT",
+    "season_xG": 1.33,
+    "season_xA": 0.55,
+    "last_5_xG": 0.22,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Xavi Simons",
+    "team": "TOT",
+    "season_xG": 2.31,
+    "season_xA": 3.52,
+    "last_5_xG": 0.4,
+    "last_5_xA": 0.51
+  },
+  {
+    "name": "Randal Kolo Muani",
+    "team": "TOT",
+    "season_xG": 1.62,
+    "season_xA": 1.31,
+    "last_5_xG": 0.33,
+    "last_5_xA": 0.36
+  },
+  {
+    "name": "Jun'ai Byfield",
+    "team": "TOT",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "James Rowswell",
+    "team": "TOT",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Conor Gallagher",
+    "team": "TOT",
+    "season_xG": 0.56,
+    "season_xA": 0.48,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Jo\u00e3o Victor de Souza Menezes",
+    "team": "TOT",
+    "season_xG": 0.02,
+    "season_xA": 0.03,
+    "last_5_xG": 0.02,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Adama Traor\u00e9 Diarra",
+    "team": "WHU",
+    "season_xG": 0.34,
+    "season_xA": 0.55,
+    "last_5_xG": 0.15,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Alphonse Areola",
+    "team": "WHU",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "El Hadji Malick Diouf",
+    "team": "WHU",
+    "season_xG": 0.46,
+    "season_xA": 1.7,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.69
+  },
+  {
+    "name": "Maximilian Kilman",
+    "team": "WHU",
+    "season_xG": 0.56,
+    "season_xA": 0.25,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Konstantinos Mavropanos",
+    "team": "WHU",
+    "season_xG": 1.91,
+    "season_xA": 0.38,
+    "last_5_xG": 0.9,
+    "last_5_xA": 0.03
+  },
+  {
+    "name": "Nayef Aguerd",
+    "team": "WHU",
+    "season_xG": 0.1,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Ollie Scarles",
+    "team": "WHU",
+    "season_xG": 0.18,
+    "season_xA": 0.32,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Jean-Clair Todibo",
+    "team": "WHU",
+    "season_xG": 0.25,
+    "season_xA": 0.31,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Aaron Wan-Bissaka",
+    "team": "WHU",
+    "season_xG": 0.0,
+    "season_xA": 0.93,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.2
+  },
+  {
+    "name": "Lucas Tolentino Coelho de Lima",
+    "team": "WHU",
+    "season_xG": 2.85,
+    "season_xA": 2.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tom\u00e1\u0161 Sou\u010dek",
+    "team": "WHU",
+    "season_xG": 4.42,
+    "season_xA": 0.39,
+    "last_5_xG": 1.7,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Crysencio Summerville",
+    "team": "WHU",
+    "season_xG": 4.53,
+    "season_xA": 1.94,
+    "last_5_xG": 1.14,
+    "last_5_xA": 0.92
+  },
+  {
+    "name": "Guido Rodr\u00edguez",
+    "team": "WHU",
+    "season_xG": 0.03,
+    "season_xA": 0.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Luis Guilherme Lira dos Santos",
+    "team": "WHU",
+    "season_xG": 0.07,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "George Earthy",
+    "team": "WHU",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Andy Irving",
+    "team": "WHU",
+    "season_xG": 0.0,
+    "season_xA": 0.17,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Freddie Potts",
+    "team": "WHU",
+    "season_xG": 0.21,
+    "season_xA": 1.05,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Jarrod Bowen",
+    "team": "WHU",
+    "season_xG": 6.04,
+    "season_xA": 3.86,
+    "last_5_xG": 0.31,
+    "last_5_xA": 1.92
+  },
+  {
+    "name": "Niclas F\u00fcllkrug",
+    "team": "WHU",
+    "season_xG": 0.93,
+    "season_xA": 0.21,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Callum Marshall",
+    "team": "WHU",
+    "season_xG": 0.13,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Kyle Walker-Peters",
+    "team": "WHU",
+    "season_xG": 1.13,
+    "season_xA": 0.26,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Callum Wilson",
+    "team": "WHU",
+    "season_xG": 6.48,
+    "season_xA": 0.29,
+    "last_5_xG": 2.03,
+    "last_5_xA": 0.14
+  },
+  {
+    "name": "Mads Hermansen",
+    "team": "WHU",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Mateus Gon\u00e7alo Espanha Fernandes",
+    "team": "WHU",
+    "season_xG": 1.23,
+    "season_xA": 2.0,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.14
+  },
+  {
+    "name": "Soungoutou Magassa",
+    "team": "WHU",
+    "season_xG": 0.44,
+    "season_xA": 0.32,
+    "last_5_xG": 0.13,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Ezra Mayers",
+    "team": "WHU",
+    "season_xG": 0.12,
+    "season_xA": 0.49,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Mohamadou Kant\u00e9",
+    "team": "WHU",
+    "season_xG": 0.03,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Pablo Felipe Pereira de Jesus",
+    "team": "WHU",
+    "season_xG": 0.34,
+    "season_xA": 0.07,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Valent\u00edn Castellanos",
+    "team": "WHU",
+    "season_xG": 2.49,
+    "season_xA": 0.53,
+    "last_5_xG": 0.68,
+    "last_5_xA": 0.32
+  },
+  {
+    "name": "Axel Disasi",
+    "team": "WHU",
+    "season_xG": 0.69,
+    "season_xA": 0.01,
+    "last_5_xG": 0.67,
+    "last_5_xA": 0.01
+  },
+  {
+    "name": "Sam Johnstone",
+    "team": "WOL",
+    "season_xG": 0.0,
+    "season_xA": 0.02,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jos\u00e9 Malheiro de S\u00e1",
+    "team": "WOL",
+    "season_xG": 0.0,
+    "season_xA": 0.03,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Emmanuel Agbadou",
+    "team": "WOL",
+    "season_xG": 0.57,
+    "season_xA": 0.4,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Matt Doherty",
+    "team": "WOL",
+    "season_xG": 0.09,
+    "season_xA": 0.19,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Hugo Bueno L\u00f3pez",
+    "team": "WOL",
+    "season_xG": 0.5,
+    "season_xA": 2.87,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.67
+  },
+  {
+    "name": "Yerson Mosquera Valdelamar",
+    "team": "WOL",
+    "season_xG": 1.57,
+    "season_xA": 0.47,
+    "last_5_xG": 0.16,
+    "last_5_xA": 0.19
+  },
+  {
+    "name": "Rodrigo Martins Gomes",
+    "team": "WOL",
+    "season_xG": 1.69,
+    "season_xA": 0.31,
+    "last_5_xG": 0.59,
+    "last_5_xA": 0.02
+  },
+  {
+    "name": "Santiago Ignacio Bueno",
+    "team": "WOL",
+    "season_xG": 1.67,
+    "season_xA": 1.04,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.04
+  },
+  {
+    "name": "Toti Gomes",
+    "team": "WOL",
+    "season_xG": 0.22,
+    "season_xA": 0.21,
+    "last_5_xG": 0.18,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Ki-Jana Hoever",
+    "team": "WOL",
+    "season_xG": 0.02,
+    "season_xA": 0.36,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Pedro Cardoso de Lima",
+    "team": "WOL",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Hwang Hee-chan",
+    "team": "WOL",
+    "season_xG": 2.1,
+    "season_xA": 0.92,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Andr\u00e9 Trindade da Costa Neto",
+    "team": "WOL",
+    "season_xG": 0.43,
+    "season_xA": 0.76,
+    "last_5_xG": 0.24,
+    "last_5_xA": 0.09
+  },
+  {
+    "name": "Jean-Ricner Bellegarde",
+    "team": "WOL",
+    "season_xG": 1.03,
+    "season_xA": 0.95,
+    "last_5_xG": 0.21,
+    "last_5_xA": 0.34
+  },
+  {
+    "name": "Fer L\u00f3pez Gonz\u00e1lez",
+    "team": "WOL",
+    "season_xG": 0.16,
+    "season_xA": 0.61,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jo\u00e3o Victor Gomes da Silva",
+    "team": "WOL",
+    "season_xG": 1.15,
+    "season_xA": 1.85,
+    "last_5_xG": 0.32,
+    "last_5_xA": 0.53
+  },
+  {
+    "name": "Marshall Munetsi",
+    "team": "WOL",
+    "season_xG": 1.64,
+    "season_xA": 0.38,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tawanda Chirewa",
+    "team": "WOL",
+    "season_xG": 0.0,
+    "season_xA": 0.0,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Tom Edozie",
+    "team": "WOL",
+    "season_xG": 0.17,
+    "season_xA": 0.0,
+    "last_5_xG": 0.17,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Sa\u0161a Kalajd\u017ei\u0107",
+    "team": "WOL",
+    "season_xG": 0.0,
+    "season_xA": 0.01,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "Jhon Arias",
+    "team": "WOL",
+    "season_xG": 3.38,
+    "season_xA": 0.62,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.0
+  },
+  {
+    "name": "David M\u00f8ller Wolfe",
+    "team": "WOL",
+    "season_xG": 0.13,
+    "season_xA": 1.04,
+    "last_5_xG": 0.0,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Jackson Tchatchoua",
+    "team": "WOL",
+    "season_xG": 0.33,
+    "season_xA": 1.49,
+    "last_5_xG": 0.07,
+    "last_5_xA": 0.52
+  },
+  {
+    "name": "Ladislav Krejc\u00ed",
+    "team": "WOL",
+    "season_xG": 2.01,
+    "season_xA": 1.35,
+    "last_5_xG": 0.04,
+    "last_5_xA": 0.08
+  },
+  {
+    "name": "Tolu Arokodare",
+    "team": "WOL",
+    "season_xG": 4.63,
+    "season_xA": 0.36,
+    "last_5_xG": 1.71,
+    "last_5_xA": 0.05
+  },
+  {
+    "name": "Mateus Man\u00e9",
+    "team": "WOL",
+    "season_xG": 1.35,
+    "season_xA": 1.66,
+    "last_5_xG": 0.12,
+    "last_5_xA": 0.37
+  },
+  {
+    "name": "Angel Gomes",
+    "team": "WOL",
+    "season_xG": 0.11,
+    "season_xA": 0.16,
+    "last_5_xG": 0.06,
+    "last_5_xA": 0.09
+  },
+  {
+    "name": "Adam Armstrong",
+    "team": "WOL",
+    "season_xG": 0.65,
+    "season_xA": 0.62,
+    "last_5_xG": 0.65,
+    "last_5_xA": 0.25
   }
 ]
