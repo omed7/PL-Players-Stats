@@ -226,10 +226,18 @@ th, td {
 th:first-child, td:first-child {
     position: sticky;
     left: 0;
-    z-index: 20;
+    z-index: 10;
     /* Add a solid right border to completely block subpixel text bleed */
     border-right: 1px solid var(--border-color);
     background-clip: padding-box;
+}
+
+td:first-child {
+    background-color: var(--bg-card);
+}
+
+th:first-child {
+    z-index: 11;
 }
 
 th {
@@ -239,7 +247,7 @@ th {
 /* Explicit !important overrides to force solid colors on sticky columns */
 #players-table th:first-child {
     background-color: #222 !important; /* matching var(--table-header-bg) */
-    z-index: 30 !important;
+    z-index: 11 !important;
 }
 
 #players-table td:first-child {
