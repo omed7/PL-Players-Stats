@@ -1,8 +1,8 @@
 const state = {
     players: [],
     filteredPlayers: [],
-    timeframe: 'season', // 'season' or 'last5'
-    sortColumn: 'xG', // 'name', 'xG', 'xA', 'npxG', 'creativity', 'points', 'bonus', 'bps', 'influence', 'threat', 'ict', 'chances_created'
+    timeframe: 'last_5', // 'last_5' or 'last_10'
+    sortColumn: 'xG', // 'name', 'xG', 'xA', 'creativity', 'threat', 'ict', 'bps', 'bonus', 'points'
     sortDirection: 'desc', // 'asc' or 'desc'
     searchQuery: '',
     selectedTeams: [], // Array of selected team strings
@@ -11,8 +11,8 @@ const state = {
 };
 
 const elements = {
-    btnSeason: document.getElementById('btn-season'),
     btnLast5: document.getElementById('btn-last5'),
+    btnLast10: document.getElementById('btn-last10'),
     searchInput: document.getElementById('search-input'),
     teamFilterBtn: document.getElementById('team-filter-btn'),
     teamFilterDropdown: document.getElementById('team-filter-dropdown'),
@@ -109,7 +109,7 @@ function applyFiltersAndSort() {
             valB = b[state.sortColumn].toLowerCase();
         } else {
             // It's a metric, need to determine based on timeframe
-            const prefix = state.timeframe === 'season' ? 'season_' : 'last_5_';
+            const prefix = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
             valA = a[`${prefix}${state.sortColumn}`];
             valB = b[`${prefix}${state.sortColumn}`];
         }
@@ -147,7 +147,7 @@ function renderTable() {
         return;
     }
 
-    const prefix = state.timeframe === 'season' ? 'season_' : 'last_5_';
+    const prefix = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
 
     const startIndex = (state.currentPage - 1) * state.itemsPerPage;
     const endIndex = startIndex + state.itemsPerPage;
@@ -155,16 +155,13 @@ function renderTable() {
 
     playersToRender.forEach(player => {
         const xG = player[`${prefix}xG`].toFixed(2);
-        const npxG = player[`${prefix}npxG`].toFixed(2);
         const xA = player[`${prefix}xA`].toFixed(2);
         const creativity = player[`${prefix}creativity`].toFixed(1);
-        const points = player[`${prefix}points`];
-        const bonus = player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0;
-        const bps = player[`${prefix}bps`] !== undefined ? player[`${prefix}bps`] : 0;
-        const influence = player[`${prefix}influence`] !== undefined ? player[`${prefix}influence`].toFixed(1) : "0.0";
         const threat = player[`${prefix}threat`] !== undefined ? player[`${prefix}threat`].toFixed(1) : "0.0";
         const ict = player[`${prefix}ict`] !== undefined ? player[`${prefix}ict`].toFixed(1) : "0.0";
-        const chances_created = player[`${prefix}chances_created`] !== undefined ? player[`${prefix}chances_created`] : 0;
+        const bps = player[`${prefix}bps`] !== undefined ? player[`${prefix}bps`] : 0;
+        const bonus = player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0;
+        const points = player[`${prefix}points`];
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -173,16 +170,13 @@ function renderTable() {
                 ${player.name}
             </td>
             <td>${xG}</td>
-            <td>${npxG}</td>
             <td>${xA}</td>
             <td>${creativity}</td>
-            <td>${points}</td>
-            <td>${bonus}</td>
-            <td>${bps}</td>
-            <td>${influence}</td>
             <td>${threat}</td>
             <td>${ict}</td>
-            <td>${chances_created}</td>
+            <td>${bps}</td>
+            <td>${bonus}</td>
+            <td>${points}</td>
         `;
         elements.tableBody.appendChild(tr);
     });
@@ -226,19 +220,19 @@ document.addEventListener('click', (e) => {
     }
 });
 
-elements.btnSeason.addEventListener('click', () => {
-    state.timeframe = 'season';
+elements.btnLast5.addEventListener('click', () => {
+    state.timeframe = 'last_5';
     state.currentPage = 1;
-    elements.btnSeason.classList.add('active');
-    elements.btnLast5.classList.remove('active');
+    elements.btnLast5.classList.add('active');
+    elements.btnLast10.classList.remove('active');
     applyFiltersAndSort();
 });
 
-elements.btnLast5.addEventListener('click', () => {
-    state.timeframe = 'last5';
+elements.btnLast10.addEventListener('click', () => {
+    state.timeframe = 'last_10';
     state.currentPage = 1;
-    elements.btnLast5.classList.add('active');
-    elements.btnSeason.classList.remove('active');
+    elements.btnLast10.classList.add('active');
+    elements.btnLast5.classList.remove('active');
     applyFiltersAndSort();
 });
 
