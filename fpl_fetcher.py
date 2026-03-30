@@ -47,9 +47,12 @@ def get_fpl_data():
             
             def calc_stats(match_list):
                 mins = sum(int(m.get('minutes', 0)) for m in match_list)
-                # Calculate max possible minutes based on how many games they were available for
                 max_mins = len(match_list) * 90
                 min_pct = round((mins / max_mins) * 100) if max_mins > 0 else 0
+                
+                # Attempt to pull hidden defensive stats if available, otherwise 0
+                defcon = sum(int(m.get('clearances_blocks_interceptions', m.get('recoveries', 0))) for m in match_list)
+                saves = sum(int(m.get('saves', 0)) for m in match_list)
                 
                 return {
                     "minutes": mins,
@@ -63,7 +66,9 @@ def get_fpl_data():
                     "ict": sum(float(m.get('ict_index', 0)) for m in match_list),
                     "bps": sum(int(m.get('bps', 0)) for m in match_list),
                     "bonus": sum(int(m.get('bonus', 0)) for m in match_list),
-                    "points": sum(int(m.get('total_points', 0)) for m in match_list)
+                    "points": sum(int(m.get('total_points', 0)) for m in match_list),
+                    "saves": saves,
+                    "defcon": defcon
                 }
             
             stats_5 = calc_stats(recent_5)
@@ -89,6 +94,8 @@ def get_fpl_data():
                 "last_5_bps": stats_5["bps"],
                 "last_5_bonus": stats_5["bonus"],
                 "last_5_points": stats_5["points"],
+                "last_5_saves": stats_5["saves"],
+                "last_5_defcon": stats_5["defcon"],
                 
                 "last_10_minutes": stats_10["minutes"],
                 "last_10_min_pct": stats_10["min_pct"],
@@ -101,7 +108,9 @@ def get_fpl_data():
                 "last_10_ict": round(stats_10["ict"], 2),
                 "last_10_bps": stats_10["bps"],
                 "last_10_bonus": stats_10["bonus"],
-                "last_10_points": stats_10["points"]
+                "last_10_points": stats_10["points"],
+                "last_10_saves": stats_10["saves"],
+                "last_10_defcon": stats_10["defcon"]
             })
             
             time.sleep(0.05)
