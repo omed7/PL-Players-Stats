@@ -5,6 +5,7 @@ const state = {
     sortColumn: 'xG', // 'name', 'xG', 'xA', 'creativity', 'threat', 'ict', 'bps', 'bonus', 'points'
     sortDirection: 'desc', // 'asc' or 'desc'
     searchQuery: '',
+    positionFilter: 'All',
     selectedTeams: [], // Array of selected team strings
     currentPage: 1,
     itemsPerPage: 15
@@ -13,6 +14,7 @@ const state = {
 const elements = {
     btnLast5: document.getElementById('btn-last5'),
     btnLast10: document.getElementById('btn-last10'),
+    positionBtns: document.querySelectorAll('.position-tabs button'),
     searchInput: document.getElementById('search-input'),
     teamFilterBtn: document.getElementById('team-filter-btn'),
     teamFilterDropdown: document.getElementById('team-filter-dropdown'),
@@ -97,7 +99,8 @@ function applyFiltersAndSort() {
     state.filteredPlayers = state.players.filter(player => {
         const matchesSearch = player.name.toLowerCase().includes(state.searchQuery.toLowerCase());
         const matchesTeam = state.selectedTeams.length === 0 || state.selectedTeams.includes(player.team);
-        return matchesSearch && matchesTeam;
+        const matchesPosition = state.positionFilter === 'All' || player.position === state.positionFilter;
+        return matchesSearch && matchesTeam && matchesPosition;
     });
 
     // 2. Sort
@@ -154,8 +157,11 @@ function renderTable() {
     const playersToRender = state.filteredPlayers.slice(startIndex, endIndex);
 
     playersToRender.forEach(player => {
+        const minutes = player[`${prefix}minutes`] !== undefined ? player[`${prefix}minutes`] : 0;
         const xG = player[`${prefix}xG`].toFixed(2);
         const xA = player[`${prefix}xA`].toFixed(2);
+        const xGI = player[`${prefix}xGI`] !== undefined ? player[`${prefix}xGI`].toFixed(2) : "0.00";
+        const xGC = player[`${prefix}xGC`] !== undefined ? player[`${prefix}xGC`].toFixed(2) : "0.00";
         const creativity = player[`${prefix}creativity`].toFixed(1);
         const threat = player[`${prefix}threat`] !== undefined ? player[`${prefix}threat`].toFixed(1) : "0.0";
         const ict = player[`${prefix}ict`] !== undefined ? player[`${prefix}ict`].toFixed(1) : "0.0";
@@ -163,14 +169,36 @@ function renderTable() {
         const bonus = player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0;
         const points = player[`${prefix}points`];
 
+        let statusHtml = '';
+        let bgColor = '';
+        let textColorClass = '';
+        if (player.status_pct < 100) {
+            statusHtml = `<div class="status-pct">%${player.status_pct}</div>`;
+            if (player.status_pct === 0) bgColor = '#B2002D';
+            else if (player.status_pct === 25) bgColor = '#D34401';
+            else if (player.status_pct === 50) { bgColor = '#FEAB1B'; textColorClass = 'dark-text'; }
+            else if (player.status_pct === 75) { bgColor = '#FBE772'; textColorClass = 'dark-text'; }
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="player-name-cell sticky-col">
-                <img src="${player.logo}" alt="${player.team} logo" class="team-logo">
-                ${player.name}
+            <td class="player-name-cell sticky-col ${textColorClass}" style="${bgColor ? `background-color: ${bgColor} !important;` : ''}">
+                <div class="player-info-wrapper">
+                    ${statusHtml}
+                    <div class="team-logo-container">
+                        <img src="${player.logo}" alt="${player.team} logo" class="team-logo" style="margin-right: 0;">
+                        <div class="player-price">£${player.price.toFixed(1)}m</div>
+                    </div>
+                    <div class="player-details">
+                        <div class="player-name-text">${player.name}</div>
+                    </div>
+                </div>
             </td>
+            <td>${minutes}</td>
             <td>${xG}</td>
             <td>${xA}</td>
+            <td>${xGI}</td>
+            <td>${xGC}</td>
             <td>${creativity}</td>
             <td>${threat}</td>
             <td>${ict}</td>
@@ -200,8 +228,8 @@ function handleSort(column) {
         state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
     } else {
         state.sortColumn = column;
-        // Default text columns to asc, number columns to desc
-        state.sortDirection = (column === 'name') ? 'asc' : 'desc';
+        // All columns (including name) default to descending (highest to lowest) on first click
+        state.sortDirection = 'desc';
     }
 
     updateSortHeaders();
@@ -269,3 +297,15 @@ elements.btnNext.addEventListener('click', () => {
 
 // Init
 document.addEventListener('DOMContentLoaded', fetchPlayers);
+
+if (elements.positionBtns) {
+    elements.positionBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            elements.positionBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.positionFilter = btn.getAttribute('data-pos');
+            state.currentPage = 1;
+            applyFiltersAndSort();
+        });
+    });
+}
