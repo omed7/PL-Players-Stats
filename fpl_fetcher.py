@@ -16,24 +16,21 @@ def get_fpl_data():
         for team in response['teams']
     }
     
-    # Map FPL element types to actual positions
     positions = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD"}
     
     players_data = []
     elements = [p for p in response['elements'] if p['minutes'] > 0]
     
-    print(f"Processing {len(elements)} players for Last 5 and Last 10 matches...")
+    print(f"Processing {len(elements)} players...")
     
     for player in elements:
         player_id = player['id']
         fpl_name = player['web_name'] 
         team_info = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
         
-        # Base Player Info
         pos = positions.get(player['element_type'], "UNK")
-        price = player['now_cost'] / 10.0 # Converts 75 to 7.5
+        price = player['now_cost'] / 10.0 
         
-        # Injury/Suspension Status (FPL returns None if perfectly healthy)
         chance = player.get('chance_of_playing_next_round')
         status_pct = chance if chance is not None else 100
         
@@ -49,8 +46,14 @@ def get_fpl_data():
             recent_10 = history[-10:]
             
             def calc_stats(match_list):
+                mins = sum(int(m.get('minutes', 0)) for m in match_list)
+                # Calculate max possible minutes based on how many games they were available for
+                max_mins = len(match_list) * 90
+                min_pct = round((mins / max_mins) * 100) if max_mins > 0 else 0
+                
                 return {
-                    "minutes": sum(int(m.get('minutes', 0)) for m in match_list),
+                    "minutes": mins,
+                    "min_pct": min_pct,
                     "xG": sum(float(m.get('expected_goals', 0)) for m in match_list),
                     "xA": sum(float(m.get('expected_assists', 0)) for m in match_list),
                     "xGI": sum(float(m.get('expected_goal_involvements', 0)) for m in match_list),
@@ -75,6 +78,7 @@ def get_fpl_data():
                 "status_pct": status_pct,
                 
                 "last_5_minutes": stats_5["minutes"],
+                "last_5_min_pct": stats_5["min_pct"],
                 "last_5_xG": round(stats_5["xG"], 2),
                 "last_5_xA": round(stats_5["xA"], 2),
                 "last_5_xGI": round(stats_5["xGI"], 2),
@@ -87,6 +91,7 @@ def get_fpl_data():
                 "last_5_points": stats_5["points"],
                 
                 "last_10_minutes": stats_10["minutes"],
+                "last_10_min_pct": stats_10["min_pct"],
                 "last_10_xG": round(stats_10["xG"], 2),
                 "last_10_xA": round(stats_10["xA"], 2),
                 "last_10_xGI": round(stats_10["xGI"], 2),
@@ -107,7 +112,7 @@ def get_fpl_data():
     with open("players.json", "w", encoding="utf-8") as f:
         json.dump(players_data, f, indent=2)
         
-    print(f"Success! Saved pure FPL data for {len(players_data)} players.")
+    print("Success! Saved updated FPL data.")
 
 if __name__ == "__main__":
     get_fpl_data()
