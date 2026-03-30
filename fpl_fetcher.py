@@ -17,14 +17,17 @@ def get_fpl_data():
     }
     
     players_data = []
-    # Only process players who have actually played this season to save time
+    # Only process players who have actually played this season
     elements = [p for p in response['elements'] if p['minutes'] > 0]
     
     print(f"Processing {len(elements)} players for Last 5 and Last 10 matches...")
     
     for player in elements:
         player_id = player['id']
-        fpl_name = f"{player['first_name']} {player['second_name']}"
+        
+        # ---> THIS IS THE FIX: Using the official FPL short name <---
+        fpl_name = player['web_name'] 
+        
         team_info = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
         
         history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
@@ -35,11 +38,9 @@ def get_fpl_data():
             if not history:
                 continue
                 
-            # Slice the history array for the two timeframes
             recent_5 = history[-5:]
             recent_10 = history[-10:]
             
-            # Helper function to sum up the stats for a given timeframe
             def calc_stats(match_list):
                 return {
                     "xG": sum(float(m.get('expected_goals', 0)) for m in match_list),
@@ -79,7 +80,6 @@ def get_fpl_data():
                 "last_10_points": stats_10["points"]
             })
             
-            # A tiny sleep just to be polite to the FPL servers
             time.sleep(0.05)
             
         except Exception:
