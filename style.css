@@ -82,6 +82,37 @@ h1 {
     border-color: var(--accent-color);
 }
 
+.position-tabs {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.position-tabs button {
+    flex: 1;
+    min-width: 60px;
+    max-width: 120px;
+    padding: 8px 12px;
+    background-color: var(--bg-main);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.position-tabs button:hover {
+    background-color: var(--hover-bg);
+}
+
+.position-tabs button.active {
+    background-color: var(--accent-color);
+    color: #000;
+    border-color: var(--accent-color);
+}
+
 .filters {
     display: flex;
     gap: 15px;
@@ -230,14 +261,15 @@ th, td {
     border-right: 1px solid var(--border-color);
     background-clip: padding-box;
     font-weight: 600;
-    max-width: 140px;
+    max-width: 160px;
+    min-width: 140px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 th.sticky-col {
-    z-index: 11 !important;
+    z-index: 30 !important;
 }
 
 #players-table tbody tr:hover td.sticky-col {
@@ -251,7 +283,9 @@ th {
     cursor: pointer;
     user-select: none;
     transition: color 0.2s;
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 20;
 }
 
 th:hover {
@@ -326,3 +360,67 @@ tbody tr:hover {
 }
 
 
+
+
+.player-info-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.player-details {
+    display: flex;
+    flex-direction: column;
+    margin-left: 8px;
+    max-width: calc(100% - 32px);
+    overflow: hidden;
+}
+
+.player-name-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player-price {
+    font-size: 0.8em;
+    color: gray;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.status-pct {
+    position: absolute;
+    top: -2px;
+    right: 0;
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #fff;
+    background: rgba(0,0,0,0.5);
+    padding: 1px 4px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.player-name-cell {
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.team-logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+}
+
+.dark-text {
+    color: #000 !important;
+}
+.dark-text .player-price {
+    color: #444 !important;
+}

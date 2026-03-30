@@ -16,6 +16,13 @@
                     <button id="btn-last5" class="active">Last 5 Matches</button>
                     <button id="btn-last10">Last 10 Matches</button>
                 </div>
+                <div class="position-tabs">
+                    <button id="btn-pos-all" class="active" data-pos="All">All</button>
+                    <button id="btn-pos-gk" data-pos="GK">GK</button>
+                    <button id="btn-pos-def" data-pos="DEF">DEF</button>
+                    <button id="btn-pos-mid" data-pos="MID">MID</button>
+                    <button id="btn-pos-fwd" data-pos="FWD">FWD</button>
+                </div>
 
                 <div class="filters">
                     <input type="text" id="search-input" placeholder="Search by Player Name...">
@@ -40,8 +47,11 @@
                     <thead>
                         <tr>
                             <th data-sort="name" class="sticky-col">Player Name <span class="sort-icon"></span></th>
+                            <th data-sort="minutes">Mins <span class="sort-icon"></span></th>
                             <th data-sort="xG" class="active-sort desc">xG <span class="sort-icon">▼</span></th>
                             <th data-sort="xA">xA <span class="sort-icon"></span></th>
+                            <th data-sort="xGI">xGI <span class="sort-icon"></span></th>
+                            <th data-sort="xGC">xGC <span class="sort-icon"></span></th>
                             <th data-sort="creativity">Creativity <span class="sort-icon"></span></th>
                             <th data-sort="threat">Threat <span class="sort-icon"></span></th>
                             <th data-sort="ict">ICT Index <span class="sort-icon"></span></th>
