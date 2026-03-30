@@ -165,7 +165,7 @@ function renderTable() {
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="player-name-cell">
+            <td class="player-name-cell sticky-col">
                 <img src="${player.logo}" alt="${player.team} logo" class="team-logo">
                 ${player.name}
             </td>

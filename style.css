@@ -181,10 +181,6 @@ h1 {
     vertical-align: middle;
 }
 
-.player-name-cell {
-    display: flex;
-    align-items: center;
-}
 
 .error {
     background-color: var(--bg-card);
@@ -203,6 +199,8 @@ h1 {
 .table-container {
     width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
     background-color: var(--bg-card);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -210,7 +208,7 @@ h1 {
 
 table {
     width: 100%;
-    border-collapse: separate;
+    border-collapse: separate !important;
     border-spacing: 0;
     min-width: 600px; /* Ensures horizontal scrolling on very small screens */
 }
@@ -223,38 +221,26 @@ th, td {
     white-space: nowrap; /* Prevent content from wrapping and overflowing cells */
 }
 
-th:first-child, td:first-child {
-    position: sticky;
-    left: 0;
+.sticky-col {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    left: 0 !important;
+    background-color: #1c1c1e !important;
     z-index: 10;
-    /* Add a solid right border to completely block subpixel text bleed */
     border-right: 1px solid var(--border-color);
     background-clip: padding-box;
+    font-weight: 600;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-td:first-child {
-    background-color: var(--bg-card);
-}
-
-th:first-child {
-    z-index: 11;
-}
-
-th {
-    background-color: var(--table-header-bg);
-}
-
-/* Explicit !important overrides to force solid colors on sticky columns */
-#players-table th:first-child {
-    background-color: #222 !important; /* matching var(--table-header-bg) */
+th.sticky-col {
     z-index: 11 !important;
 }
 
-#players-table td:first-child {
-    background-color: #1e1e1e !important; /* matching var(--bg-card) */
-}
-
-#players-table tbody tr:hover td:first-child {
+#players-table tbody tr:hover td.sticky-col {
     background-color: #2a2a2a !important; /* matching var(--hover-bg) */
 }
 
@@ -289,10 +275,6 @@ tbody tr {
 
 tbody tr:hover {
     background-color: var(--hover-bg);
-}
-
-tbody td:first-child {
-    font-weight: 600;
 }
 
 /* Pagination Styles */
@@ -344,34 +326,3 @@ tbody td:first-child {
 }
 
 
-/* --- BULLETPROOF STICKY FIRST COLUMN FOR iOS --- */
-
-/* 1. iOS requires border-collapse to be 'separate' for sticky cells to work properly */
-table {
-    border-collapse: separate !important;
-    border-spacing: 0;
-}
-
-/* 2. Force the first column to stick and truncate long names */
-th:first-child,
-td:first-child {
-    position: -webkit-sticky !important; /* Critical for iPhone Safari */
-    position: sticky !important;
-    left: 0 !important;
-    
-    /* MUST have a solid background, otherwise scrolling numbers bleed through */
-    background-color: #1c1c1e !important; 
-    
-    z-index: 10 !important;
-    
-    /* Truncate giant names */
-    max-width: 140px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* 3. Keep the header cell slightly higher than the rows */
-th:first-child {
-    z-index: 11 !important;
-}
