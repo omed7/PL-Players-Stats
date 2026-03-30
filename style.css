@@ -342,3 +342,36 @@ tbody td:first-child {
         width: 100%;
     }
 }
+
+
+/* --- BULLETPROOF STICKY FIRST COLUMN FOR iOS --- */
+
+/* 1. iOS requires border-collapse to be 'separate' for sticky cells to work properly */
+table {
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
+
+/* 2. Force the first column to stick and truncate long names */
+th:first-child,
+td:first-child {
+    position: -webkit-sticky !important; /* Critical for iPhone Safari */
+    position: sticky !important;
+    left: 0 !important;
+    
+    /* MUST have a solid background, otherwise scrolling numbers bleed through */
+    background-color: #1c1c1e !important; 
+    
+    z-index: 10 !important;
+    
+    /* Truncate giant names */
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 3. Keep the header cell slightly higher than the rows */
+th:first-child {
+    z-index: 11 !important;
+}
