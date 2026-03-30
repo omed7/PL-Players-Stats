@@ -210,7 +210,8 @@ h1 {
 
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     min-width: 600px; /* Ensures horizontal scrolling on very small screens */
 }
 
@@ -218,24 +219,35 @@ th, td {
     padding: 15px;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-card); /* Add explicit background color to all cells to prevent transparency issues */
+    white-space: nowrap; /* Prevent content from wrapping and overflowing cells */
 }
 
 th:first-child, td:first-child {
     position: sticky;
     left: 0;
-    z-index: 10;
+    z-index: 20;
+    /* Add a solid right border to completely block subpixel text bleed */
+    border-right: 1px solid var(--border-color);
+    background-clip: padding-box;
 }
 
-th:first-child {
+th {
     background-color: var(--table-header-bg);
 }
 
-td:first-child {
-    background-color: var(--bg-card);
+/* Explicit !important overrides to force solid colors on sticky columns */
+#players-table th:first-child {
+    background-color: #222 !important; /* matching var(--table-header-bg) */
+    z-index: 30 !important;
 }
 
-tbody tr:hover td:first-child {
-    background-color: var(--hover-bg);
+#players-table td:first-child {
+    background-color: #1e1e1e !important; /* matching var(--bg-card) */
+}
+
+#players-table tbody tr:hover td:first-child {
+    background-color: #2a2a2a !important; /* matching var(--hover-bg) */
 }
 
 th {
