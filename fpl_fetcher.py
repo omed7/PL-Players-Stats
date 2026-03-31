@@ -115,7 +115,8 @@ def get_fpl_data():
             
             time.sleep(0.05)
             
-        except Exception:
+        except Exception as e:
+            print(f"Error processing player {player_id}: {e}")
             continue
             
     with open("players.json", "w", encoding="utf-8") as f:
