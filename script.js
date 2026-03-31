@@ -90,31 +90,29 @@ function populateTeamFilter() {
 
 function applyFiltersAndSort() {
     // 1. Filter
+    const searchQueryLower = (state.searchQuery || '').toLowerCase();
+    const isAllTeamsSelected = state.selectedTeams.length === 0;
+    const isAllPositionsSelected = state.positionFilter === 'All';
+    const isPctMode = elements.minutesToggle.checked;
+    const sliderValue = parseInt(elements.minutesSlider.value, 10);
+    const prefix = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
+    const maxMinutes = state.timeframe === 'last_5' ? 450 : 900;
+
     state.filteredPlayers = state.players.filter(player => {
-        const prefix = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
         const minutes = player[`${prefix}minutes`] !== undefined ? player[`${prefix}minutes`] : 0;
 
         if (minutes === 0) return false; // Completely hide players with 0 minutes in the selected timeframe
 
-        const isPctMode = elements.minutesToggle.checked;
-        const sliderValue = parseInt(elements.minutesSlider.value, 10);
-        let min_pct = 0;
-
-        if (state.timeframe === 'last_5') {
-            min_pct = Math.round((minutes / 450) * 100);
-        } else {
-            min_pct = Math.round((minutes / 900) * 100);
-        }
-
         if (isPctMode) {
+            const min_pct = Math.round((minutes / maxMinutes) * 100);
             if (min_pct < sliderValue) return false;
         } else {
             if (minutes < sliderValue) return false;
         }
 
-        const matchesSearch = player.name.toLowerCase().includes(state.searchQuery.toLowerCase());
-        const matchesTeam = state.selectedTeams.length === 0 || state.selectedTeams.includes(player.team);
-        const matchesPosition = state.positionFilter === 'All' || player.position === state.positionFilter;
+        const matchesSearch = player.name.toLowerCase().includes(searchQueryLower);
+        const matchesTeam = isAllTeamsSelected || state.selectedTeams.includes(player.team);
+        const matchesPosition = isAllPositionsSelected || player.position === state.positionFilter;
         return matchesSearch && matchesTeam && matchesPosition;
     });
 
