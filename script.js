@@ -61,13 +61,23 @@ function populateTeamFilter() {
         const logo = teamsMap.get(team);
         const label = document.createElement('label');
         label.className = 'checkbox-label';
-        label.innerHTML = `
-            <input type="checkbox" value="${team}">
-            <img src="${logo}" alt="${team} logo" class="team-logo">
-            <span>${team}</span>
-        `;
 
-        const checkbox = label.querySelector('input');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.value = team;
+
+        const img = document.createElement('img');
+        img.src = logo;
+        img.alt = `${team} logo`;
+        img.className = 'team-logo';
+
+        const span = document.createElement('span');
+        span.textContent = team;
+
+        label.appendChild(checkbox);
+        label.appendChild(img);
+        label.appendChild(span);
+
         checkbox.addEventListener('change', (e) => {
             if (e.target.checked) {
                 state.selectedTeams.push(team);
@@ -145,7 +155,12 @@ function renderTable() {
 
     if (state.filteredPlayers.length === 0) {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="7" style="text-align: center; color: var(--text-secondary);">No players found matching criteria.</td>`;
+        const td = document.createElement('td');
+        td.colSpan = 12;
+        td.style.textAlign = 'center';
+        td.style.color = 'var(--text-secondary)';
+        td.textContent = 'No players found matching criteria.';
+        tr.appendChild(td);
         elements.tableBody.appendChild(tr);
         return;
     }
@@ -157,23 +172,23 @@ function renderTable() {
     const playersToRender = state.filteredPlayers.slice(startIndex, endIndex);
 
     playersToRender.forEach(player => {
-        const minutes = player[`${prefix}minutes`] !== undefined ? player[`${prefix}minutes`] : 0;
-        const xG = player[`${prefix}xG`].toFixed(2);
-        const xA = player[`${prefix}xA`].toFixed(2);
-        const xGI = player[`${prefix}xGI`] !== undefined ? player[`${prefix}xGI`].toFixed(2) : "0.00";
-        const xGC = player[`${prefix}xGC`] !== undefined ? player[`${prefix}xGC`].toFixed(2) : "0.00";
-        const creativity = player[`${prefix}creativity`].toFixed(1);
-        const threat = player[`${prefix}threat`] !== undefined ? player[`${prefix}threat`].toFixed(1) : "0.0";
-        const ict = player[`${prefix}ict`] !== undefined ? player[`${prefix}ict`].toFixed(1) : "0.0";
-        const bps = player[`${prefix}bps`] !== undefined ? player[`${prefix}bps`] : 0;
-        const bonus = player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0;
-        const points = player[`${prefix}points`];
+        const stats = [
+            player[`${prefix}minutes`] !== undefined ? player[`${prefix}minutes`] : 0,
+            player[`${prefix}xG`].toFixed(2),
+            player[`${prefix}xA`].toFixed(2),
+            player[`${prefix}xGI`] !== undefined ? player[`${prefix}xGI`].toFixed(2) : "0.00",
+            player[`${prefix}xGC`] !== undefined ? player[`${prefix}xGC`].toFixed(2) : "0.00",
+            player[`${prefix}creativity`].toFixed(1),
+            player[`${prefix}threat`] !== undefined ? player[`${prefix}threat`].toFixed(1) : "0.0",
+            player[`${prefix}ict`] !== undefined ? player[`${prefix}ict`].toFixed(1) : "0.0",
+            player[`${prefix}bps`] !== undefined ? player[`${prefix}bps`] : 0,
+            player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0,
+            player[`${prefix}points`]
+        ];
 
-        let statusHtml = '';
         let bgColor = '';
         let textColorClass = '';
         if (player.status_pct < 100) {
-            statusHtml = `<div class="status-pct">%${player.status_pct}</div>`;
             if (player.status_pct === 0) bgColor = '#B2002D';
             else if (player.status_pct === 25) bgColor = '#D34401';
             else if (player.status_pct === 50) { bgColor = '#FEAB1B'; textColorClass = 'dark-text'; }
@@ -181,31 +196,62 @@ function renderTable() {
         }
 
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="player-name-cell sticky-col ${textColorClass}" style="${bgColor ? `background-color: ${bgColor} !important;` : ''}">
-                <div class="player-info-wrapper">
-                    ${statusHtml}
-                    <div class="team-logo-container">
-                        <img src="${player.logo}" alt="${player.team} logo" class="team-logo" style="margin-right: 0;">
-                        <div class="player-price">£${player.price.toFixed(1)}m</div>
-                    </div>
-                    <div class="player-details">
-                        <div class="player-name-text">${player.name}</div>
-                    </div>
-                </div>
-            </td>
-            <td>${minutes}</td>
-            <td>${xG}</td>
-            <td>${xA}</td>
-            <td>${xGI}</td>
-            <td>${xGC}</td>
-            <td>${creativity}</td>
-            <td>${threat}</td>
-            <td>${ict}</td>
-            <td>${bps}</td>
-            <td>${bonus}</td>
-            <td>${points}</td>
-        `;
+
+        // Player Name Cell
+        const nameCell = document.createElement('td');
+        nameCell.className = `player-name-cell sticky-col ${textColorClass}`;
+        if (bgColor) {
+            nameCell.style.setProperty('background-color', bgColor, 'important');
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'player-info-wrapper';
+
+        if (player.status_pct < 100) {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'status-pct';
+            statusDiv.textContent = `%${player.status_pct}`;
+            wrapper.appendChild(statusDiv);
+        }
+
+        const logoContainer = document.createElement('div');
+        logoContainer.className = 'team-logo-container';
+
+        const logoImg = document.createElement('img');
+        logoImg.src = player.logo;
+        logoImg.alt = `${player.team} logo`;
+        logoImg.className = 'team-logo';
+        logoImg.style.marginRight = '0';
+
+        const priceDiv = document.createElement('div');
+        priceDiv.className = 'player-price';
+        priceDiv.textContent = `£${player.price.toFixed(1)}m`;
+
+        logoContainer.appendChild(logoImg);
+        logoContainer.appendChild(priceDiv);
+
+        const detailsDiv = document.createElement('div');
+        detailsDiv.className = 'player-details';
+
+        const nameTextDiv = document.createElement('div');
+        nameTextDiv.className = 'player-name-text';
+        nameTextDiv.textContent = player.name;
+
+        detailsDiv.appendChild(nameTextDiv);
+
+        wrapper.appendChild(logoContainer);
+        wrapper.appendChild(detailsDiv);
+
+        nameCell.appendChild(wrapper);
+        tr.appendChild(nameCell);
+
+        // Stats cells
+        stats.forEach(val => {
+            const td = document.createElement('td');
+            td.textContent = val;
+            tr.appendChild(td);
+        });
+
         elements.tableBody.appendChild(tr);
     });
 }
