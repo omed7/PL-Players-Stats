@@ -6,7 +6,7 @@ def get_fpl_data():
     print("Fetching FPL master list...")
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
     bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
-    response = requests.get(bootstrap_url, headers=headers).json()
+    response = requests.get(bootstrap_url, headers=headers, timeout=10).json()
     
     teams = {
         team['id']: {
@@ -36,7 +36,7 @@ def get_fpl_data():
         
         history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
         try:
-            history_resp = requests.get(history_url, headers=headers).json()
+            history_resp = requests.get(history_url, headers=headers, timeout=10).json()
             history = history_resp.get('history', [])
             
             if not history:
@@ -115,7 +115,8 @@ def get_fpl_data():
             
             time.sleep(0.05)
             
-        except Exception:
+        except Exception as e:
+            print(f"Error fetching data for player {player_id}: {e}")
             continue
             
     with open("players.json", "w", encoding="utf-8") as f:
