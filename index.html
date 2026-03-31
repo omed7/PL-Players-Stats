@@ -24,16 +24,25 @@
                     <button id="btn-pos-fwd" data-pos="FWD">FWD</button>
                 </div>
 
+                <div class="minutes-filter-section">
+                    <div class="minutes-header">
+                        <label for="minutes-slider" id="minutes-label">Min Minutes: 0</label>
+                        <div class="toggle-container">
+                            <span class="toggle-label">Raw</span>
+                            <label class="switch">
+                                <input type="checkbox" id="minutes-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="toggle-label">%</span>
+                        </div>
+                    </div>
+                    <input type="range" id="minutes-slider" min="0" max="450" value="0" step="1">
+                </div>
+
                 <div class="filters">
                     <input type="text" id="search-input" placeholder="Search by Player Name...">
-                    <div class="custom-select" id="team-filter-container">
-                        <button type="button" class="select-button" id="team-filter-btn">
-                            <span class="select-text">All Teams</span>
-                            <span class="select-arrow">▼</span>
-                        </button>
-                        <div class="select-dropdown hidden" id="team-filter-dropdown">
-                            <!-- Checkboxes will be populated here by JS -->
-                        </div>
+                    <div class="team-filter-row" id="team-filter-row">
+                        <!-- Team logos will be populated here by JS -->
                     </div>
                 </div>
             </div>
@@ -47,17 +56,18 @@
                     <thead>
                         <tr>
                             <th data-sort="name" class="sticky-col">Player Name <span class="sort-icon"></span></th>
-                            <th data-sort="minutes">Mins <span class="sort-icon"></span></th>
-                            <th data-sort="xG" class="active-sort desc">xG <span class="sort-icon">▼</span></th>
-                            <th data-sort="xA">xA <span class="sort-icon"></span></th>
-                            <th data-sort="xGI">xGI <span class="sort-icon"></span></th>
-                            <th data-sort="xGC">xGC <span class="sort-icon"></span></th>
-                            <th data-sort="creativity">Creativity <span class="sort-icon"></span></th>
-                            <th data-sort="threat">Threat <span class="sort-icon"></span></th>
-                            <th data-sort="ict">ICT Index <span class="sort-icon"></span></th>
-                            <th data-sort="bps">BPS <span class="sort-icon"></span></th>
-                            <th data-sort="bonus">Bonus <span class="sort-icon"></span></th>
-                            <th data-sort="points">FPL Points <span class="sort-icon"></span></th>
+                            <th data-sort="saves" id="col-saves" class="hidden">Saves <span class="sort-icon"></span></th>
+                            <th data-sort="defcon" id="col-defcon">DefCon <span class="sort-icon"></span></th>
+                            <th data-sort="xG" id="col-xg" class="active-sort desc">xG <span class="sort-icon">▼</span></th>
+                            <th data-sort="xA" id="col-xa">xA <span class="sort-icon"></span></th>
+                            <th data-sort="xGI" id="col-xgi">xGI <span class="sort-icon"></span></th>
+                            <th data-sort="xGC" id="col-xgc">xGC <span class="sort-icon"></span></th>
+                            <th data-sort="creativity" id="col-creativity">Creativity <span class="sort-icon"></span></th>
+                            <th data-sort="threat" id="col-threat">Threat <span class="sort-icon"></span></th>
+                            <th data-sort="ict" id="col-ict">ICT Index <span class="sort-icon"></span></th>
+                            <th data-sort="bps" id="col-bps">BPS <span class="sort-icon"></span></th>
+                            <th data-sort="bonus" id="col-bonus">Bonus <span class="sort-icon"></span></th>
+                            <th data-sort="points" id="col-points">FPL Points <span class="sort-icon"></span></th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
