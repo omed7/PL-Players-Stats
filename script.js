@@ -34,7 +34,11 @@ async function fetchPlayers() {
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        state.players = await response.json();
+        const rawPlayers = await response.json();
+        state.players = rawPlayers.map(p => ({
+            ...p,
+            name_lower: p.name.toLowerCase()
+        }));
 
         populateTeamFilter();
 
@@ -117,17 +121,20 @@ function applyFiltersAndSort() {
     });
 
     // 2. Sort
+    const isNameSort = state.sortColumn === 'name';
+    const metricPrefix = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
+    const metricKey = isNameSort ? null : `${metricPrefix}${state.sortColumn}`;
+
     state.filteredPlayers.sort((a, b) => {
         let valA, valB;
 
-        if (state.sortColumn === 'name') {
-            valA = a[state.sortColumn].toLowerCase();
-            valB = b[state.sortColumn].toLowerCase();
+        if (isNameSort) {
+            valA = a.name_lower;
+            valB = b.name_lower;
         } else {
-            // It's a metric, need to determine based on timeframe
-            const prefix = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
-            valA = a[`${prefix}${state.sortColumn}`];
-            valB = b[`${prefix}${state.sortColumn}`];
+            // It's a metric
+            valA = a[metricKey];
+            valB = b[metricKey];
         }
 
         if (valA < valB) return state.sortDirection === 'asc' ? -1 : 1;
