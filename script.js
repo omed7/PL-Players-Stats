@@ -57,6 +57,7 @@ function populateTeamFilter() {
     const sortedTeams = Array.from(teamsMap.keys()).sort();
 
     elements.teamFilterDropdown.innerHTML = '';
+    const fragment = document.createDocumentFragment();
     sortedTeams.forEach(team => {
         const logo = teamsMap.get(team);
         const label = document.createElement('label');
@@ -79,8 +80,9 @@ function populateTeamFilter() {
             applyFiltersAndSort();
         });
 
-        elements.teamFilterDropdown.appendChild(label);
+        fragment.appendChild(label);
     });
+    elements.teamFilterDropdown.appendChild(fragment);
 }
 
 function updateTeamFilterText() {
@@ -156,6 +158,7 @@ function renderTable() {
     const endIndex = startIndex + state.itemsPerPage;
     const playersToRender = state.filteredPlayers.slice(startIndex, endIndex);
 
+    const fragment = document.createDocumentFragment();
     playersToRender.forEach(player => {
         const minutes = player[`${prefix}minutes`] !== undefined ? player[`${prefix}minutes`] : 0;
         const xG = player[`${prefix}xG`].toFixed(2);
@@ -206,8 +209,9 @@ function renderTable() {
             <td>${bonus}</td>
             <td>${points}</td>
         `;
-        elements.tableBody.appendChild(tr);
+        fragment.appendChild(tr);
     });
+    elements.tableBody.appendChild(fragment);
 }
 
 function updateSortHeaders() {
