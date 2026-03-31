@@ -303,10 +303,10 @@ function updateSliderUI() {
     const isPctMode = elements.minutesToggle.checked;
     if (isPctMode) {
         elements.minutesSlider.max = 100;
-        elements.minutesLabel.textContent = `Min Minutes: ${elements.minutesSlider.value}%`;
+        elements.minutesLabel.textContent = `Mins played: ${elements.minutesSlider.value}%`;
     } else {
         elements.minutesSlider.max = state.timeframe === 'last_5' ? 450 : 900;
-        elements.minutesLabel.textContent = `Min Minutes: ${elements.minutesSlider.value}`;
+        elements.minutesLabel.textContent = `Mins played: ${elements.minutesSlider.value}`;
     }
 }
 
