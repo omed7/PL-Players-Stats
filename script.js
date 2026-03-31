@@ -201,6 +201,21 @@ function renderTable() {
         colIct.classList.remove('hidden');
     }
 
+    const metrics = [
+        { key: 'saves', default: 0 },
+        { key: 'defcon', default: 0 },
+        { key: 'xG', format: v => v.toFixed(2) },
+        { key: 'xA', format: v => v.toFixed(2) },
+        { key: 'xGI', default: "0.00", format: v => v.toFixed(2) },
+        { key: 'xGC', default: "0.00", format: v => v.toFixed(2) },
+        { key: 'creativity', format: v => v.toFixed(1) },
+        { key: 'threat', default: "0.0", format: v => v.toFixed(1) },
+        { key: 'ict', default: "0.0", format: v => v.toFixed(1) },
+        { key: 'bps', default: 0 },
+        { key: 'bonus', default: 0 },
+        { key: 'points' }
+    ];
+
     playersToRender.forEach(player => {
         const minutes = player[`${prefix}minutes`] !== undefined ? player[`${prefix}minutes`] : 0;
 
@@ -211,18 +226,15 @@ function renderTable() {
             min_pct = Math.round((minutes / 900) * 100);
         }
 
-        const saves = player[`${prefix}saves`] !== undefined ? player[`${prefix}saves`] : 0;
-        const defcon = player[`${prefix}defcon`] !== undefined ? player[`${prefix}defcon`] : 0;
-        const xG = player[`${prefix}xG`].toFixed(2);
-        const xA = player[`${prefix}xA`].toFixed(2);
-        const xGI = player[`${prefix}xGI`] !== undefined ? player[`${prefix}xGI`].toFixed(2) : "0.00";
-        const xGC = player[`${prefix}xGC`] !== undefined ? player[`${prefix}xGC`].toFixed(2) : "0.00";
-        const creativity = player[`${prefix}creativity`].toFixed(1);
-        const threat = player[`${prefix}threat`] !== undefined ? player[`${prefix}threat`].toFixed(1) : "0.0";
-        const ict = player[`${prefix}ict`] !== undefined ? player[`${prefix}ict`].toFixed(1) : "0.0";
-        const bps = player[`${prefix}bps`] !== undefined ? player[`${prefix}bps`] : 0;
-        const bonus = player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0;
-        const points = player[`${prefix}points`];
+        const stats = metrics.reduce((acc, m) => {
+            const val = player[`${prefix}${m.key}`];
+            if (val !== undefined) {
+                acc[m.key] = m.format ? m.format(val) : val;
+            } else {
+                acc[m.key] = 'default' in m ? m.default : (m.format ? m.format(val) : val);
+            }
+            return acc;
+        }, {});
 
         let statusHtml = '';
         let bgColor = '';
@@ -250,18 +262,18 @@ function renderTable() {
                     <div class="player-minutes-corner">Mins:${minutes} %${min_pct}</div>
                 </div>
             </td>
-            <td class="col-saves ${state.positionFilter === 'GK' ? '' : 'hidden'}">${saves}</td>
-            <td class="col-defcon ${state.positionFilter === 'GK' ? 'hidden' : ''}">${defcon}</td>
-            <td class="col-xg ${state.positionFilter === 'GK' ? 'hidden' : ''}">${xG}</td>
-            <td class="col-xa ${state.positionFilter === 'GK' ? 'hidden' : ''}">${xA}</td>
-            <td class="col-xgi ${state.positionFilter === 'GK' ? 'hidden' : ''}">${xGI}</td>
-            <td>${xGC}</td>
-            <td class="col-creativity ${state.positionFilter === 'GK' ? 'hidden' : ''}">${creativity}</td>
-            <td class="col-threat ${state.positionFilter === 'GK' ? 'hidden' : ''}">${threat}</td>
-            <td class="col-ict ${state.positionFilter === 'GK' ? 'hidden' : ''}">${ict}</td>
-            <td>${bps}</td>
-            <td>${bonus}</td>
-            <td>${points}</td>
+            <td class="col-saves ${state.positionFilter === 'GK' ? '' : 'hidden'}">${stats.saves}</td>
+            <td class="col-defcon ${state.positionFilter === 'GK' ? 'hidden' : ''}">${stats.defcon}</td>
+            <td class="col-xg ${state.positionFilter === 'GK' ? 'hidden' : ''}">${stats.xG}</td>
+            <td class="col-xa ${state.positionFilter === 'GK' ? 'hidden' : ''}">${stats.xA}</td>
+            <td class="col-xgi ${state.positionFilter === 'GK' ? 'hidden' : ''}">${stats.xGI}</td>
+            <td>${stats.xGC}</td>
+            <td class="col-creativity ${state.positionFilter === 'GK' ? 'hidden' : ''}">${stats.creativity}</td>
+            <td class="col-threat ${state.positionFilter === 'GK' ? 'hidden' : ''}">${stats.threat}</td>
+            <td class="col-ict ${state.positionFilter === 'GK' ? 'hidden' : ''}">${stats.ict}</td>
+            <td>${stats.bps}</td>
+            <td>${stats.bonus}</td>
+            <td>${stats.points}</td>
         `;
         elements.tableBody.appendChild(tr);
     });
