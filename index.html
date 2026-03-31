@@ -8,28 +8,41 @@
 </head>
 <body>
 
-  <!-- ── Page Header ── -->
+  <!-- ── Page Header ───────────────────────────────────────────── -->
   <header class="page-header">
     <div class="header-inner">
       <div class="brand">
         <span class="brand-eyebrow">Fantasy Premier League</span>
         <h1 class="brand-title">FPL <span>Scout</span></h1>
       </div>
+      <!-- View toggle: Table / Trend -->
+      <div class="view-toggle">
+        <button id="btn-view-table" class="view-btn active" title="Table view">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+          Table
+        </button>
+        <button id="btn-view-trend" class="view-btn" title="Trend view">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Trend
+        </button>
+      </div>
     </div>
   </header>
 
-  <!-- ── Summary Strip ── -->
+  <!-- ── Summary Strip ─────────────────────────────────────────── -->
   <div class="summary-strip" id="summary-strip">
     <div class="summary-item"><span class="s-label">Showing</span><span class="s-val" id="s-count">—</span></div>
     <div class="summary-item"><span class="s-label">Avg xG</span><span class="s-val" id="s-avg-xg">—</span></div>
     <div class="summary-item"><span class="s-label">Top xG</span><span class="s-val" id="s-top-xg">—</span></div>
     <div class="summary-item"><span class="s-label">Top Pts</span><span class="s-val" id="s-top-pts">—</span></div>
+    <div class="summary-item watchlist-summary hidden" id="wl-summary">
+      <span class="s-label">Watchlist</span>
+      <span class="s-val" id="s-wl-count">0</span>
+    </div>
   </div>
 
-  <!-- ── Controls ── -->
+  <!-- ── Controls ──────────────────────────────────────────────── -->
   <div class="controls-shell">
-
-    <!-- Timeframe + Position -->
     <div class="controls-top">
       <div class="seg-group" id="timeframe-group">
         <button id="btn-last5" class="active">Last 5</button>
@@ -42,7 +55,6 @@
         <button data-pos="MID">MID</button>
         <button data-pos="FWD">FWD</button>
       </div>
-      <!-- Minutes slider inline -->
       <div class="minutes-bar">
         <label id="minutes-label">Min Minutes: 0</label>
         <input type="range" id="minutes-slider" min="0" max="450" value="0" step="1">
@@ -56,17 +68,13 @@
         </div>
       </div>
     </div>
-
-    <!-- Search + Team Filter -->
     <div class="controls-bottom">
       <div class="search-wrap">
-        <!-- search icon -->
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
         <input type="text" id="search-input" placeholder="Search player…">
       </div>
-
       <div class="team-filter-section">
         <button class="team-filter-toggle-btn" id="team-filter-toggle-btn">
           <span id="team-filter-label">Filter by Team</span>
@@ -82,47 +90,99 @@
         </div>
       </div>
     </div>
+  </div>
 
-  </div><!-- /controls-shell -->
-
-  <!-- ── Main Content ── -->
+  <!-- ── Main ──────────────────────────────────────────────────── -->
   <main class="main-content">
 
     <div id="error-message" class="error hidden">
       Failed to load player data — serve over HTTP: <code>python3 -m http.server</code>
     </div>
 
-    <div class="table-container">
-      <table id="players-table">
-        <thead>
-          <tr>
-            <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
-            <th data-sort="saves"      id="col-saves"      class="hidden">Saves <span class="sort-icon"></span></th>
-            <th data-sort="defcon"     id="col-defcon"                    >DefCon <span class="sort-icon"></span></th>
-            <th data-sort="xG"         id="col-xg"  class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
-            <th data-sort="xA"         id="col-xa"                        >xA <span class="sort-icon"></span></th>
-            <th data-sort="xGI"        id="col-xgi"                       >xGI <span class="sort-icon"></span></th>
-            <th data-sort="xGC"                                           >xGC <span class="sort-icon"></span></th>
-            <th data-sort="creativity" id="col-creativity"                >Creativity <span class="sort-icon"></span></th>
-            <th data-sort="threat"     id="col-threat"                    >Threat <span class="sort-icon"></span></th>
-            <th data-sort="ict"        id="col-ict"                       >ICT <span class="sort-icon"></span></th>
-            <th data-sort="bps"                                           >BPS <span class="sort-icon"></span></th>
-            <th data-sort="bonus"                                         >Bonus <span class="sort-icon"></span></th>
-            <th data-sort="points"                                        >Pts <span class="sort-icon"></span></th>
-            <th data-sort="value"      title="Points per £m"              >Pts/£m <span class="sort-icon"></span></th>
-          </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
+    <!-- Watchlist Panel -->
+    <div id="watchlist-panel" class="watchlist-panel hidden">
+      <div class="wl-header">
+        <span class="wl-title">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Watchlist <span id="wl-count-badge" class="wl-count-badge">0</span>
+        </span>
+        <button id="wl-clear-all" class="wl-clear-btn">Clear all</button>
+      </div>
+      <div id="watchlist-chips" class="watchlist-chips"></div>
     </div>
 
-    <div class="pagination">
-      <button id="btn-prev" disabled>&#8592; Prev</button>
-      <span id="page-info">Page 1 of 1</span>
-      <button id="btn-next" disabled>Next &#8594;</button>
+    <!-- Table View -->
+    <div id="table-view">
+      <div class="table-container">
+        <table id="players-table">
+          <thead>
+            <tr>
+              <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
+              <th data-sort="saves"      id="col-saves"      class="hidden">Saves <span class="sort-icon"></span></th>
+              <th data-sort="defcon"     id="col-defcon"                   >DefCon <span class="sort-icon"></span></th>
+              <th data-sort="xG"         id="col-xg" class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
+              <th data-sort="xA"         id="col-xa"                       >xA <span class="sort-icon"></span></th>
+              <th data-sort="xGI"        id="col-xgi"                      >xGI <span class="sort-icon"></span></th>
+              <th data-sort="xGC"                                          >xGC <span class="sort-icon"></span></th>
+              <th data-sort="creativity" id="col-creativity"               >Creativity <span class="sort-icon"></span></th>
+              <th data-sort="threat"     id="col-threat"                   >Threat <span class="sort-icon"></span></th>
+              <th data-sort="ict"        id="col-ict"                      >ICT <span class="sort-icon"></span></th>
+              <th data-sort="bps"                                          >BPS <span class="sort-icon"></span></th>
+              <th data-sort="bonus"                                        >Bonus <span class="sort-icon"></span></th>
+              <th data-sort="points"                                       >Pts <span class="sort-icon"></span></th>
+              <th data-sort="value" title="Points per £m"                  >Pts/£m <span class="sort-icon"></span></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button id="btn-prev" disabled>&#8592; Prev</button>
+        <span id="page-info">Page 1 of 1</span>
+        <button id="btn-next" disabled>Next &#8594;</button>
+      </div>
+    </div>
+
+    <!-- Trend View -->
+    <div id="trend-view" class="hidden">
+      <div class="trend-controls">
+        <span class="trend-stat-label">Stat:</span>
+        <div class="seg-group trend-stat-group" id="trend-stat-group">
+          <button data-stat="pts" class="active">Points</button>
+          <button data-stat="xG">xG</button>
+          <button data-stat="xA">xA</button>
+          <button data-stat="minutes">Minutes</button>
+        </div>
+        <span class="trend-note" id="trend-note"></span>
+      </div>
+      <div id="trend-container" class="trend-container"></div>
+      <div class="pagination" id="trend-pagination">
+        <button id="btn-trend-prev" disabled>&#8592; Prev</button>
+        <span id="trend-page-info">Page 1 of 1</span>
+        <button id="btn-trend-next" disabled>Next &#8594;</button>
+      </div>
     </div>
 
   </main>
+
+  <!-- ── Compare Float Bar ─────────────────────────────────────── -->
+  <div id="compare-bar" class="compare-bar hidden">
+    <span id="cmp-count-label">2 players selected</span>
+    <button id="btn-open-compare" class="cmp-open-btn">Compare &#8594;</button>
+    <button id="btn-clear-compare" class="cmp-clear-btn">Clear</button>
+  </div>
+
+  <!-- ── Compare Modal ─────────────────────────────────────────── -->
+  <div id="compare-modal" class="cmp-modal hidden" role="dialog" aria-modal="true">
+    <div class="cmp-backdrop" id="cmp-backdrop"></div>
+    <div class="cmp-panel">
+      <div class="cmp-panel-header">
+        <span class="cmp-title">Player Comparison</span>
+        <button id="btn-close-compare" class="cmp-close">&#10005;</button>
+      </div>
+      <div id="compare-content" class="cmp-content"></div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
