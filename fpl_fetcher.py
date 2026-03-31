@@ -6,7 +6,11 @@ def get_fpl_data():
     print("Fetching FPL master list...")
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'}
     bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
-    response = requests.get(bootstrap_url, headers=headers).json()
+    try:
+        response = requests.get(bootstrap_url, headers=headers, timeout=10).json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching bootstrap data: {e}")
+        return
     
     teams = {
         team['id']: {
@@ -36,7 +40,7 @@ def get_fpl_data():
         
         history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
         try:
-            history_resp = requests.get(history_url, headers=headers).json()
+            history_resp = requests.get(history_url, headers=headers, timeout=10).json()
             history = history_resp.get('history', [])
             
             if not history:
@@ -81,13 +85,13 @@ def get_fpl_data():
                 return {
                     "minutes": mins,
                     "min_pct": min_pct,
-                    "xG": xg,
-                    "xA": xa,
-                    "xGI": xgi,
-                    "xGC": xgc,
-                    "creativity": creativity,
-                    "threat": threat,
-                    "ict": ict,
+                    "xG": round(xg, 2),
+                    "xA": round(xa, 2),
+                    "xGI": round(xgi, 2),
+                    "xGC": round(xgc, 2),
+                    "creativity": round(creativity, 2),
+                    "threat": round(threat, 2),
+                    "ict": round(ict, 2),
                     "bps": bps,
                     "bonus": bonus,
                     "points": points,
@@ -95,52 +99,34 @@ def get_fpl_data():
                     "defcon": defcon
                 }
             
-            stats_5 = calc_stats(recent_5)
-            stats_10 = calc_stats(recent_10)
-            
-            players_data.append({
+            player_obj = {
                 "name": fpl_name,
                 "team": team_info['short_name'],
                 "logo": team_info['logo'],
                 "position": pos,
                 "price": price,
-                "status_pct": status_pct,
-                
-                "last_5_minutes": stats_5["minutes"],
-                "last_5_min_pct": stats_5["min_pct"],
-                "last_5_xG": round(stats_5["xG"], 2),
-                "last_5_xA": round(stats_5["xA"], 2),
-                "last_5_xGI": round(stats_5["xGI"], 2),
-                "last_5_xGC": round(stats_5["xGC"], 2),
-                "last_5_creativity": round(stats_5["creativity"], 2),
-                "last_5_threat": round(stats_5["threat"], 2),
-                "last_5_ict": round(stats_5["ict"], 2),
-                "last_5_bps": stats_5["bps"],
-                "last_5_bonus": stats_5["bonus"],
-                "last_5_points": stats_5["points"],
-                "last_5_saves": stats_5["saves"],
-                "last_5_defcon": stats_5["defcon"],
-                
-                "last_10_minutes": stats_10["minutes"],
-                "last_10_min_pct": stats_10["min_pct"],
-                "last_10_xG": round(stats_10["xG"], 2),
-                "last_10_xA": round(stats_10["xA"], 2),
-                "last_10_xGI": round(stats_10["xGI"], 2),
-                "last_10_xGC": round(stats_10["xGC"], 2),
-                "last_10_creativity": round(stats_10["creativity"], 2),
-                "last_10_threat": round(stats_10["threat"], 2),
-                "last_10_ict": round(stats_10["ict"], 2),
-                "last_10_bps": stats_10["bps"],
-                "last_10_bonus": stats_10["bonus"],
-                "last_10_points": stats_10["points"],
-                "last_10_saves": stats_10["saves"],
-                "last_10_defcon": stats_10["defcon"]
-            })
+                "status_pct": status_pct
+            }
+
+            # Add stats dynamically for both timeframes
+            timeframes = [("last_5", recent_5), ("last_10", recent_10)]
+            for prefix, match_list in timeframes:
+                stats = calc_stats(match_list)
+                for key, value in stats.items():
+                    player_obj[f"{prefix}_{key}"] = value
+
+            players_data.append(player_obj)
             
             time.sleep(0.05)
             
-        except Exception as e:
-            print(f"Error processing player {player_id}: {e}")
+        except requests.exceptions.RequestException as e:
+            print(f"Network error fetching history for player {player_id}: {e}")
+            continue
+        except ValueError as e:
+            print(f"JSON decoding error for player {player_id}: {e}")
+            continue
+        except KeyError as e:
+            print(f"Missing expected data key for player {player_id}: {e}")
             continue
             
     with open("players.json", "w", encoding="utf-8") as f:
