@@ -3,7 +3,7 @@ name: Update FPL Data
 on:
   schedule:
     # Runs automatically every day at 03:00 UTC
-    - cron: "0 3 * * *"
+    - cron: '0 3 * * *'
   workflow_dispatch: # This adds the button to let you run it manually
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
