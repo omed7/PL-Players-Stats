@@ -1,443 +1,432 @@
-// State
+// ─── State ────────────────────────────────────────────────────────────────────
 const state = {
-    players: [],
-    filteredPlayers: [],
-    currentPage: 1,
-    itemsPerPage: 15,
-    timeframe: 'last_5',
-    positionFilter: 'All',
-    selectedTeams: [],
-    searchQuery: '',
-    sortColumn: 'xG',
-    sortDirection: 'desc',
-    columnMaxes: {}
+  players: [],
+  filteredPlayers: [],
+  currentPage: 1,
+  itemsPerPage: 15,
+  timeframe: 'last_5',
+  positionFilter: 'All',
+  selectedTeams: [],
+  searchQuery: '',
+  sortColumn: 'xG',
+  sortDirection: 'desc',
+  columnMaxes: {}
 };
 
-const elements = {};
+const el = {};
 
 // ─── Fetch ────────────────────────────────────────────────────────────────────
-
 async function fetchPlayers() {
-    try {
-        const response = await fetch('players.json');
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        state.players = await response.json();
-        populateTeamFilter();
-        applyFiltersAndSort();
-    } catch (err) {
-        console.error('Error fetching player data:', err);
-        if (elements.errorMessage) elements.errorMessage.classList.remove('hidden');
-    }
+  try {
+    const res = await fetch('players.json');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    state.players = await res.json();
+    populateTeamFilter();
+    applyFiltersAndSort();
+  } catch (e) {
+    console.error(e);
+    el.error?.classList.remove('hidden');
+  }
 }
 
-// ─── Team Filter (collapsible) ────────────────────────────────────────────────
-
+// ─── Team Filter ──────────────────────────────────────────────────────────────
 function populateTeamFilter() {
-    elements.teamFilterRow.innerHTML = '';
+  el.teamGrid.innerHTML = '';
 
-    const uniqueTeams = Array.from(
-        new Map(state.players.map(p => [p.team, { name: p.team, logo: p.logo }])).values()
-    ).sort((a, b) => a.name.localeCompare(b.name));
+  const teams = Array.from(
+    new Map(state.players.map(p => [p.team, { name: p.team, logo: p.logo }])).values()
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
-    const fragment = document.createDocumentFragment();
-
-    uniqueTeams.forEach(({ name: team, logo }) => {
-        const btn = document.createElement('button');
-        btn.className = 'team-logo-btn';
-        btn.title = team;
-        if (state.selectedTeams.includes(team)) btn.classList.add('selected');
-
-        btn.innerHTML = `
-            <img src="${logo}" alt="${team}">
-            <span class="team-abbr">${team}</span>
-        `;
-
-        btn.addEventListener('click', () => {
-            toggleTeam(team, btn);
-        });
-
-        fragment.appendChild(btn);
-    });
-
-    elements.teamFilterRow.appendChild(fragment);
-    updateTeamFilterUI();
-}
-
-function toggleTeam(team, btn) {
-    if (state.selectedTeams.length === 0) {
-        // All → select just this one
-        state.selectedTeams = [team];
+  const frag = document.createDocumentFragment();
+  teams.forEach(({ name, logo }) => {
+    const btn = document.createElement('button');
+    btn.className = 'team-logo-btn' + (state.selectedTeams.includes(name) ? ' selected' : '');
+    btn.title = name;
+    btn.innerHTML = `<img src="${logo}" alt="${name}"><span class="team-abbr">${name}</span>`;
+    btn.addEventListener('click', () => {
+      if (state.selectedTeams.length === 0) {
+        state.selectedTeams = [name];
         document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-    } else if (state.selectedTeams.includes(team)) {
-        // Deselect
-        state.selectedTeams = state.selectedTeams.filter(t => t !== team);
+      } else if (state.selectedTeams.includes(name)) {
+        state.selectedTeams = state.selectedTeams.filter(t => t !== name);
         btn.classList.remove('selected');
-        if (state.selectedTeams.length === 0) {
-            document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
-        }
-    } else {
-        // Add to selection
-        state.selectedTeams.push(team);
+        if (state.selectedTeams.length === 0)
+          document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
+      } else {
+        state.selectedTeams.push(name);
         btn.classList.add('selected');
-    }
+      }
+      state.currentPage = 1;
+      syncTeamFilterUI();
+      applyFiltersAndSort();
+    });
+    frag.appendChild(btn);
+  });
 
-    state.currentPage = 1;
-    updateTeamFilterUI();
-    applyFiltersAndSort();
+  el.teamGrid.appendChild(frag);
+  syncTeamFilterUI();
 }
 
-function updateTeamFilterUI() {
-    const count = state.selectedTeams.length;
-    const toggleBtn = elements.teamFilterToggleBtn;
-    const label = document.getElementById('team-filter-label');
-    const countEl = document.getElementById('team-selection-count');
+function syncTeamFilterUI() {
+  const n = state.selectedTeams.length;
+  const label = document.getElementById('team-filter-label');
+  const count = document.getElementById('team-selection-count');
+  const btn   = el.teamToggleBtn;
 
-    if (count === 0) {
-        label.textContent = 'Filter by Team';
-        toggleBtn.classList.remove('has-selection');
-        if (countEl) countEl.textContent = '';
-    } else if (count === 1) {
-        label.textContent = `Team: ${state.selectedTeams[0]}`;
-        toggleBtn.classList.add('has-selection');
-        if (countEl) countEl.textContent = '';
-    } else {
-        label.textContent = 'Filter by Team';
-        toggleBtn.classList.add('has-selection');
-        if (countEl) countEl.textContent = `${count} selected`;
-    }
+  if (n === 0) {
+    label.textContent = 'Filter by Team';
+    btn.classList.remove('has-selection');
+    count.textContent = '';
+  } else if (n === 1) {
+    label.textContent = `Team: ${state.selectedTeams[0]}`;
+    btn.classList.add('has-selection');
+    count.textContent = '';
+  } else {
+    label.textContent = 'Filter by Team';
+    btn.classList.add('has-selection');
+    count.textContent = `${n} selected`;
+  }
 }
 
 // ─── Filters + Sort ───────────────────────────────────────────────────────────
-
 function applyFiltersAndSort() {
-    const searchLower = (state.searchQuery || '').toLowerCase();
-    const allTeams = state.selectedTeams.length === 0;
-    const allPos   = state.positionFilter === 'All';
-    const isPct    = elements.minutesToggle.checked;
-    const slider   = parseInt(elements.minutesSlider.value, 10);
-    const prefix   = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
-    const maxMins  = state.timeframe === 'last_5' ? 450 : 900;
+  const qLow   = state.searchQuery.toLowerCase();
+  const allT   = state.selectedTeams.length === 0;
+  const allP   = state.positionFilter === 'All';
+  const isPct  = el.minsToggle.checked;
+  const slider = parseInt(el.minsSlider.value, 10);
+  const pfx    = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
+  const maxM   = state.timeframe === 'last_5' ? 450 : 900;
 
-    state.filteredPlayers = state.players.filter(p => {
-        const mins = p[`${prefix}minutes`] ?? 0;
-        if (mins === 0) return false;
+  state.filteredPlayers = state.players.filter(p => {
+    const mins = p[`${pfx}minutes`] ?? 0;
+    if (mins === 0) return false;
+    if (isPct  ? Math.round((mins / maxM) * 100) < slider : mins < slider) return false;
+    return (
+      p.name.toLowerCase().includes(qLow) &&
+      (allT || state.selectedTeams.includes(p.team)) &&
+      (allP || p.position === state.positionFilter)
+    );
+  });
 
-        if (isPct) {
-            if (Math.round((mins / maxMins) * 100) < slider) return false;
-        } else {
-            if (mins < slider) return false;
-        }
+  // Sort
+  state.filteredPlayers.sort((a, b) => {
+    if (state.sortColumn === 'name') {
+      const na = a.name.toLowerCase(), nb = b.name.toLowerCase();
+      return state.sortDirection === 'asc' ? na.localeCompare(nb) : nb.localeCompare(na);
+    }
+    let va, vb;
+    if (state.sortColumn === 'value') {
+      va = a.price > 0 ? (a[`${pfx}points`] ?? 0) / a.price : 0;
+      vb = b.price > 0 ? (b[`${pfx}points`] ?? 0) / b.price : 0;
+    } else {
+      va = a[`${pfx}${state.sortColumn}`] ?? 0;
+      vb = b[`${pfx}${state.sortColumn}`] ?? 0;
+    }
+    return state.sortDirection === 'asc' ? va - vb : vb - va;
+  });
 
-        return (
-            p.name.toLowerCase().includes(searchLower) &&
-            (allTeams || state.selectedTeams.includes(p.team)) &&
-            (allPos   || p.position === state.positionFilter)
-        );
-    });
+  // Column maxes for inline bars
+  const cols = ['xG','xA','xGI','creativity','threat','ict','bps','bonus','points','saves','defcon'];
+  cols.forEach(c => {
+    state.columnMaxes[c] = Math.max(...state.filteredPlayers.map(p => p[`${pfx}${c}`] ?? 0), 0.01);
+  });
 
-    // Sort
-    state.filteredPlayers.sort((a, b) => {
-        if (state.sortColumn === 'name') {
-            const na = a.name.toLowerCase(), nb = b.name.toLowerCase();
-            return state.sortDirection === 'asc' ? na.localeCompare(nb) : nb.localeCompare(na);
-        }
-        let va, vb;
-        if (state.sortColumn === 'value') {
-            va = a.price > 0 ? (a[`${prefix}points`] / a.price) : 0;
-            vb = b.price > 0 ? (b[`${prefix}points`] / b.price) : 0;
-        } else {
-            va = a[`${prefix}${state.sortColumn}`] ?? 0;
-            vb = b[`${prefix}${state.sortColumn}`] ?? 0;
-        }
-        return state.sortDirection === 'asc' ? va - vb : vb - va;
-    });
-
-    // Per-column maxes for heat-map
-    const cols = ['xG','xA','xGI','creativity','threat','ict','bps','bonus','points','saves','defcon'];
-    cols.forEach(c => {
-        state.columnMaxes[c] = Math.max(...state.filteredPlayers.map(p => p[`${prefix}${c}`] ?? 0), 0.01);
-    });
-
-    updatePagination();
-    renderTable();
+  updateSummary(pfx);
+  updatePagination();
+  renderTable(pfx);
 }
 
-// ─── Heat colour ──────────────────────────────────────────────────────────────
+// ─── Summary Strip ────────────────────────────────────────────────────────────
+function updateSummary(pfx) {
+  const fp = state.filteredPlayers;
+  if (!fp.length) {
+    document.getElementById('s-count').textContent  = '0 players';
+    document.getElementById('s-avg-xg').textContent = '—';
+    document.getElementById('s-top-xg').textContent = '—';
+    document.getElementById('s-top-pts').textContent= '—';
+    return;
+  }
+  const xgs = fp.map(p => p[`${pfx}xG`] ?? 0);
+  const pts = fp.map(p => p[`${pfx}points`] ?? 0);
+  const avgXg = (xgs.reduce((a,b) => a+b, 0) / xgs.length).toFixed(2);
+  const topXgP = fp.reduce((a,b) => (b[`${pfx}xG`] ?? 0) > (a[`${pfx}xG`] ?? 0) ? b : a);
+  const topPtsP= fp.reduce((a,b) => (b[`${pfx}points`] ?? 0) > (a[`${pfx}points`] ?? 0) ? b : a);
 
-function heatColor(value, max) {
-    if (!max || value <= 0) return '';
-    const alpha = Math.min((value / max) * 0.45, 0.45).toFixed(2);
-    return `background-color:rgba(187,134,252,${alpha});`;
+  document.getElementById('s-count').textContent   = `${fp.length} players`;
+  document.getElementById('s-avg-xg').textContent  = avgXg;
+  document.getElementById('s-top-xg').textContent  = `${topXgP.name} ${topXgP[`${pfx}xG`].toFixed(2)}`;
+  document.getElementById('s-top-pts').textContent = `${topPtsP.name} ${topPtsP[`${pfx}points`]}`;
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
-
 function updatePagination() {
-    const total = Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
-    if (state.currentPage > total) state.currentPage = total;
-    elements.pageInfo.textContent = `Page ${state.currentPage} of ${total}`;
-    elements.btnPrev.disabled = state.currentPage === 1;
-    elements.btnNext.disabled = state.currentPage === total;
+  const total = Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
+  if (state.currentPage > total) state.currentPage = total;
+  el.pageInfo.textContent = `Page ${state.currentPage} of ${total}`;
+  el.btnPrev.disabled = state.currentPage === 1;
+  el.btnNext.disabled = state.currentPage === total;
 }
 
 // ─── Render ───────────────────────────────────────────────────────────────────
+function renderTable(pfxArg) {
+  el.tbody.innerHTML = '';
+  const pfx    = pfxArg || (state.timeframe === 'last_5' ? 'last_5_' : 'last_10_');
+  const maxM   = state.timeframe === 'last_5' ? 450 : 900;
+  const isGK   = state.positionFilter === 'GK';
+  const maxes  = state.columnMaxes;
 
-function renderTable() {
-    elements.tableBody.innerHTML = '';
+  // Column visibility
+  const vis = (id, show) => document.getElementById(id)?.classList.toggle('hidden', !show);
+  vis('col-saves',      isGK);
+  vis('col-defcon',     !isGK);
+  vis('col-xg',         !isGK);
+  vis('col-xa',         !isGK);
+  vis('col-xgi',        !isGK);
+  vis('col-creativity', !isGK);
+  vis('col-threat',     !isGK);
+  vis('col-ict',        !isGK);
 
-    if (state.filteredPlayers.length === 0) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="14" style="text-align:center;color:var(--text-secondary);">No players match the current filters.</td>`;
-        elements.tableBody.appendChild(tr);
-        return;
+  if (state.filteredPlayers.length === 0) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="14" style="text-align:center;color:var(--text-2);padding:32px;">No players match the current filters.</td>`;
+    el.tbody.appendChild(tr);
+    return;
+  }
+
+  const start = (state.currentPage - 1) * state.itemsPerPage;
+  const page  = state.filteredPlayers.slice(start, start + state.itemsPerPage);
+
+  const frag = document.createDocumentFragment();
+
+  page.forEach((p, i) => {
+    const mins   = p[`${pfx}minutes`] ?? 0;
+    const minPct = Math.round((mins / maxM) * 100);
+    const saves  = p[`${pfx}saves`]      ?? 0;
+    const defcon = p[`${pfx}defcon`]     ?? 0;
+    const xG     = (p[`${pfx}xG`]        ?? 0).toFixed(2);
+    const xA     = (p[`${pfx}xA`]        ?? 0).toFixed(2);
+    const xGI    = (p[`${pfx}xGI`]       ?? 0).toFixed(2);
+    const xGC    = (p[`${pfx}xGC`]       ?? 0).toFixed(2);
+    const creat  = (p[`${pfx}creativity`]?? 0).toFixed(1);
+    const threat = (p[`${pfx}threat`]    ?? 0).toFixed(1);
+    const ict    = (p[`${pfx}ict`]       ?? 0).toFixed(1);
+    const bps    = p[`${pfx}bps`]        ?? 0;
+    const bonus  = p[`${pfx}bonus`]      ?? 0;
+    const pts    = p[`${pfx}points`]     ?? 0;
+    const val    = p.price > 0 ? (pts / p.price).toFixed(1) : '0.0';
+    const own    = p.ownership ?? '0.0';
+
+    // Injury badge
+    let injHtml = '';
+    if (p.status_pct < 100) {
+      const cls = p.status_pct === 0 ? 'inj-0' : p.status_pct === 25 ? 'inj-25' : p.status_pct === 50 ? 'inj-50' : 'inj-75';
+      injHtml = `<span class="inj-badge ${cls}">&#9888; ${p.status_pct}%</span>`;
     }
 
-    const prefix  = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
-    const maxMins = state.timeframe === 'last_5' ? 450 : 900;
-    const isGK    = state.positionFilter === 'GK';
-    const maxes   = state.columnMaxes;
+    // Bar % helper
+    const bar = (v, max) => max > 0 ? `${Math.min(v / max * 100, 100).toFixed(1)}%` : '0%';
 
-    // Column header visibility
-    document.getElementById('col-saves').classList.toggle('hidden', !isGK);
-    document.getElementById('col-defcon').classList.toggle('hidden', isGK);
-    document.getElementById('col-xg').classList.toggle('hidden', isGK);
-    document.getElementById('col-xa').classList.toggle('hidden', isGK);
-    document.getElementById('col-xgi').classList.toggle('hidden', isGK);
-    document.getElementById('col-creativity').classList.toggle('hidden', isGK);
-    document.getElementById('col-threat').classList.toggle('hidden', isGK);
-    document.getElementById('col-ict').classList.toggle('hidden', isGK);
+    const tr = document.createElement('tr');
+    tr.style.setProperty('--ri', i);
 
-    const start   = (state.currentPage - 1) * state.itemsPerPage;
-    const players = state.filteredPlayers.slice(start, start + state.itemsPerPage);
+    // Build player sticky cell
+    const playerTd = document.createElement('td');
+    playerTd.className = 'sticky-col';
+    playerTd.innerHTML = `
+      <div class="player-cell">
+        <div class="team-logo-wrap">
+          <img src="${p.logo}" alt="${p.team}" class="team-logo">
+          <span class="player-price">&#163;${p.price.toFixed(1)}m</span>
+        </div>
+        <div class="player-info">
+          <div class="player-name-row">
+            <span class="pos-badge pos-${p.position}">${p.position}</span>
+            <span class="player-name-text">${p.name}</span>
+          </div>
+          <div class="player-meta-row">
+            <span class="own-badge">${own}%</span>
+            <span class="mins-badge">${mins}m (${minPct}%)</span>
+            ${injHtml}
+          </div>
+        </div>
+      </div>`;
 
-    players.forEach(p => {
-        const mins    = p[`${prefix}minutes`] ?? 0;
-        const minPct  = Math.round((mins / maxMins) * 100);
-        const saves   = p[`${prefix}saves`]      ?? 0;
-        const defcon  = p[`${prefix}defcon`]     ?? 0;
-        const xG      = (p[`${prefix}xG`]        ?? 0).toFixed(2);
-        const xA      = (p[`${prefix}xA`]        ?? 0).toFixed(2);
-        const xGI     = (p[`${prefix}xGI`]       ?? 0).toFixed(2);
-        const xGC     = (p[`${prefix}xGC`]       ?? 0).toFixed(2);
-        const creat   = (p[`${prefix}creativity`]?? 0).toFixed(1);
-        const threat  = (p[`${prefix}threat`]    ?? 0).toFixed(1);
-        const ict     = (p[`${prefix}ict`]       ?? 0).toFixed(1);
-        const bps     = p[`${prefix}bps`]        ?? 0;
-        const bonus   = p[`${prefix}bonus`]      ?? 0;
-        const points  = p[`${prefix}points`]     ?? 0;
-        const value   = p.price > 0 ? (points / p.price).toFixed(1) : '0.0';
-        const own     = p.ownership ?? '0.0';
+    tr.appendChild(playerTd);
 
-        // Injury / availability
-        let statusBadge = '';
-        let rowBg = '';
-        let darkClass = '';
-        if (p.status_pct < 100) {
-            statusBadge = `<span class="status-pct">&#9888; ${p.status_pct}%</span>`;
-            if      (p.status_pct === 0)  rowBg = 'background-color:#B2002D!important;';
-            else if (p.status_pct === 25) rowBg = 'background-color:#D34401!important;';
-            else if (p.status_pct === 50) { rowBg = 'background-color:#FEAB1B!important;'; darkClass = 'dark-text'; }
-            else if (p.status_pct === 75) { rowBg = 'background-color:#FBE772!important;'; darkClass = 'dark-text'; }
-        }
+    // Helper: create a stat td with inline bar
+    const statTd = (value, max, hidden = false) => {
+      const td = document.createElement('td');
+      if (hidden) td.className = 'hidden';
+      td.style.setProperty('--bar', bar(parseFloat(value), max));
+      td.textContent = value;
+      return td;
+    };
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="player-name-cell sticky-col ${darkClass}" style="${rowBg}">
-                <div class="player-info-wrapper">
-                    <div class="team-logo-container">
-                        <img src="${p.logo}" alt="${p.team}" class="team-logo">
-                        <div class="player-price">&#163;${p.price.toFixed(1)}m</div>
-                    </div>
-                    <div class="player-details">
-                        <div class="player-name-text">${p.name}</div>
-                        <div class="player-meta-row">
-                            <span class="player-ownership-badge">${own}%</span>
-                            <span class="player-minutes-badge">${mins}m&nbsp;(${minPct}%)</span>
-                            ${statusBadge}
-                        </div>
-                    </div>
-                </div>
-            </td>
-            <td class="${isGK ? '' : 'hidden'}" style="${heatColor(saves, maxes.saves)}">${saves}</td>
-            <td class="${isGK ? 'hidden' : ''}" style="${heatColor(defcon, maxes.defcon)}">${defcon}</td>
-            <td class="${isGK ? 'hidden' : ''}" style="${heatColor(+xG, maxes.xG)}">${xG}</td>
-            <td class="${isGK ? 'hidden' : ''}" style="${heatColor(+xA, maxes.xA)}">${xA}</td>
-            <td class="${isGK ? 'hidden' : ''}" style="${heatColor(+xGI, maxes.xGI)}">${xGI}</td>
-            <td>${xGC}</td>
-            <td class="${isGK ? 'hidden' : ''}" style="${heatColor(+creat, maxes.creativity)}">${creat}</td>
-            <td class="${isGK ? 'hidden' : ''}" style="${heatColor(+threat, maxes.threat)}">${threat}</td>
-            <td class="${isGK ? 'hidden' : ''}" style="${heatColor(+ict, maxes.ict)}">${ict}</td>
-            <td style="${heatColor(bps, maxes.bps)}">${bps}</td>
-            <td style="${heatColor(bonus, maxes.bonus)}">${bonus}</td>
-            <td style="${heatColor(points, maxes.points)}">${points}</td>
-            <td style="${heatColor(+value, 10)}">${value}</td>
-        `;
-        elements.tableBody.appendChild(tr);
-    });
+    // Saves (GK only)
+    tr.appendChild(statTd(saves, maxes.saves, !isGK));
+    // DefCon
+    tr.appendChild(statTd(defcon, maxes.defcon, isGK));
+    // xG
+    tr.appendChild(statTd(xG, maxes.xG, isGK));
+    // xA
+    tr.appendChild(statTd(xA, maxes.xA, isGK));
+    // xGI
+    tr.appendChild(statTd(xGI, maxes.xGI, isGK));
+    // xGC — no bar (lower is better)
+    const xgcTd = document.createElement('td');
+    xgcTd.textContent = xGC;
+    tr.appendChild(xgcTd);
+    // Creativity
+    tr.appendChild(statTd(creat, maxes.creativity, isGK));
+    // Threat
+    tr.appendChild(statTd(threat, maxes.threat, isGK));
+    // ICT
+    tr.appendChild(statTd(ict, maxes.ict, isGK));
+    // BPS
+    tr.appendChild(statTd(bps, maxes.bps));
+    // Bonus
+    tr.appendChild(statTd(bonus, maxes.bonus));
+    // Points
+    tr.appendChild(statTd(pts, maxes.points));
+    // Value — bar capped at 10 pts/£m
+    tr.appendChild(statTd(val, 10));
+
+    frag.appendChild(tr);
+  });
+
+  el.tbody.appendChild(frag);
 }
 
-// ─── Sort headers ─────────────────────────────────────────────────────────────
-
-function updateSortHeaders() {
-    elements.tableHeaders.forEach(th => {
-        th.classList.remove('active-sort', 'asc', 'desc');
-        th.querySelector('.sort-icon').textContent = '';
-        if (th.getAttribute('data-sort') === state.sortColumn) {
-            th.classList.add('active-sort', state.sortDirection);
-            th.querySelector('.sort-icon').textContent = state.sortDirection === 'asc' ? '▲' : '▼';
-        }
-    });
-}
-
-function handleSort(col) {
-    if (!col) return;
-    state.sortColumn    = col;
-    state.sortDirection = (state.sortColumn === col && state.sortDirection === 'desc') ? 'asc' : 'desc';
-    // re-read — if same column, already flipped above; if new column, default desc
-    if (state.sortColumn !== col) { state.sortColumn = col; state.sortDirection = 'desc'; }
-    updateSortHeaders();
-    applyFiltersAndSort();
+// ─── Sort Headers ─────────────────────────────────────────────────────────────
+function syncSortHeaders() {
+  el.headers.forEach(th => {
+    const col = th.getAttribute('data-sort');
+    th.classList.remove('active-sort', 'asc', 'desc');
+    th.querySelector('.sort-icon').textContent = '';
+    if (col === state.sortColumn) {
+      th.classList.add('active-sort', state.sortDirection);
+      th.querySelector('.sort-icon').textContent = state.sortDirection === 'asc' ? '▲' : '▼';
+    }
+  });
 }
 
 // ─── Slider UI ────────────────────────────────────────────────────────────────
-
-function updateSliderUI() {
-    const isPct = elements.minutesToggle.checked;
-    elements.minutesSlider.max = isPct ? 100 : (state.timeframe === 'last_5' ? 450 : 900);
-    elements.minutesLabel.textContent = isPct
-        ? `Min Minutes: ${elements.minutesSlider.value}%`
-        : `Min Minutes: ${elements.minutesSlider.value}`;
+function syncSliderUI() {
+  const isPct = el.minsToggle.checked;
+  el.minsSlider.max = isPct ? 100 : (state.timeframe === 'last_5' ? 450 : 900);
+  el.minsLabel.textContent = isPct
+    ? `Min Minutes: ${el.minsSlider.value}%`
+    : `Min Minutes: ${el.minsSlider.value}`;
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Populate element refs
-    elements.btnLast5              = document.getElementById('btn-last5');
-    elements.btnLast10             = document.getElementById('btn-last10');
-    elements.positionBtns          = document.querySelectorAll('.position-tabs button');
-    elements.teamFilterRow         = document.getElementById('team-filter-row');
-    elements.teamFilterToggleBtn   = document.getElementById('team-filter-toggle-btn');
-    elements.teamFilterPanel       = document.getElementById('team-filter-panel');
-    elements.searchInput           = document.getElementById('search-input');
-    elements.tableBody             = document.getElementById('table-body');
-    elements.tableHeaders          = document.querySelectorAll('th');
-    elements.btnPrev               = document.getElementById('btn-prev');
-    elements.btnNext               = document.getElementById('btn-next');
-    elements.pageInfo              = document.getElementById('page-info');
-    elements.errorMessage          = document.getElementById('error-message');
-    elements.minutesSlider         = document.getElementById('minutes-slider');
-    elements.minutesToggle         = document.getElementById('minutes-toggle');
-    elements.minutesLabel          = document.getElementById('minutes-label');
+  el.tbody          = document.getElementById('table-body');
+  el.headers        = document.querySelectorAll('th');
+  el.btnPrev        = document.getElementById('btn-prev');
+  el.btnNext        = document.getElementById('btn-next');
+  el.pageInfo       = document.getElementById('page-info');
+  el.error          = document.getElementById('error-message');
+  el.minsSlider     = document.getElementById('minutes-slider');
+  el.minsToggle     = document.getElementById('minutes-toggle');
+  el.minsLabel      = document.getElementById('minutes-label');
+  el.searchInput    = document.getElementById('search-input');
+  el.teamGrid       = document.getElementById('team-filter-row');
+  el.teamToggleBtn  = document.getElementById('team-filter-toggle-btn');
+  el.teamPanel      = document.getElementById('team-filter-panel');
+  el.positionBtns   = document.querySelectorAll('#position-group button');
 
-    // ── Collapsible team panel ──
-    elements.teamFilterToggleBtn.addEventListener('click', () => {
-        const open = elements.teamFilterPanel.classList.toggle('open');
-        elements.teamFilterToggleBtn.classList.toggle('open', open);
-    });
+  // ── Team panel toggle ──
+  el.teamToggleBtn.addEventListener('click', () => {
+    const open = el.teamPanel.classList.toggle('open');
+    el.teamToggleBtn.classList.toggle('open', open);
+  });
+  document.getElementById('btn-select-all-teams').addEventListener('click', () => {
+    state.selectedTeams = [];
+    document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
+    state.currentPage = 1;
+    syncTeamFilterUI();
+    applyFiltersAndSort();
+  });
+  document.getElementById('btn-clear-teams').addEventListener('click', () => {
+    state.selectedTeams = [];
+    document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
+    state.currentPage = 1;
+    syncTeamFilterUI();
+    applyFiltersAndSort();
+  });
 
-    document.getElementById('btn-select-all-teams').addEventListener('click', () => {
-        state.selectedTeams = [];
-        document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
-        state.currentPage = 1;
-        updateTeamFilterUI();
-        applyFiltersAndSort();
-    });
+  // ── Timeframe ──
+  document.getElementById('btn-last5').addEventListener('click', function() {
+    state.timeframe = 'last_5'; state.currentPage = 1;
+    this.classList.add('active');
+    document.getElementById('btn-last10').classList.remove('active');
+    el.minsSlider.value = 0; syncSliderUI(); applyFiltersAndSort();
+  });
+  document.getElementById('btn-last10').addEventListener('click', function() {
+    state.timeframe = 'last_10'; state.currentPage = 1;
+    this.classList.add('active');
+    document.getElementById('btn-last5').classList.remove('active');
+    el.minsSlider.value = 0; syncSliderUI(); applyFiltersAndSort();
+  });
 
-    document.getElementById('btn-clear-teams').addEventListener('click', () => {
-        state.selectedTeams = [];
-        document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
-        state.currentPage = 1;
-        updateTeamFilterUI();
-        applyFiltersAndSort();
-    });
+  // ── Minutes ──
+  el.minsToggle.addEventListener('change', () => {
+    el.minsSlider.value = 0; syncSliderUI();
+    state.currentPage = 1; applyFiltersAndSort();
+  });
+  el.minsSlider.addEventListener('input', () => {
+    syncSliderUI(); state.currentPage = 1; applyFiltersAndSort();
+  });
 
-    // ── Timeframe ──
-    elements.btnLast5.addEventListener('click', () => {
-        state.timeframe = 'last_5';
-        state.currentPage = 1;
-        elements.btnLast5.classList.add('active');
-        elements.btnLast10.classList.remove('active');
-        elements.minutesSlider.value = 0;
-        updateSliderUI();
-        applyFiltersAndSort();
-    });
+  // ── Search ──
+  el.searchInput.addEventListener('input', e => {
+    state.searchQuery = e.target.value;
+    state.currentPage = 1; applyFiltersAndSort();
+  });
 
-    elements.btnLast10.addEventListener('click', () => {
-        state.timeframe = 'last_10';
-        state.currentPage = 1;
-        elements.btnLast10.classList.add('active');
-        elements.btnLast5.classList.remove('active');
-        elements.minutesSlider.value = 0;
-        updateSliderUI();
-        applyFiltersAndSort();
+  // ── Sort ──
+  el.headers.forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.getAttribute('data-sort');
+      if (!col) return;
+      if (state.sortColumn === col) {
+        state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        state.sortColumn = col;
+        state.sortDirection = 'desc';
+      }
+      state.currentPage = 1;
+      syncSortHeaders();
+      applyFiltersAndSort();
     });
+  });
 
-    // ── Minutes ──
-    elements.minutesToggle.addEventListener('change', () => {
-        elements.minutesSlider.value = 0;
-        updateSliderUI();
-        state.currentPage = 1;
-        applyFiltersAndSort();
+  // ── Position ──
+  el.positionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      el.positionBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.positionFilter = btn.getAttribute('data-pos');
+      state.currentPage = 1; applyFiltersAndSort();
     });
-    elements.minutesSlider.addEventListener('input', () => {
-        updateSliderUI();
-        state.currentPage = 1;
-        applyFiltersAndSort();
-    });
+  });
 
-    // ── Search ──
-    elements.searchInput.addEventListener('input', e => {
-        state.searchQuery = e.target.value;
-        state.currentPage = 1;
-        applyFiltersAndSort();
-    });
+  // ── Pagination ──
+  el.btnPrev.addEventListener('click', () => {
+    if (state.currentPage > 1) { state.currentPage--; updatePagination(); renderTable(); }
+  });
+  el.btnNext.addEventListener('click', () => {
+    const total = Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
+    if (state.currentPage < total) { state.currentPage++; updatePagination(); renderTable(); }
+  });
 
-    // ── Sort ──
-    elements.tableHeaders.forEach(th => {
-        th.addEventListener('click', () => {
-            const col = th.getAttribute('data-sort');
-            if (!col) return;
-            if (state.sortColumn === col) {
-                state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                state.sortColumn = col;
-                state.sortDirection = 'desc';
-            }
-            state.currentPage = 1;
-            updateSortHeaders();
-            applyFiltersAndSort();
-        });
-    });
-
-    // ── Pagination ──
-    elements.btnPrev.addEventListener('click', () => {
-        if (state.currentPage > 1) { state.currentPage--; updatePagination(); renderTable(); }
-    });
-    elements.btnNext.addEventListener('click', () => {
-        const total = Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
-        if (state.currentPage < total) { state.currentPage++; updatePagination(); renderTable(); }
-    });
-
-    // ── Position tabs ──
-    elements.positionBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            elements.positionBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            state.positionFilter = btn.getAttribute('data-pos');
-            state.currentPage = 1;
-            applyFiltersAndSort();
-        });
-    });
-
-    // ── Load data ──
-    fetchPlayers();
+  fetchPlayers();
 });
 
-// Export for testing
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { state, elements, fetchPlayers, populateTeamFilter,
-        applyFiltersAndSort, updatePagination, renderTable, updateSortHeaders };
+  module.exports = { state, fetchPlayers, applyFiltersAndSort, renderTable };
 }
