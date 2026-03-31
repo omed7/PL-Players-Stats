@@ -12,21 +12,25 @@
             <h1>FPL Statistics</h1>
 
             <div class="controls">
+                <!-- Timeframe -->
                 <div class="timeframe-toggle">
                     <button id="btn-last5" class="active">Last 5 Matches</button>
                     <button id="btn-last10">Last 10 Matches</button>
                 </div>
+
+                <!-- Position -->
                 <div class="position-tabs">
                     <button id="btn-pos-all" class="active" data-pos="All">All</button>
-                    <button id="btn-pos-gk" data-pos="GK">GK</button>
-                    <button id="btn-pos-def" data-pos="DEF">DEF</button>
-                    <button id="btn-pos-mid" data-pos="MID">MID</button>
-                    <button id="btn-pos-fwd" data-pos="FWD">FWD</button>
+                    <button data-pos="GK">GK</button>
+                    <button data-pos="DEF">DEF</button>
+                    <button data-pos="MID">MID</button>
+                    <button data-pos="FWD">FWD</button>
                 </div>
 
+                <!-- Minutes slider -->
                 <div class="minutes-filter-section">
                     <div class="minutes-header">
-                        <label for="minutes-slider" id="minutes-label">Mins played: 0</label>
+                        <label for="minutes-slider" id="minutes-label">Min Minutes: 0</label>
                         <div class="toggle-container">
                             <span class="toggle-label">Raw</span>
                             <label class="switch">
@@ -39,17 +43,35 @@
                     <input type="range" id="minutes-slider" min="0" max="450" value="0" step="1">
                 </div>
 
+                <!-- Search + Team filter -->
                 <div class="filters">
                     <input type="text" id="search-input" placeholder="Search by Player Name...">
-                    <div class="team-filter-row" id="team-filter-row">
-                        <!-- Team logos populated by JS -->
+
+                    <!-- Collapsible team filter -->
+                    <div class="team-filter-section">
+                        <button class="team-filter-toggle-btn" id="team-filter-toggle-btn">
+                            <span id="team-filter-label">Filter by Team</span>
+                            <span class="toggle-arrow">&#9660;</span>
+                        </button>
+                        <div class="team-filter-panel" id="team-filter-panel">
+                            <div class="team-filter-actions">
+                                <button id="btn-select-all-teams">All</button>
+                                <button id="btn-clear-teams">Clear</button>
+                                <span class="selection-count" id="team-selection-count"></span>
+                            </div>
+                            <div class="team-logo-grid" id="team-filter-row">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
 
         <main>
-            <div id="error-message" class="error hidden">Failed to load player data. Make sure you're serving this over HTTP (not opening as a local file).</div>
+            <div id="error-message" class="error hidden">
+                Failed to load player data. Serve over HTTP — run: <code>python3 -m http.server</code>
+            </div>
 
             <div class="table-container">
                 <table id="players-table">
@@ -58,7 +80,7 @@
                             <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
                             <th data-sort="saves" id="col-saves" class="hidden">Saves <span class="sort-icon"></span></th>
                             <th data-sort="defcon" id="col-defcon">DefCon <span class="sort-icon"></span></th>
-                            <th data-sort="xG" id="col-xg" class="active-sort desc">xG <span class="sort-icon">▼</span></th>
+                            <th data-sort="xG" id="col-xg" class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
                             <th data-sort="xA" id="col-xa">xA <span class="sort-icon"></span></th>
                             <th data-sort="xGI" id="col-xgi">xGI <span class="sort-icon"></span></th>
                             <th data-sort="xGC">xGC <span class="sort-icon"></span></th>
@@ -68,12 +90,10 @@
                             <th data-sort="bps">BPS <span class="sort-icon"></span></th>
                             <th data-sort="bonus">Bonus <span class="sort-icon"></span></th>
                             <th data-sort="points">Pts <span class="sort-icon"></span></th>
-                            <th data-sort="value" title="FPL Points per £m">Pts/£m <span class="sort-icon"></span></th>
+                            <th data-sort="value" title="FPL Points per £m price">Pts/£m <span class="sort-icon"></span></th>
                         </tr>
                     </thead>
-                    <tbody id="table-body">
-                        <!-- Data populated by JS -->
-                    </tbody>
+                    <tbody id="table-body"></tbody>
                 </table>
             </div>
 
