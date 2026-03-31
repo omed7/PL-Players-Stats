@@ -1,85 +1,101 @@
+// State
 const state = {
     players: [],
     filteredPlayers: [],
-    timeframe: 'last_5', // 'last_5' or 'last_10'
-    sortColumn: 'xG', // 'name', 'xG', 'xA', 'creativity', 'threat', 'ict', 'bps', 'bonus', 'points'
-    sortDirection: 'desc', // 'asc' or 'desc'
-    searchQuery: '',
-    positionFilter: 'All',
-    selectedTeams: [], // Array of selected team strings
     currentPage: 1,
-    itemsPerPage: 15
+    itemsPerPage: 15,
+    timeframe: 'last_5', // 'last_5' or 'last_10'
+    positionFilter: 'All', // 'All', 'GK', 'DEF', 'MID', 'FWD'
+    selectedTeams: [], // Empty means ALL teams are selected
+    searchQuery: '',
+    sortColumn: 'xG',
+    sortDirection: 'desc' // 'asc' or 'desc'
 };
 
-const elements = {
-    btnLast5: document.getElementById('btn-last5'),
-    btnLast10: document.getElementById('btn-last10'),
-    positionBtns: document.querySelectorAll('.position-tabs button'),
-    minutesSlider: document.getElementById('minutes-slider'),
-    minutesLabel: document.getElementById('minutes-label'),
-    minutesToggle: document.getElementById('minutes-toggle'),
-    searchInput: document.getElementById('search-input'),
-    teamFilterRow: document.getElementById('team-filter-row'),
-    tableHeaders: document.querySelectorAll('th'),
-    tableBody: document.getElementById('table-body'),
-    errorMessage: document.getElementById('error-message'),
-    btnPrev: document.getElementById('btn-prev'),
-    btnNext: document.getElementById('btn-next'),
-    pageInfo: document.getElementById('page-info')
-};
+// DOM Elements
+const elements = {};
+document.addEventListener('DOMContentLoaded', () => {
+    elements.btnLast5 = document.getElementById('btn-last5');
+    elements.btnLast10 = document.getElementById('btn-last10');
+    elements.positionBtns = document.querySelectorAll('.position-tabs button');
+    elements.teamFilterRow = document.getElementById('team-filter-row');
+    elements.searchInput = document.getElementById('search-input');
+    elements.tableBody = document.getElementById('table-body');
+    elements.tableHeaders = document.querySelectorAll('th');
+    elements.btnPrev = document.getElementById('btn-prev');
+    elements.btnNext = document.getElementById('btn-next');
+    elements.pageInfo = document.getElementById('page-info');
+    elements.errorMessage = document.getElementById('error-message');
+    elements.minutesSlider = document.getElementById('minutes-slider');
+    elements.minutesToggle = document.getElementById('minutes-toggle');
+    elements.minutesLabel = document.getElementById('minutes-label');
+});
 
+// Fetch Data
 async function fetchPlayers() {
     try {
         const response = await fetch('players.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const rawPlayers = await response.json();
-        state.players = rawPlayers.map(p => ({
-            ...p,
-            name_lower: p.name.toLowerCase()
-        }));
+        const data = await response.json();
+        state.players = data;
 
         populateTeamFilter();
-
-        // Initial render
         applyFiltersAndSort();
     } catch (error) {
-        console.error("Failed to load players data:", error);
-        elements.errorMessage.classList.remove('hidden');
-        elements.errorMessage.textContent = "Failed to load player data. Please ensure players.json exists and is accessible.";
+        console.error('Error fetching player data:', error);
+        if (elements.errorMessage) {
+            elements.errorMessage.classList.remove('hidden');
+        }
     }
 }
 
 function populateTeamFilter() {
-    // Extract unique teams and their logos
-    const teamsMap = new Map();
-    state.players.forEach(player => {
-        if (!teamsMap.has(player.team)) {
-            teamsMap.set(player.team, player.logo);
-        }
-    });
-
-    const sortedTeams = Array.from(teamsMap.keys()).sort();
-
-    // By default, select all teams
-    state.selectedTeams = [...sortedTeams];
-
     elements.teamFilterRow.innerHTML = '';
-    sortedTeams.forEach(team => {
-        const logo = teamsMap.get(team);
+
+    const uniqueTeams = Array.from(new Map(state.players.map(p => [p.team, { name: p.team, logo: p.logo }])).values())
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+    const fragment = document.createDocumentFragment();
+
+    uniqueTeams.forEach(teamInfo => {
         const btn = document.createElement('button');
-        btn.className = 'team-logo-btn selected';
-        btn.title = team;
-        btn.innerHTML = `<img src="${logo}" alt="${team} logo">`;
+        btn.className = 'team-logo-btn';
+        btn.setAttribute('title', teamInfo.name);
+
+        const img = document.createElement('img');
+        img.src = teamInfo.logo;
+        img.alt = teamInfo.name;
+
+        btn.appendChild(img);
+
+        const team = teamInfo.name;
+
+        // By default, no buttons have 'selected' class = ALL are active.
+        if (state.selectedTeams.includes(team)) {
+            btn.classList.add('selected');
+        }
 
         btn.addEventListener('click', () => {
-            const isSelected = btn.classList.contains('selected');
-
-            if (isSelected) {
-                btn.classList.remove('selected');
+            // Logic:
+            // If selectedTeams is empty, it implies "ALL". Clicking a team makes ONLY that team selected.
+            if (state.selectedTeams.length === 0) {
+                state.selectedTeams = [team];
+                document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            }
+            // If clicked team is already selected:
+            else if (state.selectedTeams.includes(team)) {
                 state.selectedTeams = state.selectedTeams.filter(t => t !== team);
-            } else {
+                btn.classList.remove('selected');
+                // If deselected the last one, revert to "ALL" state
+                if (state.selectedTeams.length === 0) {
+                    document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
+                }
+            }
+            // If clicking a new team, add to selection
+            else {
                 btn.classList.add('selected');
                 state.selectedTeams.push(team);
             }
@@ -88,8 +104,10 @@ function populateTeamFilter() {
             applyFiltersAndSort();
         });
 
-        elements.teamFilterRow.appendChild(btn);
+        fragment.appendChild(btn);
     });
+
+    elements.teamFilterRow.appendChild(fragment);
 }
 
 function applyFiltersAndSort() {
@@ -117,32 +135,31 @@ function applyFiltersAndSort() {
         const matchesSearch = player.name.toLowerCase().includes(searchQueryLower);
         const matchesTeam = isAllTeamsSelected || state.selectedTeams.includes(player.team);
         const matchesPosition = isAllPositionsSelected || player.position === state.positionFilter;
+
         return matchesSearch && matchesTeam && matchesPosition;
     });
 
     // 2. Sort
-    const isNameSort = state.sortColumn === 'name';
-    const metricPrefix = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
-    const metricKey = isNameSort ? null : `${metricPrefix}${state.sortColumn}`;
-
     state.filteredPlayers.sort((a, b) => {
         let valA, valB;
 
-        if (isNameSort) {
-            valA = a.name_lower;
-            valB = b.name_lower;
-        } else {
-            // It's a metric
-            valA = a[metricKey];
-            valB = b[metricKey];
+        if (state.sortColumn === 'name') {
+            valA = a.name.toLowerCase();
+            valB = b.name.toLowerCase();
+            if (valA < valB) return state.sortDirection === 'asc' ? -1 : 1;
+            if (valA > valB) return state.sortDirection === 'asc' ? 1 : -1;
+            return 0;
         }
 
-        if (valA < valB) return state.sortDirection === 'asc' ? -1 : 1;
-        if (valA > valB) return state.sortDirection === 'asc' ? 1 : -1;
-        return 0;
+        valA = a[`${prefix}${state.sortColumn}`];
+        valB = b[`${prefix}${state.sortColumn}`];
+
+        if (valA === undefined) valA = 0;
+        if (valB === undefined) valB = 0;
+
+        return state.sortDirection === 'asc' ? valA - valB : valB - valA;
     });
 
-    // 3. Update Pagination and Render
     updatePagination();
     renderTable();
 }
@@ -228,6 +245,7 @@ function renderTable() {
         const bps = player[`${prefix}bps`] !== undefined ? player[`${prefix}bps`] : 0;
         const bonus = player[`${prefix}bonus`] !== undefined ? player[`${prefix}bonus`] : 0;
         const points = player[`${prefix}points`];
+        const ownership = player.ownership !== undefined ? player.ownership : "0.0";
 
         let statusHtml = '';
         let bgColor = '';
@@ -244,6 +262,7 @@ function renderTable() {
         tr.innerHTML = `
             <td class="player-name-cell sticky-col ${textColorClass}" style="${bgColor ? `background-color: ${bgColor} !important;` : ''}">
                 <div class="player-info-wrapper">
+                    <div class="player-ownership-corner">${ownership}%</div>
                     ${statusHtml}
                     <div class="team-logo-container">
                         <img src="${player.logo}" alt="${player.team} logo" class="team-logo" style="margin-right: 0;">
@@ -303,10 +322,10 @@ function updateSliderUI() {
     const isPctMode = elements.minutesToggle.checked;
     if (isPctMode) {
         elements.minutesSlider.max = 100;
-        elements.minutesLabel.textContent = `Mins played: ${elements.minutesSlider.value}%`;
+        elements.minutesLabel.textContent = `Min Minutes: ${elements.minutesSlider.value}%`;
     } else {
         elements.minutesSlider.max = state.timeframe === 'last_5' ? 450 : 900;
-        elements.minutesLabel.textContent = `Mins played: ${elements.minutesSlider.value}`;
+        elements.minutesLabel.textContent = `Min Minutes: ${elements.minutesSlider.value}`;
     }
 }
 
