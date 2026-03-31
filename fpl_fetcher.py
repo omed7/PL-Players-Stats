@@ -46,27 +46,51 @@ def get_fpl_data():
             recent_10 = history[-10:]
             
             def calc_stats(match_list):
-                mins = sum(int(m.get('minutes', 0)) for m in match_list)
+                mins = 0
+                defcon = 0
+                saves = 0
+                xg = 0.0
+                xa = 0.0
+                xgi = 0.0
+                xgc = 0.0
+                creativity = 0.0
+                threat = 0.0
+                ict = 0.0
+                bps = 0
+                bonus = 0
+                points = 0
+
+                for m in match_list:
+                    mins += int(m.get('minutes', 0))
+                    defcon += int(m.get('clearances_blocks_interceptions', m.get('recoveries', 0)))
+                    saves += int(m.get('saves', 0))
+                    xg += float(m.get('expected_goals', 0))
+                    xa += float(m.get('expected_assists', 0))
+                    xgi += float(m.get('expected_goal_involvements', 0))
+                    xgc += float(m.get('expected_goals_conceded', 0))
+                    creativity += float(m.get('creativity', 0))
+                    threat += float(m.get('threat', 0))
+                    ict += float(m.get('ict_index', 0))
+                    bps += int(m.get('bps', 0))
+                    bonus += int(m.get('bonus', 0))
+                    points += int(m.get('total_points', 0))
+
                 max_mins = len(match_list) * 90
                 min_pct = round((mins / max_mins) * 100) if max_mins > 0 else 0
-                
-                # Attempt to pull hidden defensive stats if available, otherwise 0
-                defcon = sum(int(m.get('clearances_blocks_interceptions', m.get('recoveries', 0))) for m in match_list)
-                saves = sum(int(m.get('saves', 0)) for m in match_list)
                 
                 return {
                     "minutes": mins,
                     "min_pct": min_pct,
-                    "xG": sum(float(m.get('expected_goals', 0)) for m in match_list),
-                    "xA": sum(float(m.get('expected_assists', 0)) for m in match_list),
-                    "xGI": sum(float(m.get('expected_goal_involvements', 0)) for m in match_list),
-                    "xGC": sum(float(m.get('expected_goals_conceded', 0)) for m in match_list),
-                    "creativity": sum(float(m.get('creativity', 0)) for m in match_list),
-                    "threat": sum(float(m.get('threat', 0)) for m in match_list),
-                    "ict": sum(float(m.get('ict_index', 0)) for m in match_list),
-                    "bps": sum(int(m.get('bps', 0)) for m in match_list),
-                    "bonus": sum(int(m.get('bonus', 0)) for m in match_list),
-                    "points": sum(int(m.get('total_points', 0)) for m in match_list),
+                    "xG": xg,
+                    "xA": xa,
+                    "xGI": xgi,
+                    "xGC": xgc,
+                    "creativity": creativity,
+                    "threat": threat,
+                    "ict": ict,
+                    "bps": bps,
+                    "bonus": bonus,
+                    "points": points,
                     "saves": saves,
                     "defcon": defcon
                 }
