@@ -1,177 +1,148 @@
 import requests
 import json
-from concurrent.futures import ThreadPoolExecutor
-
-
-def calc_stats(match_list):
-    mins = 0
-    defcon = 0
-    saves = 0
-    xg = 0.0
-    xa = 0.0
-    xgi = 0.0
-    xgc = 0.0
-    creativity = 0.0
-    threat = 0.0
-    ict = 0.0
-    bps = 0
-    bonus = 0
-    points = 0
-
-    for m in match_list:
-        mins += int(m.get("minutes", 0))
-        defcon += int(m.get("clearances_blocks_interceptions", m.get("recoveries", 0)))
-        saves += int(m.get("saves", 0))
-        xg += float(m.get("expected_goals", 0))
-        xa += float(m.get("expected_assists", 0))
-        xgi += float(m.get("expected_goal_involvements", 0))
-        xgc += float(m.get("expected_goals_conceded", 0))
-        creativity += float(m.get("creativity", 0))
-        threat += float(m.get("threat", 0))
-        ict += float(m.get("ict_index", 0))
-        bps += int(m.get("bps", 0))
-        bonus += int(m.get("bonus", 0))
-        points += int(m.get("total_points", 0))
-
-    max_mins = len(match_list) * 90
-    min_pct = round((mins / max_mins) * 100) if max_mins > 0 else 0
-
-    return {
-        "minutes": mins,
-        "min_pct": min_pct,
-        "xG": xg,
-        "xA": xa,
-        "xGI": xgi,
-        "xGC": xgc,
-        "creativity": creativity,
-        "threat": threat,
-        "ict": ict,
-        "bps": bps,
-        "bonus": bonus,
-        "points": points,
-        "saves": saves,
-        "defcon": defcon,
-    }
-
-
-def process_player(player, teams, positions, headers, session):
-    player_id = player["id"]
-    fpl_name = player["web_name"]
-    team_info = teams.get(player["team"], {"short_name": "UNK", "logo": ""})
-
-    pos = positions.get(player["element_type"], "UNK")
-    price = player["now_cost"] / 10.0
-
-    chance = player.get("chance_of_playing_next_round")
-    status_pct = chance if chance is not None else 100
-
-    history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
-    try:
-        history_resp = session.get(history_url, headers=headers).json()
-        history = history_resp.get("history", [])
-
-        if not history:
-            return None
-
-        recent_5 = history[-5:]
-        recent_10 = history[-10:]
-
-        stats_5 = calc_stats(recent_5)
-        stats_10 = calc_stats(recent_10)
-
-        return {
-            "name": fpl_name,
-            "team": team_info["short_name"],
-            "logo": team_info["logo"],
-            "position": pos,
-            "price": price,
-            "status_pct": status_pct,
-            "last_5_minutes": stats_5["minutes"],
-            "last_5_min_pct": stats_5["min_pct"],
-            "last_5_xG": round(stats_5["xG"], 2),
-            "last_5_xA": round(stats_5["xA"], 2),
-            "last_5_xGI": round(stats_5["xGI"], 2),
-            "last_5_xGC": round(stats_5["xGC"], 2),
-            "last_5_creativity": round(stats_5["creativity"], 2),
-            "last_5_threat": round(stats_5["threat"], 2),
-            "last_5_ict": round(stats_5["ict"], 2),
-            "last_5_bps": stats_5["bps"],
-            "last_5_bonus": stats_5["bonus"],
-            "last_5_points": stats_5["points"],
-            "last_5_saves": stats_5["saves"],
-            "last_5_defcon": stats_5["defcon"],
-            "last_10_minutes": stats_10["minutes"],
-            "last_10_min_pct": stats_10["min_pct"],
-            "last_10_xG": round(stats_10["xG"], 2),
-            "last_10_xA": round(stats_10["xA"], 2),
-            "last_10_xGI": round(stats_10["xGI"], 2),
-            "last_10_xGC": round(stats_10["xGC"], 2),
-            "last_10_creativity": round(stats_10["creativity"], 2),
-            "last_10_threat": round(stats_10["threat"], 2),
-            "last_10_ict": round(stats_10["ict"], 2),
-            "last_10_bps": stats_10["bps"],
-            "last_10_bonus": stats_10["bonus"],
-            "last_10_points": stats_10["points"],
-            "last_10_saves": stats_10["saves"],
-            "last_10_defcon": stats_10["defcon"],
-        }
-
-    except Exception as e:
-        print(f"Error processing player {player_id}: {e}")
-        return None
-
+import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 def get_fpl_data():
+    print("Initializing session with retries and timeouts...")
+    
+    # 1. Setup session with retry logic
+    session = requests.Session()
+    retries = Retry(total=3, backoff_factor=0.5, status_forcelist=[429, 500, 502, 503, 504])
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+    
+    # 2. Set session-level headers
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'
+    })
+    
+    # 3. Standard timeout for all requests
+    req_timeout = 10
+
     print("Fetching FPL master list...")
-    headers = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"}
     bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
-    response = requests.get(bootstrap_url, headers=headers).json()
-
+    response = session.get(bootstrap_url, timeout=req_timeout).json()
+    
     teams = {
-        team["id"]: {
-            "short_name": team["short_name"],
-            "logo": f"https://resources.premierleague.com/premierleague/badges/t{team['code']}.png",
-        }
-        for team in response["teams"]
+        team['id']: {
+            'short_name': team['short_name'], 
+            'logo': f"https://resources.premierleague.com/premierleague/badges/t{team['code']}.png"
+        } 
+        for team in response['teams']
     }
-
+    
     positions = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD"}
-
-    elements = [p for p in response["elements"] if p["minutes"] > 0]
-
-    print(f"Processing {len(elements)} players...")
-
+    
     players_data = []
-
-    max_workers = 20
-
-    with requests.Session() as session:
-        adapter = requests.adapters.HTTPAdapter(
-            pool_connections=max_workers, pool_maxsize=max_workers
-        )
-        session.mount("https://", adapter)
-        session.mount("http://", adapter)
-
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Maintain original order by iterating over elements directly
-            futures = [
-                executor.submit(process_player, player, teams, positions, headers, session)
-                for player in elements
-            ]
-
-            for future in futures:
-                try:
-                    result = future.result()
-                    if result:
-                        players_data.append(result)
-                except Exception as e:
-                    print(f"Unhandled error in thread: {e}")
-
+    elements = [p for p in response['elements'] if p['minutes'] > 0]
+    
+    print(f"Processing {len(elements)} players...")
+    
+    for player in elements:
+        player_id = player['id']
+        fpl_name = player['web_name'] 
+        team_info = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
+        
+        pos = positions.get(player['element_type'], "UNK")
+        price = player['now_cost'] / 10.0 
+        
+        chance = player.get('chance_of_playing_next_round')
+        status_pct = chance if chance is not None else 100
+        
+        # 4. Pull Ownership Percentage
+        ownership = player.get('selected_by_percent', "0.0")
+        
+        history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
+        try:
+            history_resp = session.get(history_url, timeout=req_timeout).json()
+            history = history_resp.get('history', [])
+            
+            if not history:
+                continue
+                
+            recent_5 = history[-5:]
+            recent_10 = history[-10:]
+            
+            def calc_stats(match_list):
+                mins = sum(int(m.get('minutes', 0)) for m in match_list)
+                max_mins = len(match_list) * 90
+                min_pct = round((mins / max_mins) * 100) if max_mins > 0 else 0
+                
+                # 5. Explicit DefCon stat without fallback chaining
+                defcon = sum(int(m.get('clearances_blocks_interceptions', 0)) for m in match_list)
+                saves = sum(int(m.get('saves', 0)) for m in match_list)
+                
+                return {
+                    "minutes": mins,
+                    "min_pct": min_pct,
+                    "xG": sum(float(m.get('expected_goals', 0)) for m in match_list),
+                    "xA": sum(float(m.get('expected_assists', 0)) for m in match_list),
+                    "xGI": sum(float(m.get('expected_goal_involvements', 0)) for m in match_list),
+                    "xGC": sum(float(m.get('expected_goals_conceded', 0)) for m in match_list),
+                    "creativity": sum(float(m.get('creativity', 0)) for m in match_list),
+                    "threat": sum(float(m.get('threat', 0)) for m in match_list),
+                    "ict": sum(float(m.get('ict_index', 0)) for m in match_list),
+                    "bps": sum(int(m.get('bps', 0)) for m in match_list),
+                    "bonus": sum(int(m.get('bonus', 0)) for m in match_list),
+                    "points": sum(int(m.get('total_points', 0)) for m in match_list),
+                    "saves": saves,
+                    "defcon": defcon
+                }
+            
+            stats_5 = calc_stats(recent_5)
+            stats_10 = calc_stats(recent_10)
+            
+            players_data.append({
+                "name": fpl_name,
+                "team": team_info['short_name'],
+                "logo": team_info['logo'],
+                "position": pos,
+                "price": price,
+                "status_pct": status_pct,
+                "ownership": ownership,
+                
+                "last_5_minutes": stats_5["minutes"],
+                "last_5_min_pct": stats_5["min_pct"],
+                "last_5_xG": round(stats_5["xG"], 2),
+                "last_5_xA": round(stats_5["xA"], 2),
+                "last_5_xGI": round(stats_5["xGI"], 2),
+                "last_5_xGC": round(stats_5["xGC"], 2),
+                "last_5_creativity": round(stats_5["creativity"], 2),
+                "last_5_threat": round(stats_5["threat"], 2),
+                "last_5_ict": round(stats_5["ict"], 2),
+                "last_5_bps": stats_5["bps"],
+                "last_5_bonus": stats_5["bonus"],
+                "last_5_points": stats_5["points"],
+                "last_5_saves": stats_5["saves"],
+                "last_5_defcon": stats_5["defcon"],
+                
+                "last_10_minutes": stats_10["minutes"],
+                "last_10_min_pct": stats_10["min_pct"],
+                "last_10_xG": round(stats_10["xG"], 2),
+                "last_10_xA": round(stats_10["xA"], 2),
+                "last_10_xGI": round(stats_10["xGI"], 2),
+                "last_10_xGC": round(stats_10["xGC"], 2),
+                "last_10_creativity": round(stats_10["creativity"], 2),
+                "last_10_threat": round(stats_10["threat"], 2),
+                "last_10_ict": round(stats_10["ict"], 2),
+                "last_10_bps": stats_10["bps"],
+                "last_10_bonus": stats_10["bonus"],
+                "last_10_points": stats_10["points"],
+                "last_10_saves": stats_10["saves"],
+                "last_10_defcon": stats_10["defcon"]
+            })
+            
+            time.sleep(0.05)
+            
+        except Exception as e:
+            print(f"Failed to fetch {fpl_name}: {e}")
+            continue
+            
     with open("players.json", "w", encoding="utf-8") as f:
         json.dump(players_data, f, indent=2)
-
+        
     print("Success! Saved updated FPL data.")
-
 
 if __name__ == "__main__":
     get_fpl_data()
