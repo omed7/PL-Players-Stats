@@ -155,7 +155,9 @@ def get_fpl_data():
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Maintain original order by iterating over elements directly
             futures = [
-                executor.submit(process_player, player, teams, positions, headers, session)
+                executor.submit(
+                    process_player, player, teams, positions, headers, session
+                )
                 for player in elements
             ]
 
