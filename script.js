@@ -384,3 +384,19 @@ if (elements.positionBtns) {
         });
     });
 }
+
+// Export for testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        state,
+        elements,
+        fetchPlayers,
+        populateTeamFilter,
+        applyFiltersAndSort,
+        updatePagination,
+        renderTable,
+        updateSortHeaders,
+        handleSort,
+        updateSliderUI
+    };
+}
