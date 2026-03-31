@@ -42,36 +42,37 @@
                 <div class="filters">
                     <input type="text" id="search-input" placeholder="Search by Player Name...">
                     <div class="team-filter-row" id="team-filter-row">
-                        <!-- Team logos will be populated here by JS -->
+                        <!-- Team logos populated by JS -->
                     </div>
                 </div>
             </div>
         </header>
 
         <main>
-            <div id="error-message" class="error hidden">Failed to load player data.</div>
+            <div id="error-message" class="error hidden">Failed to load player data. Make sure you're serving this over HTTP (not opening as a local file).</div>
 
             <div class="table-container">
                 <table id="players-table">
                     <thead>
                         <tr>
-                            <th data-sort="name" class="sticky-col">Player Name <span class="sort-icon"></span></th>
+                            <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
                             <th data-sort="saves" id="col-saves" class="hidden">Saves <span class="sort-icon"></span></th>
                             <th data-sort="defcon" id="col-defcon">DefCon <span class="sort-icon"></span></th>
                             <th data-sort="xG" id="col-xg" class="active-sort desc">xG <span class="sort-icon">▼</span></th>
                             <th data-sort="xA" id="col-xa">xA <span class="sort-icon"></span></th>
                             <th data-sort="xGI" id="col-xgi">xGI <span class="sort-icon"></span></th>
-                            <th data-sort="xGC" id="col-xgc">xGC <span class="sort-icon"></span></th>
+                            <th data-sort="xGC">xGC <span class="sort-icon"></span></th>
                             <th data-sort="creativity" id="col-creativity">Creativity <span class="sort-icon"></span></th>
                             <th data-sort="threat" id="col-threat">Threat <span class="sort-icon"></span></th>
-                            <th data-sort="ict" id="col-ict">ICT Index <span class="sort-icon"></span></th>
-                            <th data-sort="bps" id="col-bps">BPS <span class="sort-icon"></span></th>
-                            <th data-sort="bonus" id="col-bonus">Bonus <span class="sort-icon"></span></th>
-                            <th data-sort="points" id="col-points">FPL Points <span class="sort-icon"></span></th>
+                            <th data-sort="ict" id="col-ict">ICT <span class="sort-icon"></span></th>
+                            <th data-sort="bps">BPS <span class="sort-icon"></span></th>
+                            <th data-sort="bonus">Bonus <span class="sort-icon"></span></th>
+                            <th data-sort="points">Pts <span class="sort-icon"></span></th>
+                            <th data-sort="value" title="FPL Points per £m">Pts/£m <span class="sort-icon"></span></th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <!-- Data will be populated here -->
+                        <!-- Data populated by JS -->
                     </tbody>
                 </table>
             </div>
