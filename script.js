@@ -1,27 +1,28 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 const state = {
-  players:         [],
-  filteredPlayers: [],
-  currentPage:     1,
-  trendPage:       1,
-  itemsPerPage:    15,
-  trendPerPage:    24,
-  timeframe:       'last_5',
-  positionFilter:  'All',
-  selectedTeams:   [],
-  searchQuery:     '',
-  sortColumn:      'xG',
-  sortDirection:   'desc',
-  columnMaxes:     {},
-  nextGWs:         [],      // global next GW numbers for BGW detection
-  currentGW:       null,
-  view:            'table', // 'table' | 'trend'
-  trendStat:       'pts',
-  watchlist:       new Set(),
-  compareSet:      new Set(),
+  players:          [],
+  filteredPlayers:  [],
+  currentPage:      1,
+  itemsPerPage:     15,
+  timeframe:        'last_5',
+  positionFilter:   'All',
+  selectedTeams:    [],
+  searchQuery:      '',
+  sortColumn:       'xG',
+  sortDirection:    'desc',
+  columnMaxes:      {},
+  nextGWs:          [],
+  currentGW:        null,
+  watchlist:        new Set(),
+  watchlistVisible: false,
+  watchlistOnly:    false,
+  compareSet:       [],   // ordered array, max 3 — order matters for colours
 };
 
 const el = {};
+
+// Accent colours per compare slot
+const CMP_COLORS = ['#00d9a3', '#ffb84d', '#ff6b6b'];
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── WATCHLIST ────────────────────────────────────────────────────────────────
@@ -41,30 +42,44 @@ function toggleWatch(name) {
   if (state.watchlist.has(name)) state.watchlist.delete(name);
   else                            state.watchlist.add(name);
   saveWatchlist();
-  renderWatchlist();
-  // Sync all star buttons for this player across table + trend
-  document.querySelectorAll(`[data-watch="${CSS.escape(name)}"]`).forEach(b => {
-    b.classList.toggle('active', state.watchlist.has(name));
+  syncWatchlistStrip();
+  renderWatchlistPanel();
+  // Sync star buttons
+  document.querySelectorAll(`[data-watch]`).forEach(b => {
+    if (b.dataset.watch === name)
+      b.classList.toggle('active', state.watchlist.has(name));
   });
 }
 
-function renderWatchlist() {
-  const panel = document.getElementById('watchlist-panel');
-  const chips = document.getElementById('watchlist-chips');
-  const badge = document.getElementById('wl-count-badge');
-  const strip = document.getElementById('wl-summary');
-  const stripCount = document.getElementById('s-wl-count');
-  const n = state.watchlist.size;
-
+function syncWatchlistStrip() {
+  const n    = state.watchlist.size;
+  const strip = document.getElementById('wl-strip');
+  const countEl = document.getElementById('s-wl-count');
+  if (!strip) return;
   if (n === 0) {
-    panel.classList.add('hidden');
     strip.classList.add('hidden');
-    return;
+    // If only mode was on and watchlist is now empty, turn it off
+    if (state.watchlistOnly) {
+      state.watchlistOnly = false;
+      document.getElementById('btn-wl-only')?.classList.remove('active');
+      applyFiltersAndSort();
+    }
+  } else {
+    strip.classList.remove('hidden');
+    countEl.textContent = n;
   }
-  panel.classList.remove('hidden');
-  strip.classList.remove('hidden');
-  badge.textContent = n;
-  stripCount.textContent = n;
+}
+
+function renderWatchlistPanel() {
+  const panel  = document.getElementById('watchlist-panel');
+  const chips  = document.getElementById('watchlist-chips');
+  const badge  = document.getElementById('wl-count-badge');
+  if (!panel) return;
+
+  badge.textContent = state.watchlist.size;
+
+  // Panel visibility is controlled by watchlistVisible
+  panel.classList.toggle('hidden', !state.watchlistVisible || state.watchlist.size === 0);
 
   const pfx = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
   chips.innerHTML = '';
@@ -73,7 +88,7 @@ function renderWatchlist() {
     const p = state.players.find(pl => pl.name === name);
     if (!p) return;
     const pts = p[`${pfx}points`] ?? 0;
-    const xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2);
+    const xgi = (p[`${pfx}xGI`]  ?? 0).toFixed(2);
 
     const chip = document.createElement('div');
     chip.className = 'wl-chip';
@@ -81,9 +96,9 @@ function renderWatchlist() {
       <img src="${p.logo}" alt="${p.team}" class="wl-logo">
       <div class="wl-info">
         <span class="wl-name">${p.name}</span>
-        <span class="wl-stat">${pts} pts · xGI ${xgi} · £${p.price.toFixed(1)}m</span>
+        <span class="wl-stat">${pts} pts &middot; xGI ${xgi} &middot; &pound;${p.price.toFixed(1)}m</span>
       </div>
-      <button class="wl-remove" title="Remove">&#10005;</button>`;
+      <button class="wl-remove" title="Remove">&times;</button>`;
     chip.querySelector('.wl-remove').addEventListener('click', () => toggleWatch(name));
     chips.appendChild(chip);
   });
@@ -104,25 +119,24 @@ function buildFixtureChipsHTML(player) {
     byGW[f.gw].push(f);
   });
 
-  // Use global next GWs to detect blank GWs; fall back to player's own GWs
+  // Use global next_gws (5 GWs) if available for blank GW detection
   const gws = state.nextGWs.length
-    ? state.nextGWs.slice(0, 3)
-    : Object.keys(byGW).map(Number).sort((a, b) => a - b).slice(0, 3);
+    ? state.nextGWs.slice(0, 5)
+    : Object.keys(byGW).map(Number).sort((a, b) => a - b).slice(0, 5);
 
   let html = '<div class="fixture-chips">';
   gws.forEach(gw => {
     const fixes = byGW[gw] || [];
-    html += '<div class="gw-slot' + (fixes.length === 0 ? ' bgw' : '') + '">';
+    html += `<div class="gw-slot${fixes.length === 0 ? ' bgw' : ''}">`;
     if (fixes.length === 0) {
-      // Blank gameweek
-      html += `<div class="fix-chip blank" title="GW${gw}: Blank Gameweek">—</div>`;
+      html += `<div class="fix-chip blank" title="GW${gw}: No fixture">&mdash;</div>`;
     } else {
       fixes.forEach(f => {
         const ha    = f.is_home ? 'H' : 'A';
         const away  = f.is_home ? '' : ' away';
         const title = `GW${gw} vs ${f.opponent} (${ha}) · FDR ${f.difficulty}`;
         html += `<div class="fix-chip diff-${f.difficulty}${away}" title="${title}">
-          <img src="${f.opponent_logo}" alt="${f.opponent}" style="background:#0d1117;border-radius:2px;padding:1px;">
+          <img src="${f.opponent_logo}" alt="${f.opponent}">
         </div>`;
       });
     }
@@ -133,242 +147,163 @@ function buildFixtureChipsHTML(player) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// ─── COMPARISON ───────────────────────────────────────────────────────────────
+// ─── COMPARISON DRAWER ────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CMP_COLORS = ['var(--cmp-0)', 'var(--cmp-1)', 'var(--cmp-2)'];
-const CMP_FILL   = ['#00d9a3',    '#ffb84d',     '#ff6b6b'];
+const CMP_STATS = [
+  { key: 'points',     label: 'Pts',    bestLow: false },
+  { key: 'xG',        label: 'xG',     bestLow: false },
+  { key: 'xA',        label: 'xA',     bestLow: false },
+  { key: 'xGI',       label: 'xGI',    bestLow: false },
+  { key: 'ict',       label: 'ICT',    bestLow: false },
+  { key: 'xGC',       label: 'xGC',    bestLow: true  }, // lower is better
+  { key: 'creativity',label: 'Creat',  bestLow: false },
+  { key: 'bps',       label: 'BPS',    bestLow: false },
+];
 
 function toggleCompare(name) {
-  if (state.compareSet.has(name)) {
-    state.compareSet.delete(name);
-  } else if (state.compareSet.size < 3) {
-    state.compareSet.add(name);
+  const idx = state.compareSet.indexOf(name);
+  if (idx !== -1) {
+    state.compareSet.splice(idx, 1);
+  } else if (state.compareSet.length < 3) {
+    state.compareSet.push(name);
   } else {
-    return; // max 3 reached
+    return; // max 3 — ignore
   }
-  syncCompareBar();
-  // Sync checkboxes
-  document.querySelectorAll('.cmp-check').forEach(cb => {
-    if (cb.dataset.name === name) cb.checked = state.compareSet.has(name);
+
+  // Sync ⊕ buttons
+  document.querySelectorAll('.cmp-add-btn').forEach(btn => {
+    if (btn.dataset.cmp !== name) return;
+    const inSet = state.compareSet.includes(name);
+    btn.classList.toggle('active', inSet);
+    btn.textContent = inSet ? '✕' : '⊕';
   });
+
+  syncCompareDrawer();
 }
 
-function syncCompareBar() {
-  const bar = document.getElementById('compare-bar');
-  const n   = state.compareSet.size;
-  if (n >= 2) {
-    bar.classList.remove('hidden');
-    document.getElementById('cmp-count-label').textContent = `${n} player${n > 1 ? 's' : ''} selected`;
+function syncCompareDrawer() {
+  const drawer = document.getElementById('compare-drawer');
+  const countEl = document.getElementById('cmp-drawer-count');
+  if (!drawer) return;
+
+  const n = state.compareSet.length;
+  countEl.textContent = n;
+
+  if (n === 0) {
+    drawer.classList.remove('open');
   } else {
-    bar.classList.add('hidden');
+    drawer.classList.add('open');
+    renderCompareDrawer();
   }
 }
 
-function openCompareModal() {
-  const players = [...state.compareSet]
+function renderCompareDrawer() {
+  const body = document.getElementById('cmp-drawer-body');
+  const pfx  = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
+  body.innerHTML = '';
+
+  // For each stat, find the best value across selected players (to draw relative bars)
+  const players = state.compareSet
     .map(name => state.players.find(p => p.name === name))
     .filter(Boolean);
-  if (players.length < 2) return;
 
-  const pfx = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
-  const STATS = [
-    { key: 'xG',         label: 'xG' },
-    { key: 'xA',         label: 'xA' },
-    { key: 'xGI',        label: 'xGI' },
-    { key: 'xGC',        label: 'xGC' },
-    { key: 'creativity', label: 'Creat.' },
-    { key: 'threat',     label: 'Threat' },
-    { key: 'ict',        label: 'ICT' },
-    { key: 'bps',        label: 'BPS' },
-    { key: 'bonus',      label: 'Bonus' },
-    { key: 'points',     label: 'Points' },
-  ];
-
-  // ── Player header strip ──
-  let html = '<div class="cmp-player-strip">';
-  players.forEach((p, i) => {
-    const pts = p[`${pfx}points`] ?? 0;
-    const val = p.price > 0 ? (pts / p.price).toFixed(1) : '—';
-    html += `
-      <div class="cmp-player-card">
-        <div class="cmp-p-top">
-          <img src="${p.logo}" alt="${p.team}" class="team-logo">
-          <div>
-            <span class="pos-badge pos-${p.position}">${p.position}</span>
-            <span class="cmp-p-name">${p.name}</span>
-          </div>
-        </div>
-        <div class="cmp-p-meta">£${p.price.toFixed(1)}m · ${p.ownership}% owned · ${pts} pts · ${val} pts/£m</div>
-        <div class="cmp-color-bar" style="background:${CMP_FILL[i]};"></div>
-      </div>`;
+  const statMaxes = {};
+  CMP_STATS.forEach(({ key, bestLow }) => {
+    const vals = players.map(p => parseFloat(p[`${pfx}${key}`] ?? 0));
+    statMaxes[key] = bestLow
+      ? Math.min(...vals)     // for xGC: lowest = best
+      : Math.max(...vals, 0.01);
   });
-  html += '</div>';
-
-  // ── Stats grid ──
-  html += '<div class="cmp-stats-grid">';
-  STATS.forEach(({ key, label }) => {
-    const vals = players.map(p => {
-      const v = p[`${pfx}${key}`] ?? 0;
-      return typeof v === 'number' ? v : parseFloat(v) || 0;
-    });
-    const max = Math.max(...vals, 0.01);
-
-    html += `<div class="cmp-stat-row">
-      <div class="cmp-stat-label">${label}</div>
-      <div class="cmp-stat-bars">`;
-
-    vals.forEach((v, i) => {
-      const pct   = ((v / max) * 100).toFixed(1);
-      const disp  = Number.isInteger(v) ? v : v.toFixed(2);
-      html += `
-        <div class="cmp-bar-row">
-          <div class="cmp-bar-track">
-            <div class="cmp-bar-fill" style="width:${pct}%;background:${CMP_FILL[i]};"></div>
-          </div>
-          <span class="cmp-bar-val" style="color:${CMP_FILL[i]}">${disp}</span>
-        </div>`;
-    });
-    html += '</div></div>';
-  });
-  html += '</div>';
-
-  document.getElementById('compare-content').innerHTML = html;
-  document.getElementById('compare-modal').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeCompareModal() {
-  document.getElementById('compare-modal').classList.add('hidden');
-  document.body.style.overflow = '';
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ─── TREND VIEW ───────────────────────────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function buildSparkline(player, statKey) {
-  const history = player.gw_history;
-  if (!history || history.length < 2) {
-    return '<div class="sparkline-empty">Re-run fpl_fetcher.py to load trend data</div>';
-  }
-
-  const values = history.map(h => {
-    if (statKey === 'pts')     return h.pts     ?? 0;
-    if (statKey === 'xG')      return h.xG      ?? 0;
-    if (statKey === 'xA')      return h.xA      ?? 0;
-    if (statKey === 'minutes') return h.minutes ?? 0;
-    return 0;
-  });
-
-  const W = 240, H = 56, PAD = 6;
-  const n    = values.length;
-  const max  = Math.max(...values, 0.01);
-  const min  = Math.min(...values, 0);
-  const rng  = max - min || 1;
-
-  const cx = i => PAD + (i / (n - 1)) * (W - PAD * 2);
-  const cy = v => H - PAD - ((v - min) / rng) * (H - PAD * 2);
-
-  const pts    = values.map((v, i) => `${cx(i).toFixed(1)},${cy(v).toFixed(1)}`).join(' ');
-  const maxIdx = values.indexOf(Math.max(...values));
-  const lastX  = cx(n - 1).toFixed(1);
-  const lastY  = cy(values[n - 1]).toFixed(1);
-  const maxX   = cx(maxIdx).toFixed(1);
-  const maxY   = cy(values[maxIdx]).toFixed(1);
-
-  // Area polygon: line points + bottom-right + bottom-left
-  const areaExtra = ` ${cx(n-1).toFixed(1)},${H} ${cx(0).toFixed(1)},${H}`;
-
-  return `
-    <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="sparkline-svg" preserveAspectRatio="none">
-      <polygon points="${pts} ${areaExtra}" fill="rgba(0,217,163,0.1)"/>
-      <polyline points="${pts}" fill="none" stroke="#00d9a3" stroke-width="1.8"
-        stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="${maxX}" cy="${maxY}" r="3.5" fill="#00d9a3" opacity="0.9"/>
-      <circle cx="${lastX}" cy="${lastY}" r="2.5" fill="#dce8f5" opacity="0.75"/>
-    </svg>`;
-}
-
-function renderTrendView() {
-  const container  = document.getElementById('trend-container');
-  const noteEl     = document.getElementById('trend-note');
-  const pagEl      = document.getElementById('trend-page-info');
-  const btnTP      = document.getElementById('btn-trend-prev');
-  const btnTN      = document.getElementById('btn-trend-next');
-  const stat       = state.trendStat;
-  const pfx        = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
-
-  container.innerHTML = '';
-
-  if (state.filteredPlayers.length === 0) {
-    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-2);padding:48px;font-family:var(--f-mono);font-size:0.82rem;">No players match the current filters.</div>';
-    return;
-  }
-
-  // Check if any player has gw_history
-  const hasHistory = state.filteredPlayers.some(p => p.gw_history && p.gw_history.length > 0);
-  noteEl.textContent = hasHistory ? '' : '⚠ Re-run fpl_fetcher.py to unlock sparklines';
-
-  // Trend pagination
-  const total = Math.ceil(state.filteredPlayers.length / state.trendPerPage) || 1;
-  if (state.trendPage > total) state.trendPage = total;
-  pagEl.textContent    = `Page ${state.trendPage} of ${total}`;
-  btnTP.disabled       = state.trendPage === 1;
-  btnTN.disabled       = state.trendPage === total;
-
-  const start   = (state.trendPage - 1) * state.trendPerPage;
-  const players = state.filteredPlayers.slice(start, start + state.trendPerPage);
+  // value pts/£m
+  const valVals  = players.map(p => p.price > 0 ? (p[`${pfx}points`] ?? 0) / p.price : 0);
+  const valMax   = Math.max(...valVals, 0.01);
 
   const frag = document.createDocumentFragment();
 
   players.forEach((p, i) => {
-    const pts   = p[`${pfx}points`]     ?? 0;
-    const xgi   = (p[`${pfx}xGI`]      ?? 0).toFixed(2);
-    const xg    = (p[`${pfx}xG`]       ?? 0).toFixed(2);
+    const color = CMP_COLORS[i];
+    const pts   = p[`${pfx}points`]  ?? 0;
     const val   = p.price > 0 ? (pts / p.price).toFixed(1) : '—';
-    const spark = buildSparkline(p, stat);
-    const fixChips = buildFixtureChipsHTML(p);
-    const watched  = state.watchlist.has(p.name);
-    const compared = state.compareSet.has(p.name);
 
     const card = document.createElement('div');
-    card.className = 'trend-card' + (watched ? ' watched' : '');
-    card.style.setProperty('--ci', i);
-    card.innerHTML = `
-      <div class="tc-header">
-        <img src="${p.logo}" alt="${p.team}" class="tc-logo">
-        <div class="tc-info">
-          <div class="tc-name-row">
-            <span class="pos-badge pos-${p.position}">${p.position}</span>
-            <span class="tc-name">${p.name}</span>
-          </div>
-          <span class="tc-sub">£${p.price.toFixed(1)}m · ${p.team} · ${p.ownership}% owned</span>
-        </div>
-        <button class="tc-star ${watched ? 'active' : ''}" data-watch="${p.name}" title="Watchlist">★</button>
-      </div>
-      <div class="tc-sparkline">${spark}</div>
-      <div class="tc-stats">
-        <span class="tc-stat"><span class="tc-stat-l">Pts</span> ${pts}</span>
-        <span class="tc-stat"><span class="tc-stat-l">xG</span> ${xg}</span>
-        <span class="tc-stat"><span class="tc-stat-l">xGI</span> ${xgi}</span>
-        <span class="tc-stat"><span class="tc-stat-l">Pts/£m</span> ${val}</span>
-      </div>
-      ${fixChips}
-      <label class="tc-cmp-check">
-        <input type="checkbox" class="cmp-check" data-name="${p.name}" ${compared ? 'checked' : ''}>
-        Add to comparison
-      </label>`;
+    card.className = 'cmp-card';
 
-    card.querySelector('.tc-star').addEventListener('click', () => toggleWatch(p.name));
-    card.querySelector('.cmp-check').addEventListener('change', e => {
-      toggleCompare(p.name);
+    // Accent bar
+    const accentBar = document.createElement('div');
+    accentBar.className = 'cmp-card-accent';
+    accentBar.style.background = color;
+    card.appendChild(accentBar);
+
+    // Top section
+    const topDiv = document.createElement('div');
+    topDiv.className = 'cmp-card-top';
+    topDiv.innerHTML = `
+      <img src="${p.logo}" alt="${p.team}" class="cmp-card-logo">
+      <div class="cmp-card-info">
+        <div class="cmp-card-name">
+          <span class="pos-badge pos-${p.position}">${p.position}</span>
+          ${p.name}
+        </div>
+        <div class="cmp-card-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% &middot; ${pts} pts &middot; ${val} pts/&pound;m</div>
+      </div>
+      <button class="cmp-card-remove" title="Remove from compare">&times;</button>`;
+    topDiv.querySelector('.cmp-card-remove').addEventListener('click', () => toggleCompare(p.name));
+    card.appendChild(topDiv);
+
+    // Stats
+    const statsDiv = document.createElement('div');
+    statsDiv.className = 'cmp-stats';
+
+    CMP_STATS.forEach(({ key, label, bestLow }) => {
+      const raw    = parseFloat(p[`${pfx}${key}`] ?? 0);
+      const max    = statMaxes[key];
+      const pct    = max > 0
+        ? bestLow
+          ? ((max / (raw || 0.01)) * 100).toFixed(1) // invert for lower-is-better
+          : ((raw / max) * 100).toFixed(1)
+        : '0';
+      const disp   = Number.isInteger(raw) ? raw : raw.toFixed(2);
+
+      // Is this player the best for this stat?
+      const allVals = players.map(pp => parseFloat(pp[`${pfx}${key}`] ?? 0));
+      const isBest  = bestLow
+        ? raw === Math.min(...allVals)
+        : raw === Math.max(...allVals);
+
+      const line = document.createElement('div');
+      line.className = 'cmp-stat-line';
+      line.innerHTML = `
+        <span class="cmp-stat-key">${label}</span>
+        <div class="cmp-stat-bar-wrap">
+          <div class="cmp-stat-bar-fill" style="width:${pct}%;background:${color};"></div>
+        </div>
+        <span class="cmp-stat-num" style="color:${color}">${disp}</span>
+        <div class="cmp-best-dot${isBest ? '' : ' hidden-dot'}"></div>`;
+      statsDiv.appendChild(line);
     });
 
+    // Pts/£m row
+    const valRaw = p.price > 0 ? (pts / p.price) : 0;
+    const valPct = valMax > 0 ? ((valRaw / valMax) * 100).toFixed(1) : '0';
+    const allValVals = players.map(pp => pp.price > 0 ? ((pp[`${pfx}points`] ?? 0) / pp.price) : 0);
+    const isValBest  = valRaw === Math.max(...allValVals);
+    const valLine = document.createElement('div');
+    valLine.className = 'cmp-stat-line';
+    valLine.innerHTML = `
+      <span class="cmp-stat-key">Pts/£m</span>
+      <div class="cmp-stat-bar-wrap">
+        <div class="cmp-stat-bar-fill" style="width:${valPct}%;background:${color};"></div>
+      </div>
+      <span class="cmp-stat-num" style="color:${color}">${val}</span>
+      <div class="cmp-best-dot${isValBest ? '' : ' hidden-dot'}"></div>`;
+    statsDiv.appendChild(valLine);
+
+    card.appendChild(statsDiv);
     frag.appendChild(card);
   });
 
-  container.appendChild(frag);
+  body.appendChild(frag);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -381,14 +316,14 @@ async function fetchPlayers() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    // Handle both old format (array) and new format ({players, next_gws, current_gw})
+    // Handle both old flat-array format and new {players, next_gws, current_gw}
     if (Array.isArray(data)) {
       state.players   = data;
       state.nextGWs   = [];
       state.currentGW = null;
     } else {
-      state.players   = data.players  || [];
-      state.nextGWs   = data.next_gws || [];
+      state.players   = data.players   || [];
+      state.nextGWs   = data.next_gws  || [];
       state.currentGW = data.current_gw || null;
     }
 
@@ -456,24 +391,31 @@ function syncTeamFilterUI() {
 
 function applyFiltersAndSort() {
   const qLow  = state.searchQuery.toLowerCase();
-  const allT  = state.selectedTeams.length === 0;
-  const allP  = state.positionFilter === 'All';
   const isPct = el.minsToggle.checked;
   const sld   = parseInt(el.minsSlider.value, 10);
   const pfx   = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_';
   const maxM  = state.timeframe === 'last_5' ? 450 : 900;
 
-  state.filteredPlayers = state.players.filter(p => {
-    const mins = p[`${pfx}minutes`] ?? 0;
-    if (!mins) return false;
-    if (isPct ? Math.round((mins / maxM) * 100) < sld : mins < sld) return false;
-    return (
-      p.name.toLowerCase().includes(qLow) &&
-      (allT || state.selectedTeams.includes(p.team)) &&
-      (allP || p.position === state.positionFilter)
-    );
-  });
+  if (state.watchlistOnly && state.watchlist.size > 0) {
+    // Watchlist-only mode ignores other filters — show all starred players
+    state.filteredPlayers = state.players.filter(p => state.watchlist.has(p.name));
+  } else {
+    const allT  = state.selectedTeams.length === 0;
+    const allP  = state.positionFilter === 'All';
 
+    state.filteredPlayers = state.players.filter(p => {
+      const mins = p[`${pfx}minutes`] ?? 0;
+      if (!mins) return false;
+      if (isPct ? Math.round((mins / maxM) * 100) < sld : mins < sld) return false;
+      return (
+        p.name.toLowerCase().includes(qLow) &&
+        (allT || state.selectedTeams.includes(p.team)) &&
+        (allP || p.position === state.positionFilter)
+      );
+    });
+  }
+
+  // Sort
   state.filteredPlayers.sort((a, b) => {
     if (state.sortColumn === 'name') {
       const na = a.name.toLowerCase(), nb = b.name.toLowerCase();
@@ -490,41 +432,23 @@ function applyFiltersAndSort() {
     return state.sortDirection === 'asc' ? va - vb : vb - va;
   });
 
+  // Column maxes for inline bars
   const cols = ['xG','xA','xGI','creativity','threat','ict','bps','bonus','points','saves','defcon'];
   cols.forEach(c => {
     state.columnMaxes[c] = Math.max(...state.filteredPlayers.map(p => p[`${pfx}${c}`] ?? 0), 0.01);
   });
 
   state.currentPage = 1;
-  state.trendPage   = 1;
   updateSummary(pfx);
-
-  if (state.view === 'table') {
-    updatePagination();
-    renderTable(pfx);
-  } else {
-    renderTrendView();
-  }
-  renderWatchlist();
+  updatePagination();
+  renderTable(pfx);
+  renderWatchlistPanel();
 }
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
 function updateSummary(pfx) {
-  const fp = state.filteredPlayers;
-  if (!fp.length) {
-    document.getElementById('s-count').textContent   = '0 players';
-    document.getElementById('s-avg-xg').textContent  = '—';
-    document.getElementById('s-top-xg').textContent  = '—';
-    document.getElementById('s-top-pts').textContent = '—';
-    return;
-  }
-  const avgXg  = (fp.reduce((a, p) => a + (p[`${pfx}xG`] ?? 0), 0) / fp.length).toFixed(2);
-  const topXgP = fp.reduce((a, b) => (b[`${pfx}xG`] ?? 0) > (a[`${pfx}xG`] ?? 0) ? b : a);
-  const topPts = fp.reduce((a, b) => (b[`${pfx}points`] ?? 0) > (a[`${pfx}points`] ?? 0) ? b : a);
-  document.getElementById('s-count').textContent   = `${fp.length} players`;
-  document.getElementById('s-avg-xg').textContent  = avgXg;
-  document.getElementById('s-top-xg').textContent  = `${topXgP.name} ${topXgP[`${pfx}xG`].toFixed(2)}`;
-  document.getElementById('s-top-pts').textContent = `${topPts.name} ${topPts[`${pfx}points`]}`;
+  const n = state.filteredPlayers.length;
+  document.getElementById('s-count').textContent = `${n} player${n !== 1 ? 's' : ''}`;
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
@@ -547,10 +471,16 @@ function renderTable(pfxArg) {
   const isGK  = state.positionFilter === 'GK';
   const maxes = state.columnMaxes;
 
+  // Column header visibility
   const vis = (id, show) => document.getElementById(id)?.classList.toggle('hidden', !show);
-  vis('col-saves', isGK); vis('col-defcon', !isGK); vis('col-xg', !isGK);
-  vis('col-xa', !isGK);   vis('col-xgi', !isGK);    vis('col-creativity', !isGK);
-  vis('col-threat', !isGK); vis('col-ict', !isGK);
+  vis('col-saves',      isGK);
+  vis('col-xg',         !isGK);
+  vis('col-xa',         !isGK);
+  vis('col-xgi',        !isGK);
+  vis('col-creativity', !isGK);
+  vis('col-threat',     !isGK);
+  vis('col-ict',        !isGK);
+  vis('col-defcon',     !isGK);
 
   if (!state.filteredPlayers.length) {
     const tr = document.createElement('tr');
@@ -559,10 +489,10 @@ function renderTable(pfxArg) {
     return;
   }
 
-  const start   = (state.currentPage - 1) * state.itemsPerPage;
-  const page    = state.filteredPlayers.slice(start, start + state.itemsPerPage);
-  const bar     = (v, max) => max > 0 ? `${Math.min(v / max * 100, 100).toFixed(1)}%` : '0%';
-  const frag    = document.createDocumentFragment();
+  const start = (state.currentPage - 1) * state.itemsPerPage;
+  const page  = state.filteredPlayers.slice(start, start + state.itemsPerPage);
+  const bar   = (v, max) => max > 0 ? `${Math.min(v / max * 100, 100).toFixed(1)}%` : '0%';
+  const frag  = document.createDocumentFragment();
 
   page.forEach((p, i) => {
     const mins   = p[`${pfx}minutes`]     ?? 0;
@@ -580,36 +510,42 @@ function renderTable(pfxArg) {
     const bonus  = p[`${pfx}bonus`]       ?? 0;
     const pts    = p[`${pfx}points`]      ?? 0;
     const val    = p.price > 0 ? (pts / p.price).toFixed(1) : '0.0';
-    const own    = p.ownership           ?? '0.0';
+    const own    = p.ownership             ?? '0.0';
 
     let injHtml = '';
     if (p.status_pct < 100) {
-      const cls = p.status_pct === 0 ? 'inj-0' : p.status_pct === 25 ? 'inj-25' : p.status_pct === 50 ? 'inj-50' : 'inj-75';
+      const cls = p.status_pct === 0 ? 'inj-0'
+                : p.status_pct === 25 ? 'inj-25'
+                : p.status_pct === 50 ? 'inj-50' : 'inj-75';
       injHtml = `<span class="inj-badge ${cls}">&#9888; ${p.status_pct}%</span>`;
     }
 
     const watched  = state.watchlist.has(p.name);
-    const compared = state.compareSet.has(p.name);
+    const compared = state.compareSet.includes(p.name);
     const fixChips = buildFixtureChipsHTML(p);
+    const cmpFull  = state.compareSet.length >= 3 && !compared;
 
     const tr = document.createElement('tr');
     tr.style.setProperty('--ri', i);
 
-    // ── Sticky player cell ──
+    // ── Sticky player cell ──────────────────────────────────────────────────
     const playerTd = document.createElement('td');
     playerTd.className = 'sticky-col';
     playerTd.innerHTML = `
       <div class="player-cell">
-        <input type="checkbox" class="cmp-check" data-name="${p.name}" title="Add to comparison" ${compared ? 'checked' : ''}>
         <div class="team-logo-wrap">
           <img src="${p.logo}" alt="${p.team}" class="team-logo">
-          <span class="player-price">&#163;${p.price.toFixed(1)}m</span>
+          <span class="player-price">&pound;${p.price.toFixed(1)}m</span>
         </div>
         <div class="player-info">
           <div class="player-name-row">
             <span class="pos-badge pos-${p.position}">${p.position}</span>
             <span class="player-name-text">${p.name}</span>
-            <button class="star-btn ${watched ? 'active' : ''}" data-watch="${p.name}" title="Add to watchlist">&#9733;</button>
+            <button class="star-btn ${watched ? 'active' : ''}"
+              data-watch="${p.name}" title="Add to watchlist">&#9733;</button>
+            <button class="cmp-add-btn ${compared ? 'active' : ''}"
+              data-cmp="${p.name}" title="Add to comparison"
+              ${cmpFull ? 'disabled' : ''}>${compared ? '&#10005;' : '&#8853;'}</button>
           </div>
           <div class="player-meta-row">
             <span class="own-badge">${own}%</span>
@@ -621,9 +557,13 @@ function renderTable(pfxArg) {
       </div>`;
 
     playerTd.querySelector('.star-btn').addEventListener('click', () => toggleWatch(p.name));
-    playerTd.querySelector('.cmp-check').addEventListener('change', () => toggleCompare(p.name));
+    playerTd.querySelector('.cmp-add-btn').addEventListener('click', () => {
+      if (!cmpFull || compared) toggleCompare(p.name);
+    });
+
     tr.appendChild(playerTd);
 
+    // ── Stat cells (in order: Pts, xG, xA, xGI, xGC, Creat, Threat, ICT, DefCon, BPS, Bonus, Pts/£m)
     const statTd = (value, max, hidden = false) => {
       const td = document.createElement('td');
       if (hidden) td.classList.add('hidden');
@@ -632,27 +572,28 @@ function renderTable(pfxArg) {
       return td;
     };
 
-    tr.appendChild(statTd(saves,  maxes.saves,      !isGK));
-    tr.appendChild(statTd(defcon, maxes.defcon,      isGK));
-    tr.appendChild(statTd(xG,     maxes.xG,          isGK));
-    tr.appendChild(statTd(xA,     maxes.xA,          isGK));
-    tr.appendChild(statTd(xGI,    maxes.xGI,         isGK));
+    tr.appendChild(statTd(saves,  maxes.saves,       !isGK));   // Saves (GK only)
+    tr.appendChild(statTd(pts,    maxes.points));                // Pts — FIRST stat
+    tr.appendChild(statTd(xG,     maxes.xG,           isGK));   // xG
+    tr.appendChild(statTd(xA,     maxes.xA,           isGK));   // xA
+    tr.appendChild(statTd(xGI,    maxes.xGI,          isGK));   // xGI
     const xgcTd = document.createElement('td');
-    xgcTd.textContent = xGC; tr.appendChild(xgcTd);
-    tr.appendChild(statTd(creat,  maxes.creativity,  isGK));
-    tr.appendChild(statTd(threat, maxes.threat,      isGK));
-    tr.appendChild(statTd(ict,    maxes.ict,         isGK));
-    tr.appendChild(statTd(bps,    maxes.bps));
-    tr.appendChild(statTd(bonus,  maxes.bonus));
-    tr.appendChild(statTd(pts,    maxes.points));
-    tr.appendChild(statTd(val,    10));
+    xgcTd.textContent = xGC;
+    tr.appendChild(xgcTd);                                       // xGC (no bar)
+    tr.appendChild(statTd(creat,  maxes.creativity,   isGK));   // Creativity
+    tr.appendChild(statTd(threat, maxes.threat,       isGK));   // Threat
+    tr.appendChild(statTd(ict,    maxes.ict,          isGK));   // ICT
+    tr.appendChild(statTd(defcon, maxes.defcon,       isGK));   // DefCon — after ICT
+    tr.appendChild(statTd(bps,    maxes.bps));                  // BPS
+    tr.appendChild(statTd(bonus,  maxes.bonus));                 // Bonus
+    tr.appendChild(statTd(val,    10));                          // Pts/£m
 
     frag.appendChild(tr);
   });
   el.tbody.appendChild(frag);
 }
 
-// ─── Sort headers ──────────────────────────────────────────────────────────────
+// ─── Sort headers ─────────────────────────────────────────────────────────────
 function syncSortHeaders() {
   el.headers.forEach(th => {
     const col = th.getAttribute('data-sort');
@@ -679,7 +620,6 @@ function syncSliderUI() {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Refs
   el.tbody         = document.getElementById('table-body');
   el.headers       = document.querySelectorAll('th');
   el.btnPrev       = document.getElementById('btn-prev');
@@ -695,54 +635,45 @@ document.addEventListener('DOMContentLoaded', () => {
   el.teamPanel     = document.getElementById('team-filter-panel');
   el.positionBtns  = document.querySelectorAll('#position-group button');
 
-  // ── View Toggle ──
-  document.getElementById('btn-view-table').addEventListener('click', () => {
-    state.view = 'table';
-    document.getElementById('btn-view-table').classList.add('active');
-    document.getElementById('btn-view-trend').classList.remove('active');
-    document.getElementById('table-view').classList.remove('hidden');
-    document.getElementById('trend-view').classList.add('hidden');
-    updatePagination();
-    renderTable();
-  });
-  document.getElementById('btn-view-trend').addEventListener('click', () => {
-    state.view = 'trend';
-    document.getElementById('btn-view-trend').classList.add('active');
-    document.getElementById('btn-view-table').classList.remove('active');
-    document.getElementById('trend-view').classList.remove('hidden');
-    document.getElementById('table-view').classList.add('hidden');
-    renderTrendView();
+  // ── Watchlist buttons ──
+  document.getElementById('btn-wl-show').addEventListener('click', () => {
+    state.watchlistVisible = !state.watchlistVisible;
+    document.getElementById('btn-wl-show').textContent = state.watchlistVisible ? 'Hide' : 'Show';
+    renderWatchlistPanel();
   });
 
-  // ── Trend stat selector ──
-  document.querySelectorAll('#trend-stat-group button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('#trend-stat-group button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.trendStat = btn.dataset.stat;
-      state.trendPage = 1;
-      renderTrendView();
-    });
+  document.getElementById('btn-wl-only').addEventListener('click', () => {
+    state.watchlistOnly = !state.watchlistOnly;
+    document.getElementById('btn-wl-only').classList.toggle('active', state.watchlistOnly);
+    state.currentPage = 1;
+    applyFiltersAndSort();
   });
 
-  // Trend pagination
-  document.getElementById('btn-trend-prev').addEventListener('click', () => {
-    if (state.trendPage > 1) { state.trendPage--; renderTrendView(); }
-  });
-  document.getElementById('btn-trend-next').addEventListener('click', () => {
-    const total = Math.ceil(state.filteredPlayers.length / state.trendPerPage) || 1;
-    if (state.trendPage < total) { state.trendPage++; renderTrendView(); }
-  });
-
-  // ── Watchlist ──
   document.getElementById('wl-clear-all').addEventListener('click', () => {
     state.watchlist.clear();
     saveWatchlist();
     document.querySelectorAll('[data-watch]').forEach(b => b.classList.remove('active'));
-    renderWatchlist();
+    state.watchlistVisible = false;
+    state.watchlistOnly    = false;
+    document.getElementById('btn-wl-show').textContent = 'Show';
+    document.getElementById('btn-wl-only').classList.remove('active');
+    syncWatchlistStrip();
+    renderWatchlistPanel();
+    applyFiltersAndSort();
   });
 
-  // ── Team filter panel ──
+  // ── Compare drawer ──
+  document.getElementById('btn-clear-compare').addEventListener('click', () => {
+    state.compareSet = [];
+    document.querySelectorAll('.cmp-add-btn').forEach(btn => {
+      btn.classList.remove('active');
+      btn.textContent = '⊕';
+      btn.disabled = false;
+    });
+    syncCompareDrawer();
+  });
+
+  // ── Team filter ──
   el.teamToggleBtn.addEventListener('click', () => {
     const open = el.teamPanel.classList.toggle('open');
     el.teamToggleBtn.classList.toggle('open', open);
@@ -752,20 +683,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
     state.currentPage = 1; syncTeamFilterUI(); applyFiltersAndSort();
   });
-  document.getElementById('btn-clear-teams').addEventListener('click', () => {
-    state.selectedTeams = [];
-    document.querySelectorAll('.team-logo-btn').forEach(b => b.classList.remove('selected'));
-    state.currentPage = 1; syncTeamFilterUI(); applyFiltersAndSort();
-  });
 
   // ── Timeframe ──
-  document.getElementById('btn-last5').addEventListener('click', function () {
+  document.getElementById('btn-last5').addEventListener('click', function() {
     state.timeframe = 'last_5'; state.currentPage = 1;
     this.classList.add('active');
     document.getElementById('btn-last10').classList.remove('active');
     el.minsSlider.value = 0; syncSliderUI(); applyFiltersAndSort();
   });
-  document.getElementById('btn-last10').addEventListener('click', function () {
+  document.getElementById('btn-last10').addEventListener('click', function() {
     state.timeframe = 'last_10'; state.currentPage = 1;
     this.classList.add('active');
     document.getElementById('btn-last5').classList.remove('active');
@@ -814,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── Table Pagination ──
+  // ── Pagination ──
   el.btnPrev.addEventListener('click', () => {
     if (state.currentPage > 1) { state.currentPage--; updatePagination(); renderTable(); }
   });
@@ -823,23 +749,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.currentPage < total) { state.currentPage++; updatePagination(); renderTable(); }
   });
 
-  // ── Compare modal ──
-  document.getElementById('btn-open-compare').addEventListener('click', openCompareModal);
-  document.getElementById('btn-close-compare').addEventListener('click', closeCompareModal);
-  document.getElementById('cmp-backdrop').addEventListener('click', closeCompareModal);
-  document.getElementById('btn-clear-compare').addEventListener('click', () => {
-    state.compareSet.clear();
-    document.querySelectorAll('.cmp-check').forEach(cb => cb.checked = false);
-    syncCompareBar();
-  });
-
-  // ── Load watchlist from localStorage ──
+  // ── Load persisted watchlist ──
   loadWatchlist();
 
-  // ── Fetch data ──
+  // ── Fetch ──
   fetchPlayers();
 });
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { state, fetchPlayers, applyFiltersAndSort, renderTable, renderTrendView };
+  module.exports = { state, fetchPlayers, applyFiltersAndSort, renderTable };
 }
