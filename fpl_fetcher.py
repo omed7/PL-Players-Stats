@@ -5,7 +5,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 def get_fpl_data():
-    print("Initializing session with retries and timeouts...")
+    print("Initializing session...")
 
     session = requests.Session()
     retries = Retry(total=3, backoff_factor=0.5, status_forcelist=[429, 500, 502, 503, 504])
@@ -24,36 +24,33 @@ def get_fpl_data():
         }
         for team in response['teams']
     }
-
     positions = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD"}
 
-    # ── Determine the current gameweek ──────────────────────────────────────
     current_gw = next(
         (e['id'] for e in response['events'] if e['is_current']),
         next((e['id'] for e in response['events'] if e['is_next']), 1)
     )
-    # Next 3 GWs for the meta block (used to detect blank GWs on the frontend)
-    next_gws = [gw for gw in range(current_gw, current_gw + 5)]
+    # Store 5 next GWs for blank-GW detection
+    next_gws = list(range(current_gw, current_gw + 5))
 
     players_data = []
     elements = [p for p in response['elements'] if p['minutes'] > 0]
     print(f"Processing {len(elements)} players (GW {current_gw})...")
 
     for player in elements:
-        player_id   = player['id']
-        fpl_name    = player['web_name']
-        team_info   = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
-        pos         = positions.get(player['element_type'], "UNK")
-        price       = player['now_cost'] / 10.0
-        chance      = player.get('chance_of_playing_next_round')
-        status_pct  = chance if chance is not None else 100
-        ownership   = player.get('selected_by_percent', "0.0")
+        player_id  = player['id']
+        fpl_name   = player['web_name']
+        team_info  = teams.get(player['team'], {'short_name': 'UNK', 'logo': ''})
+        pos        = positions.get(player['element_type'], "UNK")
+        price      = player['now_cost'] / 10.0
+        chance     = player.get('chance_of_playing_next_round')
+        status_pct = chance if chance is not None else 100
+        ownership  = player.get('selected_by_percent', "0.0")
 
         history_url = f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
         try:
             history_resp = session.get(history_url, timeout=req_timeout).json()
-            history      = history_resp.get('history', [])
-
+            history = history_resp.get('history', [])
             if not history:
                 continue
 
@@ -64,8 +61,6 @@ def get_fpl_data():
                 mins     = sum(int(m.get('minutes', 0)) for m in match_list)
                 max_mins = len(match_list) * 90
                 min_pct  = round((mins / max_mins) * 100) if max_mins > 0 else 0
-                defcon   = sum(int(m.get('clearances_blocks_interceptions', 0)) for m in match_list)
-                saves    = sum(int(m.get('saves', 0)) for m in match_list)
                 return {
                     "minutes":    mins,
                     "min_pct":    min_pct,
@@ -79,25 +74,26 @@ def get_fpl_data():
                     "bps":        sum(int(m.get('bps', 0)) for m in match_list),
                     "bonus":      sum(int(m.get('bonus', 0)) for m in match_list),
                     "points":     sum(int(m.get('total_points', 0)) for m in match_list),
-                    "saves":      saves,
-                    "defcon":     defcon,
+                    "saves":      sum(int(m.get('saves', 0)) for m in match_list),
+                    "defcon":     sum(int(m.get('clearances_blocks_interceptions', 0)) for m in match_list),
                 }
 
             stats_5  = calc_stats(recent_5)
             stats_10 = calc_stats(recent_10)
 
-            # ── GW-by-GW history for trend sparklines (last 10 matches) ──────
-            gw_history = []
-            for m in history[-10:]:
-                gw_history.append({
-                    "gw":     m.get('round', 0),
-                    "pts":    int(m.get('total_points', 0)),
-                    "xG":     round(float(m.get('expected_goals', 0)), 2),
-                    "xA":     round(float(m.get('expected_assists', 0)), 2),
+            # GW-by-GW history (last 10) for future use
+            gw_history = [
+                {
+                    "gw":      m.get('round', 0),
+                    "pts":     int(m.get('total_points', 0)),
+                    "xG":      round(float(m.get('expected_goals', 0)), 2),
+                    "xA":      round(float(m.get('expected_assists', 0)), 2),
                     "minutes": int(m.get('minutes', 0)),
-                })
+                }
+                for m in history[-10:]
+            ]
 
-            # ── Upcoming fixtures (next 3 gameweeks) ─────────────────────────
+            # Upcoming fixtures — collect up to 5 unique GWs
             fixtures_raw = history_resp.get('fixtures', [])
             upcoming = sorted(
                 [f for f in fixtures_raw
@@ -105,24 +101,22 @@ def get_fpl_data():
                 key=lambda x: (x['event'], x.get('id', 0))
             )
 
-            # Group by GW, collect up to 3 unique GWs
             seen_gws = []
             fixtures_data = []
             for f in upcoming:
                 gw = f['event']
                 if gw not in seen_gws:
-                    if len(seen_gws) >= 3:
+                    if len(seen_gws) >= 5:   # collect up to 5 GWs
                         break
                     seen_gws.append(gw)
-                is_home    = f.get('is_home', True)
-                opp_id     = f['team_a'] if is_home else f['team_h']
-                opp_info   = teams.get(opp_id, {'short_name': '?', 'logo': ''})
-                difficulty = f.get('difficulty', 3)
+                is_home  = f.get('is_home', True)
+                opp_id   = f['team_a'] if is_home else f['team_h']
+                opp_info = teams.get(opp_id, {'short_name': '?', 'logo': ''})
                 fixtures_data.append({
                     "gw":            gw,
                     "opponent":      opp_info['short_name'],
                     "opponent_logo": opp_info['logo'],
-                    "difficulty":    difficulty,
+                    "difficulty":    f.get('difficulty', 3),
                     "is_home":       is_home,
                 })
 
@@ -165,7 +159,6 @@ def get_fpl_data():
                 "last_10_saves":      stats_10["saves"],
                 "last_10_defcon":     stats_10["defcon"],
 
-                # ── New fields ──────────────────────────────────
                 "gw_history": gw_history,
                 "fixtures":   fixtures_data,
             })
@@ -176,17 +169,16 @@ def get_fpl_data():
             print(f"Failed to fetch {fpl_name}: {e}")
             continue
 
-    # ── Save — include root-level next_gws for BGW detection ────────────────
     output = {
-        "next_gws": next_gws[:5],  # e.g. [32, 33, 34, 35, 36]
+        "next_gws":   next_gws,       # [32,33,34,35,36] — used for BGW detection
         "current_gw": current_gw,
-        "players": players_data,
+        "players":    players_data,
     }
 
     with open("players.json", "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2)
 
-    print(f"Done. Saved {len(players_data)} players. next_gws={next_gws[:5]}")
+    print(f"Done. Saved {len(players_data)} players. next_gws={next_gws}")
 
 if __name__ == "__main__":
     get_fpl_data()
