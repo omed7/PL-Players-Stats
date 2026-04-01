@@ -15,29 +15,21 @@
         <span class="brand-eyebrow">Fantasy Premier League</span>
         <h1 class="brand-title">FPL <span>Scout</span></h1>
       </div>
-      <!-- View toggle: Table / Trend -->
-      <div class="view-toggle">
-        <button id="btn-view-table" class="view-btn active" title="Table view">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
-          Table
-        </button>
-        <button id="btn-view-trend" class="view-btn" title="Trend view">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Trend
-        </button>
-      </div>
     </div>
   </header>
 
   <!-- ── Summary Strip ─────────────────────────────────────────── -->
   <div class="summary-strip" id="summary-strip">
-    <div class="summary-item"><span class="s-label">Showing</span><span class="s-val" id="s-count">—</span></div>
-    <div class="summary-item"><span class="s-label">Avg xG</span><span class="s-val" id="s-avg-xg">—</span></div>
-    <div class="summary-item"><span class="s-label">Top xG</span><span class="s-val" id="s-top-xg">—</span></div>
-    <div class="summary-item"><span class="s-label">Top Pts</span><span class="s-val" id="s-top-pts">—</span></div>
-    <div class="summary-item watchlist-summary hidden" id="wl-summary">
-      <span class="s-label">Watchlist</span>
+    <div class="summary-item">
+      <span class="s-label">Players</span>
+      <span class="s-val" id="s-count">—</span>
+    </div>
+    <!-- Watchlist strip — only visible when watchlist has items -->
+    <div class="summary-item wl-strip hidden" id="wl-strip">
+      <span class="s-label">★</span>
       <span class="s-val" id="s-wl-count">0</span>
+      <button id="btn-wl-show" class="strip-pill-btn">Show</button>
+      <button id="btn-wl-only" class="strip-pill-btn" id="btn-wl-only">Only</button>
     </div>
   </div>
 
@@ -83,7 +75,6 @@
         <div class="team-filter-panel" id="team-filter-panel">
           <div class="team-filter-actions">
             <button id="btn-select-all-teams">All</button>
-            <button id="btn-clear-teams">Clear</button>
             <span class="selection-count" id="team-selection-count"></span>
           </div>
           <div class="team-logo-grid" id="team-filter-row"></div>
@@ -99,7 +90,7 @@
       Failed to load player data — serve over HTTP: <code>python3 -m http.server</code>
     </div>
 
-    <!-- Watchlist Panel -->
+    <!-- Watchlist Panel (hidden until "Show" pressed) -->
     <div id="watchlist-panel" class="watchlist-panel hidden">
       <div class="wl-header">
         <span class="wl-title">
@@ -111,77 +102,46 @@
       <div id="watchlist-chips" class="watchlist-chips"></div>
     </div>
 
-    <!-- Table View -->
-    <div id="table-view">
-      <div class="table-container">
-        <table id="players-table">
-          <thead>
-            <tr>
-              <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
-              <th data-sort="saves"      id="col-saves"      class="hidden">Saves <span class="sort-icon"></span></th>
-              <th data-sort="defcon"     id="col-defcon"                   >DefCon <span class="sort-icon"></span></th>
-              <th data-sort="xG"         id="col-xg" class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
-              <th data-sort="xA"         id="col-xa"                       >xA <span class="sort-icon"></span></th>
-              <th data-sort="xGI"        id="col-xgi"                      >xGI <span class="sort-icon"></span></th>
-              <th data-sort="xGC"                                          >xGC <span class="sort-icon"></span></th>
-              <th data-sort="creativity" id="col-creativity"               >Creativity <span class="sort-icon"></span></th>
-              <th data-sort="threat"     id="col-threat"                   >Threat <span class="sort-icon"></span></th>
-              <th data-sort="ict"        id="col-ict"                      >ICT <span class="sort-icon"></span></th>
-              <th data-sort="bps"                                          >BPS <span class="sort-icon"></span></th>
-              <th data-sort="bonus"                                        >Bonus <span class="sort-icon"></span></th>
-              <th data-sort="points"                                       >Pts <span class="sort-icon"></span></th>
-              <th data-sort="value" title="Points per £m"                  >Pts/£m <span class="sort-icon"></span></th>
-            </tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
-      <div class="pagination">
-        <button id="btn-prev" disabled>&#8592; Prev</button>
-        <span id="page-info">Page 1 of 1</span>
-        <button id="btn-next" disabled>Next &#8594;</button>
-      </div>
+    <!-- Table -->
+    <div class="table-container">
+      <table id="players-table">
+        <thead>
+          <tr>
+            <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
+            <th data-sort="saves"      id="col-saves"      class="hidden">Saves <span class="sort-icon"></span></th>
+            <th data-sort="points"                                        >Pts <span class="sort-icon"></span></th>
+            <th data-sort="xG"         id="col-xg"  class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
+            <th data-sort="xA"         id="col-xa"                       >xA <span class="sort-icon"></span></th>
+            <th data-sort="xGI"        id="col-xgi"                      >xGI <span class="sort-icon"></span></th>
+            <th data-sort="xGC"                                          >xGC <span class="sort-icon"></span></th>
+            <th data-sort="creativity" id="col-creativity"               >Creativity <span class="sort-icon"></span></th>
+            <th data-sort="threat"     id="col-threat"                   >Threat <span class="sort-icon"></span></th>
+            <th data-sort="ict"        id="col-ict"                      >ICT <span class="sort-icon"></span></th>
+            <th data-sort="defcon"     id="col-defcon"                   >DefCon <span class="sort-icon"></span></th>
+            <th data-sort="bps"                                          >BPS <span class="sort-icon"></span></th>
+            <th data-sort="bonus"                                        >Bonus <span class="sort-icon"></span></th>
+            <th data-sort="value"      title="Points per £m"             >Pts/£m <span class="sort-icon"></span></th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
     </div>
 
-    <!-- Trend View -->
-    <div id="trend-view" class="hidden">
-      <div class="trend-controls">
-        <span class="trend-stat-label">Stat:</span>
-        <div class="seg-group trend-stat-group" id="trend-stat-group">
-          <button data-stat="pts" class="active">Points</button>
-          <button data-stat="xG">xG</button>
-          <button data-stat="xA">xA</button>
-          <button data-stat="minutes">Minutes</button>
-        </div>
-        <span class="trend-note" id="trend-note"></span>
-      </div>
-      <div id="trend-container" class="trend-container"></div>
-      <div class="pagination" id="trend-pagination">
-        <button id="btn-trend-prev" disabled>&#8592; Prev</button>
-        <span id="trend-page-info">Page 1 of 1</span>
-        <button id="btn-trend-next" disabled>Next &#8594;</button>
-      </div>
+    <div class="pagination">
+      <button id="btn-prev" disabled>&#8592; Prev</button>
+      <span id="page-info">Page 1 of 1</span>
+      <button id="btn-next" disabled>Next &#8594;</button>
     </div>
 
   </main>
 
-  <!-- ── Compare Float Bar ─────────────────────────────────────── -->
-  <div id="compare-bar" class="compare-bar hidden">
-    <span id="cmp-count-label">2 players selected</span>
-    <button id="btn-open-compare" class="cmp-open-btn">Compare &#8594;</button>
-    <button id="btn-clear-compare" class="cmp-clear-btn">Clear</button>
-  </div>
-
-  <!-- ── Compare Modal ─────────────────────────────────────────── -->
-  <div id="compare-modal" class="cmp-modal hidden" role="dialog" aria-modal="true">
-    <div class="cmp-backdrop" id="cmp-backdrop"></div>
-    <div class="cmp-panel">
-      <div class="cmp-panel-header">
-        <span class="cmp-title">Player Comparison</span>
-        <button id="btn-close-compare" class="cmp-close">&#10005;</button>
-      </div>
-      <div id="compare-content" class="cmp-content"></div>
+  <!-- ── Compare Drawer (slides in from right) ─────────────────── -->
+  <div id="compare-drawer" class="cmp-drawer" role="complementary" aria-label="Player comparison">
+    <div class="cmp-drawer-header">
+      <span class="cmp-drawer-title">Compare <span id="cmp-drawer-count" class="cmp-count-badge">0</span></span>
+      <button id="btn-clear-compare" class="cmp-clear-all-btn">Clear</button>
     </div>
+    <div id="cmp-drawer-body" class="cmp-drawer-body"></div>
   </div>
 
   <script src="script.js"></script>
