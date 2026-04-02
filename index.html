@@ -2,55 +2,32 @@
 <html lang="en" data-theme="teal">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>FPL Scout</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ── Header ────────────────────────────────────────────────── -->
   <header class="page-header">
     <div class="header-inner">
       <div class="brand">
         <h1 class="brand-title">FPL <span>Scout</span></h1>
       </div>
       <div class="header-right">
-        <!-- GW Countdown -->
         <div class="gw-countdown" id="gw-countdown">
           <span class="cd-label">GW<span id="gw-num">—</span></span>
           <span class="cd-sep">·</span>
           <span class="cd-time" id="cd-time">—</span>
         </div>
-        <!-- Watchlist button -->
         <button class="hdr-btn" id="btn-wl-open" title="Watchlist">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
           </svg>
           <span class="hdr-btn-badge hidden" id="wl-hdr-badge">0</span>
         </button>
-        <!-- Gear / Theme -->
-        <div class="theme-wrap">
-          <button class="hdr-btn" id="btn-gear" title="Change theme">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"/>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-          </button>
-          <div class="theme-panel hidden" id="theme-panel">
-            <div class="theme-panel-title">Theme</div>
-            <div class="theme-swatches">
-              <button class="theme-swatch active" data-theme="teal"    title="Teal"    style="--sw:#00d9a3"></button>
-              <button class="theme-swatch"        data-theme="purple"  title="Purple"  style="--sw:#b388ff"></button>
-              <button class="theme-swatch"        data-theme="blue"    title="Blue"    style="--sw:#4dd0ff"></button>
-              <button class="theme-swatch"        data-theme="gold"    title="Gold"    style="--sw:#ffc840"></button>
-              <button class="theme-swatch"        data-theme="crimson" title="Crimson" style="--sw:#ff4d6b"></button>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </header>
 
-  <!-- ── Summary Strip ─────────────────────────────────────────── -->
   <div class="summary-strip">
     <div class="s-item">
       <span class="s-label">Players</span>
@@ -58,9 +35,7 @@
     </div>
   </div>
 
-  <!-- ── Controls ──────────────────────────────────────────────── -->
   <div class="controls-shell">
-    <!-- Row 1: timeframe + position + minutes -->
     <div class="controls-top">
       <div class="seg-group">
         <button id="btn-last5" class="active">Last 5</button>
@@ -84,7 +59,6 @@
       </div>
     </div>
 
-    <!-- Row 2: search + team filter + price range -->
     <div class="controls-bottom">
       <div class="search-wrap">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -92,7 +66,6 @@
         </svg>
         <input type="text" id="search-input" placeholder="Search player…">
       </div>
-      <!-- Price range -->
       <div class="price-section">
         <div class="price-label-row">
           <span class="price-label">Price: £<span id="price-min-disp">4.0</span>m – £<span id="price-max-disp">15.0</span>m</span>
@@ -121,40 +94,32 @@
     </div>
   </div>
 
-  <!-- ── Main ──────────────────────────────────────────────────── -->
   <main class="main-content">
-    <div id="error-message" class="error hidden">
-      Failed to load — serve over HTTP: <code>python3 -m http.server</code>
-    </div>
+    <div id="error-message" class="error hidden">Failed to load FPL Data. Ensure players.json is built.</div>
 
-    <!-- Desktop: table view -->
     <div class="table-container" id="table-view">
       <table id="players-table">
         <thead>
           <tr>
             <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
-            <th class="col-sparkline" title="GW Points Trend">Trend</th>
             <th data-sort="saves" id="col-saves" class="hidden">Saves <span class="sort-icon"></span></th>
-            <th data-sort="points" >Pts <span class="sort-icon"></span></th>
-            <th data-sort="xG"  id="col-xg"  class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
-            <th data-sort="xA"  id="col-xa"  >xA <span class="sort-icon"></span></th>
-            <th data-sort="xGI" id="col-xgi" >xGI <span class="sort-icon"></span></th>
-            <th data-sort="xGC" >xGC <span class="sort-icon"></span></th>
-            <th data-sort="creativity" id="col-creativity" >Creativity <span class="sort-icon"></span></th>
-            <th data-sort="threat"     id="col-threat"     >Threat <span class="sort-icon"></span></th>
-            <th data-sort="ict"        id="col-ict"        >ICT <span class="sort-icon"></span></th>
-            <th data-sort="defcon"     id="col-defcon"     >DefCon <span class="sort-icon"></span></th>
-            <th data-sort="bps"   >BPS <span class="sort-icon"></span></th>
-            <th data-sort="bonus" >Bonus <span class="sort-icon"></span></th>
-            <th data-sort="value" title="Points per £m" >Pts/£m <span class="sort-icon"></span></th>
+            <th data-sort="points">Pts <span class="sort-icon"></span></th>
+            <th data-sort="xG" id="col-xg" class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
+            <th data-sort="xA" id="col-xa">xA <span class="sort-icon"></span></th>
+            <th data-sort="xGI" id="col-xgi">xGI <span class="sort-icon"></span></th>
+            <th data-sort="xGC">xGC <span class="sort-icon"></span></th>
+            <th data-sort="creativity" id="col-creativity">Creativity <span class="sort-icon"></span></th>
+            <th data-sort="threat" id="col-threat">Threat <span class="sort-icon"></span></th>
+            <th data-sort="ict" id="col-ict">ICT <span class="sort-icon"></span></th>
+            <th data-sort="defcon" id="col-defcon">DefCon <span class="sort-icon"></span></th>
+            <th data-sort="bps">BPS <span class="sort-icon"></span></th>
+            <th data-sort="bonus">Bonus <span class="sort-icon"></span></th>
+            <th data-sort="value" title="Points per £m">Pts/£m <span class="sort-icon"></span></th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
       </table>
     </div>
-
-    <!-- Mobile: card view -->
-    <div class="card-view hidden" id="card-view"></div>
 
     <div class="pagination">
       <button id="btn-prev" disabled>&#8592; Prev</button>
@@ -163,7 +128,6 @@
     </div>
   </main>
 
-  <!-- ── Watchlist Left Drawer ─────────────────────────────────── -->
   <div class="wl-backdrop hidden" id="wl-backdrop"></div>
   <div class="wl-drawer" id="wl-drawer">
     <div class="wl-drawer-hdr">
@@ -179,37 +143,7 @@
       </div>
     </div>
     <div class="wl-drawer-body" id="wl-drawer-body">
-      <div class="wl-empty" id="wl-empty">No players starred yet.<br>Click ★ on any player row.</div>
-    </div>
-  </div>
-
-  <!-- ── Compare Bottom Bar ────────────────────────────────────── -->
-  <div class="cmp-bar hidden" id="cmp-bar">
-    <span class="cmp-bar-label">Comparing</span>
-    <div class="cmp-bar-players" id="cmp-bar-players"></div>
-    <button class="cmp-bar-open-btn" id="btn-cmp-open">Open &#8594;</button>
-    <button class="cmp-bar-clear-btn" id="btn-cmp-clear">&#10005;</button>
-  </div>
-
-  <!-- ── Compare Modal ─────────────────────────────────────────── -->
-  <div class="cmp-overlay hidden" id="cmp-overlay">
-    <div class="cmp-modal">
-      <div class="cmp-modal-hdr">
-        <span class="cmp-modal-title">Player Comparison</span>
-        <button class="cmp-modal-close" id="btn-cmp-modal-close">&#10005;</button>
-      </div>
-      <div class="cmp-modal-body" id="cmp-modal-body"></div>
-    </div>
-  </div>
-
-  <!-- ── Sparkline Detail Modal ────────────────────────────────── -->
-  <div class="spark-overlay hidden" id="spark-overlay">
-    <div class="spark-modal">
-      <div class="spark-modal-hdr">
-        <span class="spark-modal-title" id="spark-modal-title">GW Points Trend</span>
-        <button class="spark-modal-close" id="btn-spark-close">&#10005;</button>
-      </div>
-      <div class="spark-modal-body" id="spark-modal-body"></div>
+      <div class="wl-empty" id="wl-empty">No players starred yet.</div>
     </div>
   </div>
 
