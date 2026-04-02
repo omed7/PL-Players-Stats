@@ -12,6 +12,7 @@ def get_fpl_data():
     session.headers.update({'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)'})
     req_timeout = 10
 
+
     print("Fetching FPL master list...")
     bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
     response = session.get(bootstrap_url, timeout=req_timeout).json()
