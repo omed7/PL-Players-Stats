@@ -6,7 +6,6 @@ from urllib3.util.retry import Retry
 
 def get_fpl_data():
     print("Initializing session...")
-
     session = requests.Session()
     retries = Retry(total=3, backoff_factor=0.5, status_forcelist=[429, 500, 502, 503, 504])
     session.mount('https://', HTTPAdapter(max_retries=retries))
@@ -30,8 +29,14 @@ def get_fpl_data():
         (e['id'] for e in response['events'] if e['is_current']),
         next((e['id'] for e in response['events'] if e['is_next']), 1)
     )
-    # Store 5 next GWs for blank-GW detection
     next_gws = list(range(current_gw, current_gw + 5))
+
+    # Deadline for the next (or current) gameweek
+    target_event = (
+        next((e for e in response['events'] if e['is_next']), None) or
+        next((e for e in response['events'] if e['is_current']), None)
+    )
+    deadline = target_event['deadline_time'] if target_event else None
 
     players_data = []
     elements = [p for p in response['elements'] if p['minutes'] > 0]
@@ -62,8 +67,7 @@ def get_fpl_data():
                 max_mins = len(match_list) * 90
                 min_pct  = round((mins / max_mins) * 100) if max_mins > 0 else 0
                 return {
-                    "minutes":    mins,
-                    "min_pct":    min_pct,
+                    "minutes":    mins, "min_pct": min_pct,
                     "xG":         sum(float(m.get('expected_goals', 0)) for m in match_list),
                     "xA":         sum(float(m.get('expected_assists', 0)) for m in match_list),
                     "xGI":        sum(float(m.get('expected_goal_involvements', 0)) for m in match_list),
@@ -81,104 +85,72 @@ def get_fpl_data():
             stats_5  = calc_stats(recent_5)
             stats_10 = calc_stats(recent_10)
 
-            # GW-by-GW history (last 10) for future use
             gw_history = [
-                {
-                    "gw":      m.get('round', 0),
-                    "pts":     int(m.get('total_points', 0)),
-                    "xG":      round(float(m.get('expected_goals', 0)), 2),
-                    "xA":      round(float(m.get('expected_assists', 0)), 2),
-                    "minutes": int(m.get('minutes', 0)),
-                }
+                {"gw": m.get('round',0), "pts": int(m.get('total_points',0)),
+                 "xG": round(float(m.get('expected_goals',0)),2),
+                 "xA": round(float(m.get('expected_assists',0)),2),
+                 "minutes": int(m.get('minutes',0))}
                 for m in history[-10:]
             ]
 
-            # Upcoming fixtures — collect up to 5 unique GWs
             fixtures_raw = history_resp.get('fixtures', [])
             upcoming = sorted(
-                [f for f in fixtures_raw
-                 if not f.get('finished', True) and f.get('event') is not None],
+                [f for f in fixtures_raw if not f.get('finished', True) and f.get('event') is not None],
                 key=lambda x: (x['event'], x.get('id', 0))
             )
-
             seen_gws = []
             fixtures_data = []
             for f in upcoming:
                 gw = f['event']
                 if gw not in seen_gws:
-                    if len(seen_gws) >= 5:   # collect up to 5 GWs
-                        break
+                    if len(seen_gws) >= 5: break
                     seen_gws.append(gw)
                 is_home  = f.get('is_home', True)
                 opp_id   = f['team_a'] if is_home else f['team_h']
                 opp_info = teams.get(opp_id, {'short_name': '?', 'logo': ''})
                 fixtures_data.append({
-                    "gw":            gw,
-                    "opponent":      opp_info['short_name'],
+                    "gw": gw, "opponent": opp_info['short_name'],
                     "opponent_logo": opp_info['logo'],
-                    "difficulty":    f.get('difficulty', 3),
-                    "is_home":       is_home,
+                    "difficulty": f.get('difficulty', 3),
+                    "is_home": is_home,
                 })
 
             players_data.append({
-                "name":       fpl_name,
-                "team":       team_info['short_name'],
-                "logo":       team_info['logo'],
-                "position":   pos,
-                "price":      price,
-                "status_pct": status_pct,
-                "ownership":  ownership,
-
-                "last_5_minutes":    stats_5["minutes"],
-                "last_5_min_pct":    stats_5["min_pct"],
-                "last_5_xG":         round(stats_5["xG"], 2),
-                "last_5_xA":         round(stats_5["xA"], 2),
-                "last_5_xGI":        round(stats_5["xGI"], 2),
-                "last_5_xGC":        round(stats_5["xGC"], 2),
-                "last_5_creativity": round(stats_5["creativity"], 2),
-                "last_5_threat":     round(stats_5["threat"], 2),
-                "last_5_ict":        round(stats_5["ict"], 2),
-                "last_5_bps":        stats_5["bps"],
-                "last_5_bonus":      stats_5["bonus"],
-                "last_5_points":     stats_5["points"],
-                "last_5_saves":      stats_5["saves"],
-                "last_5_defcon":     stats_5["defcon"],
-
-                "last_10_minutes":    stats_10["minutes"],
-                "last_10_min_pct":    stats_10["min_pct"],
-                "last_10_xG":         round(stats_10["xG"], 2),
-                "last_10_xA":         round(stats_10["xA"], 2),
-                "last_10_xGI":        round(stats_10["xGI"], 2),
-                "last_10_xGC":        round(stats_10["xGC"], 2),
-                "last_10_creativity": round(stats_10["creativity"], 2),
-                "last_10_threat":     round(stats_10["threat"], 2),
-                "last_10_ict":        round(stats_10["ict"], 2),
-                "last_10_bps":        stats_10["bps"],
-                "last_10_bonus":      stats_10["bonus"],
-                "last_10_points":     stats_10["points"],
-                "last_10_saves":      stats_10["saves"],
-                "last_10_defcon":     stats_10["defcon"],
-
-                "gw_history": gw_history,
-                "fixtures":   fixtures_data,
+                "name": fpl_name, "team": team_info['short_name'],
+                "logo": team_info['logo'], "position": pos,
+                "price": price, "status_pct": status_pct, "ownership": ownership,
+                "last_5_minutes": stats_5["minutes"], "last_5_min_pct": stats_5["min_pct"],
+                "last_5_xG": round(stats_5["xG"],2), "last_5_xA": round(stats_5["xA"],2),
+                "last_5_xGI": round(stats_5["xGI"],2), "last_5_xGC": round(stats_5["xGC"],2),
+                "last_5_creativity": round(stats_5["creativity"],2),
+                "last_5_threat": round(stats_5["threat"],2), "last_5_ict": round(stats_5["ict"],2),
+                "last_5_bps": stats_5["bps"], "last_5_bonus": stats_5["bonus"],
+                "last_5_points": stats_5["points"], "last_5_saves": stats_5["saves"],
+                "last_5_defcon": stats_5["defcon"],
+                "last_10_minutes": stats_10["minutes"], "last_10_min_pct": stats_10["min_pct"],
+                "last_10_xG": round(stats_10["xG"],2), "last_10_xA": round(stats_10["xA"],2),
+                "last_10_xGI": round(stats_10["xGI"],2), "last_10_xGC": round(stats_10["xGC"],2),
+                "last_10_creativity": round(stats_10["creativity"],2),
+                "last_10_threat": round(stats_10["threat"],2), "last_10_ict": round(stats_10["ict"],2),
+                "last_10_bps": stats_10["bps"], "last_10_bonus": stats_10["bonus"],
+                "last_10_points": stats_10["points"], "last_10_saves": stats_10["saves"],
+                "last_10_defcon": stats_10["defcon"],
+                "gw_history": gw_history, "fixtures": fixtures_data,
             })
-
             time.sleep(0.05)
-
         except Exception as e:
             print(f"Failed to fetch {fpl_name}: {e}")
             continue
 
     output = {
-        "next_gws":   next_gws,       # [32,33,34,35,36] — used for BGW detection
+        "next_gws": next_gws,
         "current_gw": current_gw,
-        "players":    players_data,
+        "deadline": deadline,
+        "players": players_data,
     }
-
     with open("players.json", "w", encoding="utf-8") as f:
         json.dump(output, f, indent=2)
-
-    print(f"Done. Saved {len(players_data)} players. next_gws={next_gws}")
+    print(f"Done. Saved {len(players_data)} players. GW={current_gw}, deadline={deadline}")
 
 if __name__ == "__main__":
     get_fpl_data()
