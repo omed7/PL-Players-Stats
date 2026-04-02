@@ -806,3 +806,173 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
   .gw-countdown { display: none; }
   .cmp-overlay { padding: 10px; }
 }
+
+
+```css
+/* ══════════════════════════════════════════════════════════════════
+   SPARKLINE — Inline Table Cell
+   ══════════════════════════════════════════════════════════════════ */
+.col-sparkline {
+  width: 90px;
+  min-width: 90px;
+  cursor: default !important;
+  padding: 10px 8px !important;
+  text-align: center;
+}
+.sparkline-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 2px 0;
+  transition: opacity 0.15s;
+}
+.sparkline-cell:hover {
+  opacity: 0.8;
+}
+.sparkline-cell svg {
+  display: block;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SPARKLINE — Detail Modal
+   ══════════════════════════════════════════════════════════════════ */
+.spark-overlay {
+  position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,0.65);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.15s ease;
+}
+.spark-modal {
+  background: var(--bg-1);
+  border: 1px solid var(--blight);
+  border-radius: 12px;
+  width: 94vw; max-width: 560px;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.6);
+}
+.spark-modal-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.spark-modal-title {
+  font-family: var(--f-d); font-size: 1.1rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--teal);
+}
+.spark-modal-close {
+  background: none; border: none; color: var(--text-2);
+  font-size: 1.2rem; cursor: pointer; padding: 4px 8px;
+  border-radius: 4px; transition: color 0.13s, background 0.13s;
+}
+.spark-modal-close:hover {
+  color: var(--text-1); background: var(--bg-2);
+}
+.spark-modal-body {
+  padding: 20px;
+}
+.spark-chart-wrap {
+  display: flex; justify-content: center;
+  margin-bottom: 16px;
+}
+.spark-chart-wrap svg {
+  width: 100%; max-width: 500px; height: auto;
+}
+.spark-gw-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--f-m);
+  font-size: 0.75rem;
+}
+.spark-gw-table th {
+  font-family: var(--f-d);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--blight);
+  text-align: left;
+  background: var(--bg-1);
+  cursor: default;
+  position: static;
+}
+.spark-gw-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-1);
+}
+.spark-gw-table tr:hover td {
+  background: var(--bg-hover);
+}
+.spark-pts-high {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE CARD VIEW
+   ══════════════════════════════════════════════════════════════════ */
+.card-view {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.player-card {
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.13s;
+}
+.player-card:hover {
+  border-color: var(--teal);
+}
+
+/* Card header row */
+.pc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.pc-logo {
+  width: 30px; height: 30px; object-fit: contain;
+  border-radius: 4px; background: var(--bg-2); padding: 2px;
+}
+.pc-name {
+  font-family: var(--f-d);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-1);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pc-pos {
+  font-family: var(--f-d);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.pc-pos-GK  { background: rgba(255,184,77,0.15); color: var(--pos-gk); }
+.pc-pos-DEF { background: rgba(91,156,246,0.15); color: var(--pos-def); }
+.pc-pos-MID { background: var(--teal-dim);        color: var(--teal); }
+.pc-pos-FWD { background: rgba(255,107,107,0.15); color: var(--pos-fwd); }
+
+/* Card meta */
+.pc-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--f-m);
+  font-size: 0.68
