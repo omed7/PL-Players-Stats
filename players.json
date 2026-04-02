@@ -7,6 +7,7 @@
     35
   ],
   "current_gw": 31,
+  "deadline": "2026-04-10T17:30:00Z",
   "players": [
     {
       "name": "Raya",
@@ -161,7 +162,7 @@
       "position": "DEF",
       "price": 7.2,
       "status_pct": 75,
-      "ownership": "43.1",
+      "ownership": "43.0",
       "last_5_minutes": 450,
       "last_5_min_pct": 100,
       "last_5_xG": 0.06,
@@ -9053,7 +9054,7 @@
       "position": "MID",
       "price": 5.0,
       "status_pct": 100,
-      "ownership": "2.0",
+      "ownership": "1.9",
       "last_5_minutes": 443,
       "last_5_min_pct": 98,
       "last_5_xG": 0.89,
@@ -32390,7 +32391,7 @@
       "team": "EVE",
       "logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
       "position": "MID",
-      "price": 5.2,
+      "price": 5.3,
       "status_pct": 100,
       "ownership": "4.3",
       "last_5_minutes": 450,
@@ -50786,7 +50787,7 @@
       "team": "MUN",
       "logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
       "position": "GK",
-      "price": 5.0,
+      "price": 5.1,
       "status_pct": 100,
       "ownership": "2.8",
       "last_5_minutes": 450,
