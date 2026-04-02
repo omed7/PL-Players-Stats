@@ -192,35 +192,32 @@ function buildFixtureChipsHTML(player) {
   const fixtures = player.fixtures;
   if (!fixtures || fixtures.length === 0) return '';
 
+  // Always show the next 5 actual PL fixtures — ignore cup-game GWs (they
+  // don't appear in the FPL fixture list at all, so we never get a blank slot
+  // caused by a cup week).  DGW teams get 2 chips in the same visual group.
   const byGW = {};
   fixtures.forEach(f => { (byGW[f.gw] = byGW[f.gw] || []).push(f); });
 
-  // Always show exactly 5 GW slots — blank if no fixture that GW
-  let gws;
-  if (state.nextGWs.length) {
-    gws = state.nextGWs.slice(0, 5);
-  } else {
-    const fixtureGWs = Object.keys(byGW).map(Number).sort((a,b) => a-b);
-    const base = fixtureGWs[0] || (state.currentGW ?? 1);
-    gws = Array.from({length: 5}, (_, i) => base + i);
-  }
+  // Collect up to 5 unique GWs that have at least one PL fixture
+  const gws = Object.keys(byGW)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .slice(0, 5);
+
+  if (!gws.length) return '';
 
   let html = '<div class="fixture-chips">';
   gws.forEach(gw => {
-    const fixes = byGW[gw] || [];
-    html += `<div class="gw-slot${fixes.length === 0 ? ' bgw' : ''}">`;
-    if (fixes.length === 0) {
-      html += `<div class="fix-chip blank" title="GW${gw}: No fixture">&mdash;</div>`;
-    } else {
-      fixes.forEach(f => {
-        const ha    = f.is_home ? 'H' : 'A';
-        const away  = f.is_home ? '' : ' away';
-        const title = `GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}`;
-        html += `<div class="fix-chip diff-${f.difficulty}${away}" title="${title}">
-          <img src="${f.opponent_logo}" alt="${f.opponent}">
-        </div>`;
-      });
-    }
+    const fixes = byGW[gw];
+    html += '<div class="gw-slot">';
+    fixes.forEach(f => {
+      const ha    = f.is_home ? 'H' : 'A';
+      const title = `GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}`;
+      html += `<div class="fix-chip diff-${f.difficulty}" title="${title}">
+        <img src="${f.opponent_logo}" alt="${f.opponent}">
+        <span class="fix-ha">${ha}</span>
+      </div>`;
+    });
     html += '</div>';
   });
   html += '</div>';
