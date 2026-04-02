@@ -381,22 +381,32 @@ input[type="range"]:not(.dr-input)::-moz-range-thumb {
 .hidden { display: none !important; }
 
 .table-container {
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  padding-right: 1rem;
-  overflow-x: auto;
+  /* Counteracts the 28px left/right padding of .main-content exactly */
+  width: calc(100% + 56px); 
+  margin-left: -28px;
+  margin-right: -28px;
+  
+  overflow-x: auto; 
   -webkit-overflow-scrolling: touch;
-  background: var(--bg-1);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  scrollbar-width: thin;
+  background: var(--bg-1); 
+  
+  /* Remove side borders and radius for a clean, edge-to-edge native look */
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-left: none;
+  border-right: none;
+  border-radius: 0; 
+  
+  scrollbar-width: thin; 
   scrollbar-color: var(--blight) transparent;
 }
-.table-container::-webkit-scrollbar { height: 5px; }
-.table-container::-webkit-scrollbar-thumb { background: var(--blight); border-radius: 3px; }
 
-table { width: 100%; border-collapse: collapse; border-spacing: 0; min-width: max-content; }
+table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  border-spacing: 0; 
+  min-width: max-content; 
+}
 
 th {
   font-family: var(--f-d); font-size: 0.75rem; font-weight: 700;
@@ -442,6 +452,11 @@ td.sticky-col {
   background-image: none !important; padding: 6px 10px; height: auto;
 }
 tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
+
+/* Adds breathing room to the final column so text doesn't touch the screen edge */
+th:last-child, td:last-child {
+  padding-right: 28px;
+}
 
 /* ── Player Cell ──────────────────────────────────────────────── */
 .player-cell { display: flex; align-items: flex-start; gap: 7px; padding: 6px 0; }
@@ -813,4 +828,14 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
   .wl-drawer { width: 100%; }
   .gw-countdown { display: none; }
   .cmp-overlay { padding: 10px; }
+  
+  /* Recalculate breakout for mobile padding (14px + 14px) */
+  .table-container {
+    width: calc(100% + 28px);
+    margin-left: -14px;
+    margin-right: -14px;
+  }
+  th:last-child, td:last-child {
+    padding-right: 14px;
+  }
 }
