@@ -6,6 +6,18 @@ const state = {
 };
 const el = {};
 
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('fpl_theme_v1', t);
+  document.querySelectorAll('.theme-swatch').forEach(s => {
+    s.classList.toggle('active', s.dataset.theme === t);
+  });
+}
+function loadTheme() {
+  const saved = localStorage.getItem('fpl_theme_v1') || 'teal';
+  applyTheme(saved);
+}
+
 function startCountdown(deadlineStr, gwNum) {
   const gwNumEl = document.getElementById('gw-num'), timeEl = document.getElementById('cd-time'), wrap = document.getElementById('gw-countdown');
   if (!gwNumEl || !timeEl) return;
@@ -49,6 +61,27 @@ function syncWatchlistHeader() {
 function openWatchlist() { document.getElementById('wl-drawer').classList.add('open'); document.getElementById('wl-backdrop').classList.remove('hidden'); }
 function closeWatchlist() { document.getElementById('wl-drawer').classList.remove('open'); document.getElementById('wl-backdrop').classList.add('hidden'); }
 
+function buildFixtureChipsHTML(player) {
+  const fixtures = player.fixtures;
+  if (!fixtures || fixtures.length === 0) return '';
+  const byGW = {};
+  fixtures.forEach(f => { (byGW[f.gw] = byGW[f.gw] || []).push(f); });
+  const gws = state.nextGWs.length ? state.nextGWs.slice(0, 5) : Object.keys(byGW).map(Number).sort((a,b) => a-b).slice(0, 5);
+  if (!gws.length) return '';
+  let html = '<div class="fixture-chips">';
+  gws.forEach(gw => {
+    const fixes = byGW[gw] || [];
+    html += '<div class="gw-slot">';
+    fixes.forEach(f => {
+      const ha = f.is_home ? 'H' : 'A';
+      html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}"><img src="${f.opponent_logo}" alt="${f.opponent}"><span class="fix-ha">${ha}</span></div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
 function renderWatchlistDrawer() {
   const body = document.getElementById('wl-drawer-body'), countEl = document.getElementById('wl-drawer-count'), emptyEl = document.getElementById('wl-empty');
   if (!body) return;
@@ -59,9 +92,10 @@ function renderWatchlistDrawer() {
   const pfx = state.timeframe === 'last_5' ? 'last_5_' : 'last_10_', frag = document.createDocumentFragment();
   [...state.watchlist].forEach(name => {
     const p = state.players.find(pl => pl.name === name); if (!p) return;
-    const pts = p[`${pfx}points`] ?? 0, xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2), val = p.price > 0 ? (pts / p.price).toFixed(1) : '—';
+    const pts = p[`${pfx}points`] ?? 0, xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2);
+    const fixChips = buildFixtureChipsHTML(p);
     const card = document.createElement('div'); card.className = 'wl-card';
-    card.innerHTML = `<div class="wl-card-top"><img src="${p.logo}" alt="${p.team}" class="wl-card-logo"><div class="wl-card-info"><div class="wl-card-name-row"><span class="pos-badge pos-${p.position}">${p.position}</span><span class="wl-card-name">${p.name}</span></div><div class="wl-card-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% &middot; ${pts} pts &middot; xGI ${xgi}</div></div><button class="wl-card-remove">&times;</button></div>`;
+    card.innerHTML = `<div class="wl-card-top"><img src="${p.logo}" alt="${p.team}" class="wl-card-logo"><div class="wl-card-info"><div class="wl-card-name-row"><span class="pos-badge pos-${p.position}">${p.position}</span><span class="wl-card-name">${p.name}</span></div><div class="wl-card-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% &middot; ${pts} pts &middot; xGI ${xgi}</div></div><button class="wl-card-remove">&times;</button></div>${fixChips ? `<div class="wl-card-chips">${fixChips}</div>` : ''}`;
     card.querySelector('.wl-card-remove').addEventListener('click', () => toggleWatch(name));
     frag.appendChild(card);
   });
@@ -176,6 +210,8 @@ function renderTable(pfxArg) {
     }
 
     const watched = state.watchlist.has(p.name);
+    const fixChips = buildFixtureChipsHTML(p);
+
     const tr = document.createElement('tr'); tr.style.setProperty('--ri', i);
     const td = document.createElement('td'); td.className = 'sticky-col';
 
@@ -193,6 +229,7 @@ function renderTable(pfxArg) {
             <button class="star-btn ${watched ? 'active' : ''}" data-watch="${p.name}">&#9733;</button>
             ${injHtml}
           </div>
+          ${fixChips}
         </div>
         <div class="mins-corner">Mins: ${mins} %${minPct}</div>
       </div>`;
@@ -246,6 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
   el.teamToggleBtn = document.getElementById('team-filter-toggle-btn'); el.teamPanel = document.getElementById('team-filter-panel');
   el.positionBtns = document.querySelectorAll('#position-group button');
   el.priceMinSlider = document.getElementById('price-min-slider'); el.priceMaxSlider = document.getElementById('price-max-slider');
+
+  loadTheme();
+  document.getElementById('btn-gear').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('theme-panel').classList.toggle('hidden'); });
+  document.addEventListener('click', () => document.getElementById('theme-panel').classList.add('hidden'));
+  document.getElementById('theme-panel').addEventListener('click', e => e.stopPropagation());
+  document.querySelectorAll('.theme-swatch').forEach(s => { s.addEventListener('click', () => applyTheme(s.dataset.theme)); });
 
   document.getElementById('btn-wl-open').addEventListener('click', openWatchlist); document.getElementById('btn-wl-close').addEventListener('click', closeWatchlist);
   document.getElementById('wl-backdrop').addEventListener('click', closeWatchlist);
