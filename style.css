@@ -381,14 +381,22 @@ input[type="range"]:not(.dr-input)::-moz-range-thumb {
 .hidden { display: none !important; }
 
 .table-container {
-  width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
-  background: var(--bg-1); border: 1px solid var(--border); border-radius: 8px;
-  scrollbar-width: thin; scrollbar-color: var(--blight) transparent;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  padding-right: 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--blight) transparent;
 }
 .table-container::-webkit-scrollbar { height: 5px; }
 .table-container::-webkit-scrollbar-thumb { background: var(--blight); border-radius: 3px; }
 
-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 700px; }
+table { width: 100%; border-collapse: collapse; border-spacing: 0; min-width: max-content; }
 
 th {
   font-family: var(--f-d); font-size: 0.75rem; font-weight: 700;
