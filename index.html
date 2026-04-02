@@ -1,42 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="teal">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FPL Scout — Player Statistics</title>
+  <title>FPL Scout</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- ── Page Header ───────────────────────────────────────────── -->
+  <!-- ── Header ────────────────────────────────────────────────── -->
   <header class="page-header">
     <div class="header-inner">
       <div class="brand">
-        <span class="brand-eyebrow">Fantasy Premier League</span>
         <h1 class="brand-title">FPL <span>Scout</span></h1>
+      </div>
+      <div class="header-right">
+        <!-- GW Countdown -->
+        <div class="gw-countdown" id="gw-countdown">
+          <span class="cd-label">GW<span id="gw-num">—</span></span>
+          <span class="cd-sep">·</span>
+          <span class="cd-time" id="cd-time">—</span>
+        </div>
+
+        <!-- Watchlist button -->
+        <button class="hdr-btn" id="btn-wl-open" title="Watchlist">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span class="hdr-btn-badge hidden" id="wl-hdr-badge">0</span>
+        </button>
+
+        <!-- Gear / Theme -->
+        <div class="theme-wrap">
+          <button class="hdr-btn" id="btn-gear" title="Change theme">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+          <div class="theme-panel hidden" id="theme-panel">
+            <div class="theme-panel-title">Theme</div>
+            <div class="theme-swatches">
+              <button class="theme-swatch active" data-theme="teal"    title="Teal"   style="--sw:#00d9a3"></button>
+              <button class="theme-swatch"         data-theme="purple" title="Purple" style="--sw:#b388ff"></button>
+              <button class="theme-swatch"         data-theme="blue"   title="Blue"   style="--sw:#4dd0ff"></button>
+              <button class="theme-swatch"         data-theme="gold"   title="Gold"   style="--sw:#ffc840"></button>
+              <button class="theme-swatch"         data-theme="crimson"title="Crimson"style="--sw:#ff4d6b"></button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
 
   <!-- ── Summary Strip ─────────────────────────────────────────── -->
-  <div class="summary-strip" id="summary-strip">
-    <div class="summary-item">
+  <div class="summary-strip">
+    <div class="s-item">
       <span class="s-label">Players</span>
       <span class="s-val" id="s-count">—</span>
-    </div>
-    <!-- Watchlist strip — only visible when watchlist has items -->
-    <div class="summary-item wl-strip hidden" id="wl-strip">
-      <span class="s-label">★</span>
-      <span class="s-val" id="s-wl-count">0</span>
-      <button id="btn-wl-show" class="strip-pill-btn">Show</button>
-      <button id="btn-wl-only" class="strip-pill-btn" id="btn-wl-only">Only</button>
     </div>
   </div>
 
   <!-- ── Controls ──────────────────────────────────────────────── -->
   <div class="controls-shell">
+    <!-- Row 1: timeframe + position + minutes -->
     <div class="controls-top">
-      <div class="seg-group" id="timeframe-group">
+      <div class="seg-group">
         <button id="btn-last5" class="active">Last 5</button>
         <button id="btn-last10">Last 10</button>
       </div>
@@ -48,18 +77,17 @@
         <button data-pos="FWD">FWD</button>
       </div>
       <div class="minutes-bar">
-        <label id="minutes-label">Min Minutes: 0</label>
+        <label id="minutes-label">Min Mins: 0</label>
         <input type="range" id="minutes-slider" min="0" max="450" value="0" step="1">
         <div class="toggle-wrap">
           <span>Raw</span>
-          <label class="switch">
-            <input type="checkbox" id="minutes-toggle">
-            <span class="sw-track"></span>
-          </label>
+          <label class="switch"><input type="checkbox" id="minutes-toggle"><span class="sw-track"></span></label>
           <span>%</span>
         </div>
       </div>
     </div>
+
+    <!-- Row 2: search + team filter + price range -->
     <div class="controls-bottom">
       <div class="search-wrap">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -67,6 +95,21 @@
         </svg>
         <input type="text" id="search-input" placeholder="Search player…">
       </div>
+
+      <!-- Price range -->
+      <div class="price-section">
+        <div class="price-label-row">
+          <span class="price-label">Price: £<span id="price-min-disp">4.0</span>m – £<span id="price-max-disp">15.0</span>m</span>
+        </div>
+        <div class="dual-range" id="price-dual-range">
+          <div class="dual-range-track">
+            <div class="dual-range-fill" id="price-fill"></div>
+          </div>
+          <input type="range" id="price-min-slider" class="dr-input" min="30" max="150" value="30" step="1">
+          <input type="range" id="price-max-slider" class="dr-input" min="30" max="150" value="150" step="1">
+        </div>
+      </div>
+
       <div class="team-filter-section">
         <button class="team-filter-toggle-btn" id="team-filter-toggle-btn">
           <span id="team-filter-label">Filter by Team</span>
@@ -85,42 +128,28 @@
 
   <!-- ── Main ──────────────────────────────────────────────────── -->
   <main class="main-content">
-
     <div id="error-message" class="error hidden">
-      Failed to load player data — serve over HTTP: <code>python3 -m http.server</code>
+      Failed to load — serve over HTTP: <code>python3 -m http.server</code>
     </div>
 
-    <!-- Watchlist Panel (hidden until "Show" pressed) -->
-    <div id="watchlist-panel" class="watchlist-panel hidden">
-      <div class="wl-header">
-        <span class="wl-title">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          Watchlist <span id="wl-count-badge" class="wl-count-badge">0</span>
-        </span>
-        <button id="wl-clear-all" class="wl-clear-btn">Clear all</button>
-      </div>
-      <div id="watchlist-chips" class="watchlist-chips"></div>
-    </div>
-
-    <!-- Table -->
     <div class="table-container">
       <table id="players-table">
         <thead>
           <tr>
             <th data-sort="name" class="sticky-col">Player <span class="sort-icon"></span></th>
-            <th data-sort="saves"      id="col-saves"      class="hidden">Saves <span class="sort-icon"></span></th>
-            <th data-sort="points"                                        >Pts <span class="sort-icon"></span></th>
-            <th data-sort="xG"         id="col-xg"  class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
-            <th data-sort="xA"         id="col-xa"                       >xA <span class="sort-icon"></span></th>
-            <th data-sort="xGI"        id="col-xgi"                      >xGI <span class="sort-icon"></span></th>
-            <th data-sort="xGC"                                          >xGC <span class="sort-icon"></span></th>
-            <th data-sort="creativity" id="col-creativity"               >Creativity <span class="sort-icon"></span></th>
-            <th data-sort="threat"     id="col-threat"                   >Threat <span class="sort-icon"></span></th>
-            <th data-sort="ict"        id="col-ict"                      >ICT <span class="sort-icon"></span></th>
-            <th data-sort="defcon"     id="col-defcon"                   >DefCon <span class="sort-icon"></span></th>
-            <th data-sort="bps"                                          >BPS <span class="sort-icon"></span></th>
-            <th data-sort="bonus"                                        >Bonus <span class="sort-icon"></span></th>
-            <th data-sort="value"      title="Points per £m"             >Pts/£m <span class="sort-icon"></span></th>
+            <th data-sort="saves"       id="col-saves"      class="hidden">Saves <span class="sort-icon"></span></th>
+            <th data-sort="points"                                         >Pts <span class="sort-icon"></span></th>
+            <th data-sort="xG"          id="col-xg" class="active-sort desc">xG <span class="sort-icon">&#9660;</span></th>
+            <th data-sort="xA"          id="col-xa"                        >xA <span class="sort-icon"></span></th>
+            <th data-sort="xGI"         id="col-xgi"                       >xGI <span class="sort-icon"></span></th>
+            <th data-sort="xGC"                                            >xGC <span class="sort-icon"></span></th>
+            <th data-sort="creativity"  id="col-creativity"                >Creativity <span class="sort-icon"></span></th>
+            <th data-sort="threat"      id="col-threat"                    >Threat <span class="sort-icon"></span></th>
+            <th data-sort="ict"         id="col-ict"                       >ICT <span class="sort-icon"></span></th>
+            <th data-sort="defcon"      id="col-defcon"                    >DefCon <span class="sort-icon"></span></th>
+            <th data-sort="bps"                                            >BPS <span class="sort-icon"></span></th>
+            <th data-sort="bonus"                                          >Bonus <span class="sort-icon"></span></th>
+            <th data-sort="value"       title="Points per £m"              >Pts/£m <span class="sort-icon"></span></th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
@@ -132,16 +161,45 @@
       <span id="page-info">Page 1 of 1</span>
       <button id="btn-next" disabled>Next &#8594;</button>
     </div>
-
   </main>
 
-  <!-- ── Compare Drawer (slides in from right) ─────────────────── -->
-  <div id="compare-drawer" class="cmp-drawer" role="complementary" aria-label="Player comparison">
-    <div class="cmp-drawer-header">
-      <span class="cmp-drawer-title">Compare <span id="cmp-drawer-count" class="cmp-count-badge">0</span></span>
-      <button id="btn-clear-compare" class="cmp-clear-all-btn">Clear</button>
+  <!-- ── Watchlist Left Drawer ─────────────────────────────────── -->
+  <div class="wl-backdrop hidden" id="wl-backdrop"></div>
+  <div class="wl-drawer" id="wl-drawer">
+    <div class="wl-drawer-hdr">
+      <div class="wl-drawer-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Watchlist
+        <span class="wl-count-pill" id="wl-drawer-count">0</span>
+      </div>
+      <div class="wl-drawer-actions">
+        <button id="btn-wl-only" class="wl-only-btn">Only ★</button>
+        <button id="btn-wl-clear" class="wl-clr-btn">Clear</button>
+        <button id="btn-wl-close" class="wl-x-btn">&#10005;</button>
+      </div>
     </div>
-    <div id="cmp-drawer-body" class="cmp-drawer-body"></div>
+    <div class="wl-drawer-body" id="wl-drawer-body">
+      <div class="wl-empty" id="wl-empty">No players starred yet.<br>Click ★ on any player row.</div>
+    </div>
+  </div>
+
+  <!-- ── Compare Bottom Bar ────────────────────────────────────── -->
+  <div class="cmp-bar hidden" id="cmp-bar">
+    <span class="cmp-bar-label">Comparing</span>
+    <div class="cmp-bar-players" id="cmp-bar-players"></div>
+    <button class="cmp-bar-open-btn" id="btn-cmp-open">Open &#8594;</button>
+    <button class="cmp-bar-clear-btn" id="btn-cmp-clear">&#10005;</button>
+  </div>
+
+  <!-- ── Compare Modal ─────────────────────────────────────────── -->
+  <div class="cmp-overlay hidden" id="cmp-overlay">
+    <div class="cmp-modal">
+      <div class="cmp-modal-hdr">
+        <span class="cmp-modal-title">Player Comparison</span>
+        <button class="cmp-modal-close" id="btn-cmp-modal-close">&#10005;</button>
+      </div>
+      <div class="cmp-modal-body" id="cmp-modal-body"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
