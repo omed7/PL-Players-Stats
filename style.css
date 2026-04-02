@@ -103,7 +103,7 @@ body {
   pointer-events: none;
 }
 .header-inner {
-  position: relative; max-width: 1400px; margin: 0 auto;
+  position: relative;
   display: flex; align-items: center;
   justify-content: space-between; gap: 16px; flex-wrap: wrap;
 }
@@ -178,7 +178,7 @@ body {
    ══════════════════════════════════════════════════════════════════ */
 .summary-strip {
   font-family: var(--f-m); font-size: 0.68rem; color: var(--text-2);
-  padding: 12px 28px 0; max-width: 1400px; margin: 0 auto;
+  padding: 12px 28px 0;
   display: flex; align-items: center; gap: 16px;
 }
 .s-item { display: flex; align-items: center; gap: 6px; }
@@ -189,7 +189,7 @@ body {
    CONTROLS
    ══════════════════════════════════════════════════════════════════ */
 .controls-shell {
-  max-width: 1400px; margin: 14px auto 0;
+  margin: 14px 0 0;
   padding: 0 28px; display: flex; flex-direction: column; gap: 10px;
 }
 .controls-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -371,7 +371,7 @@ input[type="range"]:not(.dr-input)::-moz-range-thumb {
    MAIN + TABLE
    ══════════════════════════════════════════════════════════════════ */
 .main-content {
-  max-width: 1400px; margin: 16px auto 80px; padding: 0 28px;
+  margin: 16px 0 80px; padding: 0 28px;
 }
 .error {
   background: rgba(255,92,108,0.07); color: var(--red);
@@ -381,32 +381,14 @@ input[type="range"]:not(.dr-input)::-moz-range-thumb {
 .hidden { display: none !important; }
 
 .table-container {
-  /* Counteracts the 28px left/right padding of .main-content exactly */
-  width: calc(100% + 56px); 
-  margin-left: -28px;
-  margin-right: -28px;
-  
-  overflow-x: auto; 
-  -webkit-overflow-scrolling: touch;
-  background: var(--bg-1); 
-  
-  /* Remove side borders and radius for a clean, edge-to-edge native look */
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  border-left: none;
-  border-right: none;
-  border-radius: 0; 
-  
-  scrollbar-width: thin; 
-  scrollbar-color: var(--blight) transparent;
+  width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  background: var(--bg-1); border: 1px solid var(--border); border-radius: 8px;
+  scrollbar-width: thin; scrollbar-color: var(--blight) transparent;
 }
+.table-container::-webkit-scrollbar { height: 5px; }
+.table-container::-webkit-scrollbar-thumb { background: var(--blight); border-radius: 3px; }
 
-table { 
-  width: 100%; 
-  border-collapse: collapse; 
-  border-spacing: 0; 
-  min-width: max-content; 
-}
+table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 700px; }
 
 th {
   font-family: var(--f-d); font-size: 0.75rem; font-weight: 700;
@@ -452,11 +434,6 @@ td.sticky-col {
   background-image: none !important; padding: 6px 10px; height: auto;
 }
 tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
-
-/* Adds breathing room to the final column so text doesn't touch the screen edge */
-th:last-child, td:last-child {
-  padding-right: 28px;
-}
 
 /* ── Player Cell ──────────────────────────────────────────────── */
 .player-cell { display: flex; align-items: flex-start; gap: 7px; padding: 6px 0; }
@@ -828,14 +805,4 @@ th:last-child, td:last-child {
   .wl-drawer { width: 100%; }
   .gw-countdown { display: none; }
   .cmp-overlay { padding: 10px; }
-  
-  /* Recalculate breakout for mobile padding (14px + 14px) */
-  .table-container {
-    width: calc(100% + 28px);
-    margin-left: -14px;
-    margin-right: -14px;
-  }
-  th:last-child, td:last-child {
-    padding-right: 14px;
-  }
 }
