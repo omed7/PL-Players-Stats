@@ -85,7 +85,8 @@ body {
    PAGE HEADER
    ══════════════════════════════════════════════════════════════════ */
 .page-header {
-  position: relative; padding: 22px 28px 0; overflow: hidden;
+  position: relative; padding: 22px 28px 0;
+  /* no overflow:hidden — it clips the theme dropdown panel */
 }
 .page-header::before {
   content: ''; position: absolute; inset: 0;
@@ -513,43 +514,40 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
 .gw-slot + .gw-slot { padding-left: 3px; border-left: 1px solid var(--blight); margin-left: 1px; }
 
 .fix-chip {
-  width: 22px; height: 22px; border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 32px; border-radius: 4px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  padding-top: 3px; gap: 1px;
   overflow: visible; position: relative; flex-shrink: 0;
-  flex-direction: column;
 }
 .fix-chip img {
-  width: 15px; height: 15px; object-fit: contain;
-  display: block; background: rgba(0,0,0,0.35); border-radius: 2px; padding: 1px;
+  width: 13px; height: 13px; object-fit: contain;
+  display: block; background: rgba(0,0,0,0.3); border-radius: 2px; padding: 1px;
+  flex-shrink: 0;
 }
-/* Bright glow-line at bottom */
+/* H / A label below logo */
+.fix-ha {
+  font-family: var(--f-m); font-size: 0.48rem; font-weight: 700;
+  color: rgba(255,255,255,0.92); letter-spacing: 0.02em;
+  line-height: 1; flex-shrink: 0;
+}
+/* Glow-line at very bottom */
 .fix-chip::after {
   content: ''; position: absolute; bottom: 0; left: 2px; right: 2px;
   height: 3px; border-radius: 0 0 3px 3px;
 }
 
-/* Bright solid FDR backgrounds + even brighter underline */
+/* All chips equally bright — no away dimming */
 .fix-chip.diff-1 { background: #00b864; }
-.fix-chip.diff-1::after { background: #00ff96; box-shadow: 0 0 4px #00ff96; }
+.fix-chip.diff-1::after { background: #00ff96; box-shadow: 0 0 5px #00ff96; }
 .fix-chip.diff-2 { background: #2d9645; }
-.fix-chip.diff-2::after { background: #3dcc5c; box-shadow: 0 0 4px #3dcc5c; }
+.fix-chip.diff-2::after { background: #3dcc5c; box-shadow: 0 0 5px #3dcc5c; }
 .fix-chip.diff-3 { background: #c88200; }
-.fix-chip.diff-3::after { background: #ffb800; box-shadow: 0 0 4px #ffb800; }
+.fix-chip.diff-3::after { background: #ffb800; box-shadow: 0 0 5px #ffb800; }
 .fix-chip.diff-4 { background: #c83a10; }
-.fix-chip.diff-4::after { background: #ff5a30; box-shadow: 0 0 4px #ff5a30; }
+.fix-chip.diff-4::after { background: #ff5a30; box-shadow: 0 0 5px #ff5a30; }
 .fix-chip.diff-5 { background: #b80018; }
-.fix-chip.diff-5::after { background: #ff2040; box-shadow: 0 0 5px #ff2040; }
-
-/* Away = slightly dimmer */
-.fix-chip.away { filter: brightness(0.78); }
-
-/* Blank GW chip */
-.gw-slot.bgw .fix-chip {
-  background: rgba(78,102,133,0.18);
-  font-family: var(--f-m); font-size: 0.56rem; font-weight: 600;
-  color: var(--text-2);
-}
-.gw-slot.bgw .fix-chip::after { display: none; }
+.fix-chip.diff-5::after { background: #ff2040; box-shadow: 0 0 6px #ff2040; }
 
 /* ── Pagination ───────────────────────────────────────────────── */
 .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 18px; }
