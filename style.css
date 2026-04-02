@@ -80,6 +80,7 @@ body {
   font-family: var(--f-b);
   background: var(--bg-0); color: var(--text-1);
   width: 100%; min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* ══════════════════════════════════════════════════════════════════
