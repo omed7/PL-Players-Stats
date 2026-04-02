@@ -27,6 +27,11 @@
   --f-b: 'Barlow', sans-serif;
 }
 
+[data-theme="purple"] { --teal: #b388ff; --teal-dim: rgba(179,136,255,0.13); --teal-bar: rgba(179,136,255,0.20); --teal-hover-bar: rgba(179,136,255,0.28); --glow: rgba(179,136,255,0.10); --stripe: rgba(179,136,255,0.025); --pos-mid: #b388ff; }
+[data-theme="blue"] { --teal: #4dd0ff; --teal-dim: rgba(77,208,255,0.13); --teal-bar: rgba(77,208,255,0.20); --teal-hover-bar: rgba(77,208,255,0.28); --glow: rgba(77,208,255,0.10); --stripe: rgba(77,208,255,0.025); --pos-mid: #4dd0ff; }
+[data-theme="gold"] { --teal: #ffc840; --teal-dim: rgba(255,200,64,0.13); --teal-bar: rgba(255,200,64,0.20); --teal-hover-bar: rgba(255,200,64,0.28); --glow: rgba(255,200,64,0.10); --stripe: rgba(255,200,64,0.025); --pos-mid: #ffc840; }
+[data-theme="crimson"] { --teal: #ff4d6b; --teal-dim: rgba(255,77,107,0.13); --teal-bar: rgba(255,77,107,0.20); --teal-hover-bar: rgba(255,77,107,0.28); --glow: rgba(255,77,107,0.10); --stripe: rgba(255,77,107,0.025); --pos-mid: #ff4d6b; }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--f-b); background: var(--bg-0); color: var(--text-1); min-height: 100vh; overflow-x: hidden; }
 
@@ -44,6 +49,15 @@ body { font-family: var(--f-b); background: var(--bg-0); color: var(--text-1); m
 .hdr-btn { position: relative; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--bg-1); border: 1px solid var(--blight); border-radius: 7px; cursor: pointer; color: var(--text-2); transition: border-color 0.13s, color 0.13s; }
 .hdr-btn:hover { border-color: var(--teal); color: var(--teal); }
 .hdr-btn-badge { position: absolute; top: -5px; right: -5px; background: var(--amber); color: #000; font-family: var(--f-m); font-size: 0.58rem; font-weight: 700; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 3px; }
+
+.theme-wrap { position: relative; }
+.theme-panel { position: absolute; top: calc(100% + 8px); right: 0; background: var(--bg-1); border: 1px solid var(--blight); border-radius: 8px; padding: 12px 14px; z-index: 400; min-width: 130px; animation: fadeIn 0.15s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+.theme-panel-title { font-family: var(--f-d); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-2); margin-bottom: 10px; }
+.theme-swatches { display: flex; gap: 8px; }
+.theme-swatch { width: 24px; height: 24px; border-radius: 50%; background: var(--sw, #888); border: 2px solid transparent; cursor: pointer; transition: transform 0.13s, border-color 0.13s; }
+.theme-swatch:hover { transform: scale(1.15); }
+.theme-swatch.active { border-color: var(--text-1); }
 
 .summary-strip { font-family: var(--f-m); font-size: 0.68rem; color: var(--text-2); padding: 12px 28px 0; max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 16px; }
 .s-item { display: flex; align-items: center; gap: 6px; }
@@ -119,11 +133,11 @@ td.sticky-col { z-index: 10; background-color: var(--bg-1) !important; backgroun
 tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
 
 /* ── PLAYER CELL ── */
-.player-cell { position: relative; display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.player-cell { position: relative; display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; }
 .own-badge-corner { position: absolute; top: -2px; left: -2px; font-family: var(--f-m); font-size: 0.55rem; font-weight: 700; color: #b388ff; background: rgba(179,136,255,0.1); padding: 2px 4px; border-radius: 3px; }
 .mins-corner { position: absolute; bottom: -2px; right: 0; font-family: var(--f-m); font-size: 0.55rem; color: var(--text-2); opacity: 0.7; }
 
-.team-logo-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; gap: 2px; }
+.team-logo-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; gap: 2px; margin-top: 4px; }
 .team-logo { width: 24px; height: 24px; object-fit: contain; background: #0d1117; border-radius: 3px; padding: 1px; }
 .player-price { font-family: var(--f-m); font-size: 0.55rem; font-weight: 600; color: var(--amber); }
 
@@ -144,6 +158,22 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
 .inj-25 { background: rgba(211,68,1,0.22);    color: #f08050; }
 .inj-50 { background: rgba(254,171,27,0.22);  color: #f5c842; }
 .inj-75 { background: rgba(251,231,114,0.18); color: #d4be30; }
+
+/* ── FIXTURE CHIPS ── */
+.fixture-chips { display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; margin-top: 2px; }
+.gw-slot { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.gw-slot + .gw-slot { padding-left: 3px; border-left: 1px solid var(--blight); margin-left: 1px; }
+
+.fix-chip { width: 22px; height: 32px; border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 3px; gap: 1px; position: relative; flex-shrink: 0; }
+.fix-chip img { width: 13px; height: 13px; object-fit: contain; display: block; background: rgba(0,0,0,0.3); border-radius: 2px; padding: 1px; flex-shrink: 0; }
+.fix-ha { font-family: var(--f-m); font-size: 0.48rem; font-weight: 700; color: rgba(255,255,255,0.92); line-height: 1; flex-shrink: 0; }
+.fix-chip::after { content: ''; position: absolute; bottom: 0; left: 2px; right: 2px; height: 3px; border-radius: 0 0 3px 3px; }
+
+.fix-chip.diff-1 { background: #00b864; } .fix-chip.diff-1::after { background: #00ff96; box-shadow: 0 0 5px #00ff96; }
+.fix-chip.diff-2 { background: #2d9645; } .fix-chip.diff-2::after { background: #3dcc5c; box-shadow: 0 0 5px #3dcc5c; }
+.fix-chip.diff-3 { background: #c88200; } .fix-chip.diff-3::after { background: #ffb800; box-shadow: 0 0 5px #ffb800; }
+.fix-chip.diff-4 { background: #c83a10; } .fix-chip.diff-4::after { background: #ff5a30; box-shadow: 0 0 5px #ff5a30; }
+.fix-chip.diff-5 { background: #b80018; } .fix-chip.diff-5::after { background: #ff2040; box-shadow: 0 0 6px #ff2040; }
 
 .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 18px; }
 .pagination button { font-family: var(--f-d); font-size: 0.82rem; font-weight: 700; padding: 7px 20px; background: var(--bg-1); color: var(--text-2); border: 1px solid var(--border); border-radius: 5px; cursor: pointer; }
