@@ -198,11 +198,18 @@ function buildFixtureChipsHTML(player) {
   const byGW = {};
   fixtures.forEach(f => { (byGW[f.gw] = byGW[f.gw] || []).push(f); });
 
-  // Collect up to 5 unique GWs that have at least one PL fixture
-  const gws = Object.keys(byGW)
-    .map(Number)
-    .sort((a, b) => a - b)
-    .slice(0, 5);
+  // Use global nextGWs (5 consecutive PL GWs) for slot ordering
+// so blank GWs and DGWs are correctly represented
+const gws = state.nextGWs.length
+  ? state.nextGWs.slice(0, 5)
+  : Object.keys(byGW).map(Number).sort((a,b) => a-b)
+      .reduce((acc, gw) => {
+        if (acc.length === 0) { acc.push(gw); return acc; }
+        const last = acc[acc.length - 1];
+        for (let g = last + 1; g <= gw; g++) acc.push(g);
+        return acc;
+      }, []).slice(0, 5);
+
 
   if (!gws.length) return '';
 
