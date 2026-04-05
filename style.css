@@ -874,4 +874,32 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
     padding-left: 10px;
     padding-right: 10px;
   }
+
+  /* --- NEW VERTICAL WRAPPING RULES --- */
+  
+  /* Allow the name row to expand vertically */
+  .player-name-row {
+    align-items: flex-start;
+    overflow: visible;
+  }
+  
+  /* Remove the truncation and allow the text to wrap to the next line */
+  .player-name-text {
+    white-space: normal;
+    word-break: break-word; 
+    line-height: 1.1;
+    margin-top: 1px; /* keeps the text aligned with the badges */
+  }
+
+  /* Allow the ownership, mins, and injury badges to stack vertically if tight */
+  .player-meta-row {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  /* Allow fixture chips to wrap to a second line if necessary */
+  .fixture-chips {
+    flex-wrap: wrap;
+    row-gap: 3px;
+  }
 }
