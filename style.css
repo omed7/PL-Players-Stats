@@ -862,44 +862,62 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
   .gw-countdown { display: none; }
   .cmp-overlay { padding: 10px; }
 
-  /* Tighter cell padding to fit more columns on screen */
+  /* Tighter cell padding */
   td, th {
     padding: 0 8px; 
   }
   
-  /* Perfectly sized sticky column to leave room for ~5 stat columns */
+  /* Adjusted sticky column width */
   td.sticky-col, th.sticky-col {
-    min-width: 160px !important;
-    max-width: 160px !important;
+    min-width: 170px !important;
+    max-width: 170px !important;
     padding-left: 10px;
-    padding-right: 10px;
+    padding-right: 8px;
   }
 
-  /* --- NEW VERTICAL WRAPPING RULES --- */
-  
-  /* Allow the name row to expand vertically */
+  /* 1. Let the name wrap naturally */
   .player-name-row {
     align-items: flex-start;
-    overflow: visible;
   }
-  
-  /* Remove the truncation and allow the text to wrap to the next line */
   .player-name-text {
     white-space: normal;
     word-break: break-word; 
     line-height: 1.1;
-    margin-top: 1px; /* keeps the text aligned with the badges */
+    margin-top: 1px;
   }
 
-  /* Allow the ownership, mins, and injury badges to stack vertically if tight */
+  /* 2. Lock badges to a single line and shrink them */
   .player-meta-row {
-    flex-wrap: wrap;
-    row-gap: 4px;
+    flex-wrap: nowrap; /* Prevent stacking */
+    gap: 3px;
+  }
+  .own-badge, .mins-badge, .inj-badge {
+    font-size: 0.52rem;
+    padding: 0 3px;
   }
 
-  /* Allow fixture chips to wrap to a second line if necessary */
+  /* 3. Lock fixture chips to a single line and scale them down */
   .fixture-chips {
-    flex-wrap: wrap;
-    row-gap: 3px;
+    flex-wrap: nowrap; /* Prevent stacking */
+    gap: 2px;
+  }
+  .gw-slot {
+    gap: 1px;
+  }
+  .gw-slot + .gw-slot {
+    padding-left: 2px; 
+    margin-left: 1px;
+  }
+  .fix-chip {
+    width: 19px; 
+    height: 28px;
+    padding-top: 2px;
+  }
+  .fix-chip img {
+    width: 12px; 
+    height: 12px;
+  }
+  .fix-ha {
+    font-size: 0.44rem;
   }
 }
