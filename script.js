@@ -123,37 +123,41 @@ function renderFreshness(fetchedAt) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function buildFixtureChipsHTML(player) {
-  const fixtures = player.fixtures || [];
-  if (!fixtures.length) return "";
+  const gws = state.nextGWs || [];
+  if (!gws.length) return "";
 
-  // Group by GW to detect DGWs — only use what the FPL API actually returned.
-  // Never infer blanks from nextGWs: nextGWs is just a number range and the
-  // API often doesn't yet have a GW assigned even when the match is real.
+  const fixtures = player.fixtures || [];
   const byGW = {};
   fixtures.forEach((f) => {
     (byGW[f.gw] = byGW[f.gw] || []).push(f);
   });
 
-  const gws = Object.keys(byGW)
-    .map(Number)
-    .sort((a, b) => a - b)
-    .slice(0, 5);
-  if (!gws.length) return "";
-
   let html = '<div class="fixture-chips">';
   gws.forEach((gw) => {
-    const fixes = byGW[gw];
+    const fixes = byGW[gw] || [];
     html += '<div class="gw-slot">';
-    if (fixes.length >= 2) {
-      html += `<span class="dgw-badge" title="GW${gw}: Double Gameweek">DGW</span>`;
-    }
-    fixes.forEach((f) => {
-      const ha = f.is_home ? "H" : "A";
-      html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
-        <img src="${f.opponent_logo}" alt="${f.opponent}">
-        <span class="fix-ha">${ha}</span>
+
+    if (fixes.length === 0) {
+      html += `<div class="fix-chip bgw-chip" title="BGW">
+        <span class="bgw-text">BGW</span>
       </div>`;
-    });
+    } else {
+      if (fixes.length >= 2) {
+        html += `<span class="dgw-badge" title="GW${gw}: Double Gameweek">DGW</span>`;
+      }
+
+      html += `<div class="fix-chip-group">`;
+      fixes.forEach((f) => {
+        const ha = f.is_home ? "H" : "A";
+        const dgwClass = fixes.length >= 2 ? " fix-chip-dgw" : "";
+        html += `<div class="fix-chip diff-${f.difficulty}${dgwClass}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
+          <img src="${f.opponent_logo}" alt="${f.opponent}">
+          <span class="fix-ha">${ha}</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
     html += "</div>";
   });
   html += "</div>";
