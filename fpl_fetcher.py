@@ -192,7 +192,6 @@ def get_fpl_data():
             }
             record.update(season_fields)
             players_data.append(record)
-            time.sleep(0.05)
         except Exception as e:
             print(f"Failed to fetch {fpl_name}: {e}")
             continue
