@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-04-07T05:02:50Z",
+  "fetched_at": "2026-04-07T21:02:28Z",
   "next_gws": [
     31,
     32,
@@ -725,7 +725,7 @@
       "position": "DEF",
       "price": 6.3,
       "status_pct": 75,
-      "ownership": "26.6",
+      "ownership": "26.5",
       "cost_change_event": 0.0,
       "cost_change_start": 0.8,
       "last_5_minutes": 363,
@@ -6035,7 +6035,7 @@
       "position": "MID",
       "price": 7.4,
       "status_pct": 100,
-      "ownership": "24.2",
+      "ownership": "24.1",
       "cost_change_event": -0.1,
       "cost_change_start": 0.4,
       "last_5_minutes": 436,
@@ -9511,6 +9511,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -9688,6 +9695,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -9736,7 +9750,7 @@
       "position": "DEF",
       "price": 3.9,
       "status_pct": 100,
-      "ownership": "7.7",
+      "ownership": "7.6",
       "cost_change_event": 0.0,
       "cost_change_start": -0.1,
       "last_5_minutes": 433,
@@ -9863,6 +9877,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -10042,6 +10063,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -10217,6 +10245,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -10396,6 +10431,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -10571,6 +10613,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -10750,6 +10799,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -10925,6 +10981,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -11104,6 +11167,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -11279,6 +11349,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -11458,6 +11535,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -11633,6 +11717,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -11812,6 +11903,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -11987,6 +12085,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -12166,6 +12271,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -12341,6 +12453,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -12520,6 +12639,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -12695,6 +12821,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -12874,6 +13007,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -13051,6 +13191,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -13099,7 +13246,7 @@
       "position": "GK",
       "price": 4.0,
       "status_pct": 100,
-      "ownership": "31.7",
+      "ownership": "31.6",
       "cost_change_event": 0.0,
       "cost_change_start": 0.0,
       "last_5_minutes": 450,
@@ -13226,6 +13373,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -13405,6 +13559,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -13580,6 +13741,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -13759,6 +13927,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "LEE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
@@ -13934,6 +14109,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "MCI",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t43.png",
+          "difficulty": 4,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -14113,6 +14295,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -14161,7 +14350,7 @@
       "position": "DEF",
       "price": 5.1,
       "status_pct": 100,
-      "ownership": "20.0",
+      "ownership": "20.1",
       "cost_change_event": 0.0,
       "cost_change_start": 0.6,
       "last_5_minutes": 450,
@@ -14288,6 +14477,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -14467,6 +14663,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -14642,6 +14845,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -14821,6 +15031,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -14996,6 +15213,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -15175,6 +15399,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -15223,7 +15454,7 @@
       "position": "MID",
       "price": 5.4,
       "status_pct": 100,
-      "ownership": "2.3",
+      "ownership": "2.4",
       "cost_change_event": 0.0,
       "cost_change_start": -0.1,
       "last_5_minutes": 360,
@@ -15350,6 +15581,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -15529,6 +15767,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -15704,6 +15949,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -15883,6 +16135,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -16058,6 +16317,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -16237,6 +16503,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -16412,6 +16685,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -16591,6 +16871,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -16766,6 +17053,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -16945,6 +17239,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -17120,6 +17421,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -17299,6 +17607,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -17474,6 +17789,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -17653,6 +17975,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -17828,6 +18157,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -18007,6 +18343,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -18176,6 +18519,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "CRY",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t31.png",
@@ -18335,6 +18685,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
           "difficulty": 3,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "LEE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t2.png",
+          "difficulty": 2,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -22456,7 +22813,7 @@
       "position": "FWD",
       "price": 7.3,
       "status_pct": 100,
-      "ownership": "36.6",
+      "ownership": "36.5",
       "cost_change_event": 0.0,
       "cost_change_start": 1.3,
       "last_5_minutes": 450,
@@ -22633,7 +22990,7 @@
       "position": "GK",
       "price": 4.5,
       "status_pct": 100,
-      "ownership": "5.8",
+      "ownership": "5.9",
       "cost_change_event": 0.0,
       "cost_change_start": 0.0,
       "last_5_minutes": 450,
@@ -22760,6 +23117,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -22939,6 +23303,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -23114,6 +23485,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -23293,6 +23671,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -23468,6 +23853,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -23647,6 +24039,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -23824,6 +24223,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -23872,7 +24278,7 @@
       "position": "DEF",
       "price": 4.5,
       "status_pct": 100,
-      "ownership": "5.5",
+      "ownership": "5.6",
       "cost_change_event": 0.1,
       "cost_change_start": 0.0,
       "last_5_minutes": 450,
@@ -23999,6 +24405,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -24178,6 +24591,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -24353,6 +24773,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -24532,6 +24959,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -24707,6 +25141,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -24886,6 +25327,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -25061,6 +25509,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -25240,6 +25695,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -25415,6 +25877,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -25594,6 +26063,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -25769,6 +26245,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -25948,6 +26431,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -26123,6 +26613,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -26302,6 +26799,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -26477,6 +26981,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -26656,6 +27167,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -26831,6 +27349,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -27010,6 +27535,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -27185,6 +27717,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -27364,6 +27903,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -27412,7 +27958,7 @@
       "position": "MID",
       "price": 5.5,
       "status_pct": 100,
-      "ownership": "0.2",
+      "ownership": "0.3",
       "cost_change_event": 0.0,
       "cost_change_start": 0.0,
       "last_5_minutes": 450,
@@ -27539,6 +28085,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t6.png",
           "difficulty": 2,
           "is_home": false
+        },
+        {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
         },
         {
           "gw": 35,
@@ -27718,6 +28271,13 @@
           "is_home": false
         },
         {
+          "gw": 33,
+          "opponent": "CHE",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t8.png",
+          "difficulty": 3,
+          "is_home": true
+        },
+        {
           "gw": 35,
           "opponent": "NEW",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t4.png",
@@ -27893,6 +28453,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -28072,6 +28639,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -28247,6 +28821,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -28426,6 +29007,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -28474,7 +29062,7 @@
       "position": "DEF",
       "price": 5.4,
       "status_pct": 0,
-      "ownership": "13.2",
+      "ownership": "13.1",
       "cost_change_event": -0.1,
       "cost_change_start": 0.4,
       "last_5_minutes": 360,
@@ -28601,6 +29189,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -28780,6 +29375,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -28955,6 +29557,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -29134,6 +29743,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -29309,6 +29925,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -29488,6 +30111,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -29665,6 +30295,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -29713,7 +30350,7 @@
       "position": "MID",
       "price": 10.6,
       "status_pct": 100,
-      "ownership": "16.3",
+      "ownership": "16.4",
       "cost_change_event": 0.0,
       "cost_change_start": 0.1,
       "last_5_minutes": 423,
@@ -29840,6 +30477,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -30019,6 +30663,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -30067,7 +30718,7 @@
       "position": "MID",
       "price": 6.5,
       "status_pct": 0,
-      "ownership": "14.3",
+      "ownership": "14.2",
       "cost_change_event": -0.1,
       "cost_change_start": 0.0,
       "last_5_minutes": 433,
@@ -30194,6 +30845,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -30373,6 +31031,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -30548,6 +31213,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -30727,6 +31399,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -30902,6 +31581,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -31081,6 +31767,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -31256,6 +31949,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -31435,6 +32135,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -31610,6 +32317,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -31789,6 +32503,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "NFO",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t17.png",
@@ -31964,6 +32685,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t1.png",
           "difficulty": 3,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BHA",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t36.png",
+          "difficulty": 4,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -39802,7 +40530,7 @@
       "position": "FWD",
       "price": 5.7,
       "status_pct": 100,
-      "ownership": "0.9",
+      "ownership": "0.8",
       "cost_change_event": 0.0,
       "cost_change_start": -0.3,
       "last_5_minutes": 143,
@@ -41041,7 +41769,7 @@
       "position": "DEF",
       "price": 4.6,
       "status_pct": 100,
-      "ownership": "6.6",
+      "ownership": "6.5",
       "cost_change_event": 0.0,
       "cost_change_start": 0.1,
       "last_5_minutes": 270,
@@ -42634,7 +43362,7 @@
       "position": "MID",
       "price": 6.1,
       "status_pct": 100,
-      "ownership": "24.9",
+      "ownership": "24.8",
       "cost_change_event": 0.1,
       "cost_change_start": 0.6,
       "last_5_minutes": 337,
@@ -44887,6 +45615,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -45062,6 +45797,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -45241,6 +45983,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -45416,6 +46165,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -45595,6 +46351,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -45770,6 +46533,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -45949,6 +46719,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -46124,6 +46901,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -46303,6 +47087,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -46478,6 +47269,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -46657,6 +47455,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -46832,6 +47637,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -47011,6 +47823,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -47186,6 +48005,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -47365,6 +48191,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -47540,6 +48373,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -47719,6 +48559,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -47894,6 +48741,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -48073,6 +48927,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -48248,6 +49109,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -48427,6 +49295,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -48475,7 +49350,7 @@
       "position": "FWD",
       "price": 5.6,
       "status_pct": 100,
-      "ownership": "7.9",
+      "ownership": "8.0",
       "cost_change_event": 0.0,
       "cost_change_start": 0.1,
       "last_5_minutes": 450,
@@ -48602,6 +49477,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -48781,6 +49663,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "BUR",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
@@ -48956,6 +49845,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t39.png",
           "difficulty": 2,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BOU",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t91.png",
+          "difficulty": 3,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -50068,7 +50964,7 @@
       "position": "DEF",
       "price": 5.5,
       "status_pct": 100,
-      "ownership": "4.4",
+      "ownership": "4.3",
       "cost_change_event": 0.0,
       "cost_change_start": 0.0,
       "last_5_minutes": 334,
@@ -52546,7 +53442,7 @@
       "position": "FWD",
       "price": 9.3,
       "status_pct": 100,
-      "ownership": "35.1",
+      "ownership": "35.0",
       "cost_change_event": 0.1,
       "cost_change_start": 0.8,
       "last_5_minutes": 288,
@@ -52900,7 +53796,7 @@
       "position": "MID",
       "price": 8.2,
       "status_pct": 100,
-      "ownership": "53.9",
+      "ownership": "54.0",
       "cost_change_event": 0.0,
       "cost_change_start": 1.2,
       "last_5_minutes": 430,
@@ -53027,6 +53923,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -53206,6 +54109,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -53381,6 +54291,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -53560,6 +54477,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -53735,6 +54659,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -53914,6 +54845,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -54089,6 +55027,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -54268,6 +55213,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -54443,6 +55395,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -54622,6 +55581,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -54799,6 +55765,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -54847,7 +55820,7 @@
       "position": "DEF",
       "price": 5.0,
       "status_pct": 100,
-      "ownership": "9.5",
+      "ownership": "9.6",
       "cost_change_event": -0.1,
       "cost_change_start": 0.0,
       "last_5_minutes": 339,
@@ -54974,6 +55947,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -55153,6 +56133,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -55328,6 +56315,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -55507,6 +56501,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -55682,6 +56683,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -55861,6 +56869,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -56036,6 +57051,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -56215,6 +57237,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -56390,6 +57419,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -56569,6 +57605,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -56746,6 +57789,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -56794,7 +57844,7 @@
       "position": "FWD",
       "price": 14.4,
       "status_pct": 100,
-      "ownership": "55.2",
+      "ownership": "55.3",
       "cost_change_event": -0.1,
       "cost_change_start": 0.4,
       "last_5_minutes": 315,
@@ -56921,6 +57971,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -57100,6 +58157,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -57277,6 +58341,13 @@
           "is_home": true
         },
         {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
+        },
+        {
           "gw": 35,
           "opponent": "EVE",
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t11.png",
@@ -57452,6 +58523,13 @@
           "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t3.png",
           "difficulty": 4,
           "is_home": true
+        },
+        {
+          "gw": 33,
+          "opponent": "BUR",
+          "opponent_logo": "https://resources.premierleague.com/premierleague/badges/t90.png",
+          "difficulty": 2,
+          "is_home": false
         },
         {
           "gw": 35,
@@ -66352,7 +67430,7 @@
       "position": "DEF",
       "price": 5.1,
       "status_pct": 100,
-      "ownership": "8.1",
+      "ownership": "8.0",
       "cost_change_event": 0.0,
       "cost_change_start": 0.1,
       "last_5_minutes": 396,
