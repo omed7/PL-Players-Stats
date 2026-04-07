@@ -553,9 +553,17 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
 
 /* ── Fixture Chips ────────────────────────────────────────────── */
 .fixture-chips {
-  display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; margin-top: 3px;
+  display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; margin-top: 4px;
+  overflow-x: auto; overflow-y: visible;
+  /* hide scrollbar visually but keep it functional */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* ensure chips never shrink below their natural width */
+  width: 100%;
+  padding-bottom: 1px; /* room for ::after glow */
 }
-.gw-slot { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.fixture-chips::-webkit-scrollbar { display: none; }
+.gw-slot { display: flex; align-items: center; gap: 2px; flex-shrink: 0; min-width: 0; }
 .gw-slot + .gw-slot { padding-left: 3px; border-left: 1px solid var(--blight); margin-left: 1px; }
 
 .fix-chip {
@@ -896,10 +904,12 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
     padding: 0 3px;
   }
 
-  /* 3. Lock fixture chips to a single line and scale them down */
+  /* 3. Lock fixture chips to a single scrollable line */
   .fixture-chips {
-    flex-wrap: nowrap; /* Prevent stacking */
+    flex-wrap: nowrap;
     gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
   .gw-slot {
     gap: 1px;
@@ -946,16 +956,7 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
   color: var(--text-2);
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   SPARKLINE
-   ══════════════════════════════════════════════════════════════════ */
-.sparkline-wrap {
-  margin-top: 4px;
-  opacity: 0.7;
-  transition: opacity 0.15s;
-}
-.sparkline-wrap:hover { opacity: 1; }
-.sparkline { display: block; overflow: visible; }
+/* sparkline removed */
 
 /* ══════════════════════════════════════════════════════════════════
    DATA FRESHNESS
@@ -974,13 +975,7 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
   padding: 1px 4px; margin-bottom: 2px;
   letter-spacing: 0.04em;
 }
-.bgw-chip {
-  background: rgba(78,102,133,0.15); color: var(--text-2);
-  border: 1px dashed var(--text-2); border-radius: 4px;
-  font-family: var(--f-m); font-size: 0.55rem; font-weight: 600;
-  padding: 2px 5px; opacity: 0.7;
-  cursor: default;
-}
+
 
 /* ══════════════════════════════════════════════════════════════════
    FEATURE 5 — PRICE CHANGE INDICATOR

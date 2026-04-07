@@ -92,71 +92,39 @@ function renderFreshness(fetchedAt) {
   el.title       = new Date(fetchedAt).toUTCString();
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// ─── SPARKLINE ────────────────────────────────────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function buildSparklineSVG(gwHistory) {
-  if (!gwHistory || gwHistory.length < 2) return '';
-  const vals = gwHistory.map(g => g.pts);
-  const W = 72, H = 22, pad = 2;
-  const maxV = Math.max(...vals, 1);
-  const minV = Math.min(...vals, 0);
-  const range = maxV - minV || 1;
-  const n = vals.length;
-  const pts = vals.map((v, i) => {
-    const x = pad + (i / (n - 1)) * (W - pad * 2);
-    const y = H - pad - ((v - minV) / range) * (H - pad * 2);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(' ');
-  const stroke = vals[vals.length - 1] >= vals[0] ? '#00d9a3' : '#ffb84d';
-  const lastPt = pts.split(' ').pop();
-  const [lx, ly] = lastPt.split(',');
-  return `<svg class="sparkline" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
-    <polyline points="${pts}" fill="none" stroke="${stroke}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${lx}" cy="${ly}" r="2" fill="${stroke}"/>
-  </svg>`;
-}
+// ── Sparkline removed (too much vertical space in player cell) ──
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// ─── FIXTURES — Feature 4: DGW/BGW callout ────────────────────────────────────
+// ─── FIXTURES ─────────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function buildFixtureChipsHTML(player) {
   const fixtures = player.fixtures || [];
-  // Use state.nextGWs to know the expected GW schedule — enables BGW detection
-  const nextGWs  = (state.nextGWs || []).slice(0, 5);
+  if (!fixtures.length) return '';
 
+  // Group by GW to detect DGWs — only use what the FPL API actually returned.
+  // Never infer blanks from nextGWs: nextGWs is just a number range and the
+  // API often doesn't yet have a GW assigned even when the match is real.
   const byGW = {};
   fixtures.forEach(f => { (byGW[f.gw] = byGW[f.gw] || []).push(f); });
 
-  // If nextGWs available, use them as the authoritative GW list so we can
-  // show BGW chips. Otherwise fall back to whatever GWs the player has.
-  const gws = nextGWs.length > 0
-    ? nextGWs
-    : Object.keys(byGW).map(Number).sort((a, b) => a - b).slice(0, 5);
-
+  const gws = Object.keys(byGW).map(Number).sort((a, b) => a - b).slice(0, 5);
   if (!gws.length) return '';
 
   let html = '<div class="fixture-chips">';
   gws.forEach(gw => {
     const fixes = byGW[gw];
     html += '<div class="gw-slot">';
-    if (!fixes || fixes.length === 0) {
-      // Blank gameweek for this player
-      html += `<div class="fix-chip bgw-chip" title="GW${gw}: Blank Gameweek">BGW</div>`;
-    } else {
-      if (fixes.length >= 2) {
-        html += `<span class="dgw-badge" title="GW${gw}: Double Gameweek">DGW</span>`;
-      }
-      fixes.forEach(f => {
-        const ha = f.is_home ? 'H' : 'A';
-        html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
-          <img src="${f.opponent_logo}" alt="${f.opponent}">
-          <span class="fix-ha">${ha}</span>
-        </div>`;
-      });
+    if (fixes.length >= 2) {
+      html += `<span class="dgw-badge" title="GW${gw}: Double Gameweek">DGW</span>`;
     }
+    fixes.forEach(f => {
+      const ha = f.is_home ? 'H' : 'A';
+      html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
+        <img src="${f.opponent_logo}" alt="${f.opponent}">
+        <span class="fix-ha">${ha}</span>
+      </div>`;
+    });
     html += '</div>';
   });
   html += '</div>';
@@ -826,7 +794,6 @@ function renderTable(pfxArg) {
     const cmpIdx   = state.compareSet.indexOf(p.name);
     const cmpFull  = state.compareSet.length >= 3 && cmpIdx === -1;
     const fixChips = buildFixtureChipsHTML(p);
-    const sparkline = buildSparklineSVG(p.gw_history);
 
     const tr = document.createElement('tr');
     tr.style.setProperty('--ri', i);
@@ -856,7 +823,6 @@ function renderTable(pfxArg) {
             ${injHtml}
           </div>
           ${fixChips}
-          ${sparkline ? `<div class="sparkline-wrap" title="Points last ${p.gw_history?.length||0} GWs">${sparkline}</div>` : ''}
         </div>
       </div>`;
 
@@ -866,7 +832,7 @@ function renderTable(pfxArg) {
 
     // Feature 6: row click → player modal (ignore clicks on buttons/chips)
     tr.addEventListener('click', e => {
-      if (e.target.closest('.star-btn, .cmp-add-btn, .fix-chip, .dgw-badge, .bgw-chip')) return;
+      if (e.target.closest('.star-btn, .cmp-add-btn, .fix-chip, .dgw-badge')) return;
       openPlayerModal(p);
     });
 
