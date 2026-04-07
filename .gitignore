@@ -1,3 +1,4 @@
 git rm --cached server.log server.pid
 git rm -r --cached __pycache__/
 git commit -m "Remove tracked artifacts"
+node_modules/
