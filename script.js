@@ -142,10 +142,6 @@ function buildFixtureChipsHTML(player) {
         <span class="bgw-text">BGW</span>
       </div>`;
     } else {
-      if (fixes.length >= 2) {
-        html += `<span class="dgw-badge" title="GW${gw}: Double Gameweek">DGW</span>`;
-      }
-
       html += `<div class="fix-chip-group">`;
       fixes.forEach((f) => {
         const ha = f.is_home ? "H" : "A";
@@ -1020,7 +1016,7 @@ function renderTable(pfxArg) {
 
     // Feature 6: row click → player modal (ignore clicks on buttons/chips)
     tr.addEventListener("click", (e) => {
-      if (e.target.closest(".star-btn, .cmp-add-btn, .fix-chip, .dgw-badge"))
+      if (e.target.closest(".star-btn, .cmp-add-btn, .fix-chip"))
         return;
       openPlayerModal(p);
     });

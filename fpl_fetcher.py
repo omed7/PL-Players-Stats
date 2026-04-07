@@ -59,7 +59,11 @@ def get_fpl_data():
         (e['id'] for e in response['events'] if e['is_current']),
         next((e['id'] for e in response['events'] if e['is_next']), 1)
     )
-    next_gws = list(range(current_gw, current_gw + 5))
+    next_gw_start = next(
+        (e['id'] for e in response['events'] if e['is_next']),
+        current_gw + 1
+    )
+    next_gws = list(range(next_gw_start, next_gw_start + 5))
 
     target_event = (
         next((e for e in response['events'] if e['is_next']), None) or
