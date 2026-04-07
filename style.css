@@ -563,7 +563,14 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
   padding-bottom: 1px; /* room for ::after glow */
 }
 .fixture-chips::-webkit-scrollbar { display: none; }
-.gw-slot { display: flex; align-items: center; gap: 2px; flex-shrink: 0; min-width: 0; }
+.gw-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  min-width: 0;
+}
 .gw-slot + .gw-slot { padding-left: 3px; border-left: 1px solid var(--blight); margin-left: 1px; }
 
 .fix-chip {
@@ -601,6 +608,51 @@ tbody tr:hover td.sticky-col { background-color: var(--bg-hover) !important; }
 .fix-chip.diff-4::after { background: #ff5a30; box-shadow: 0 0 5px #ff5a30; }
 .fix-chip.diff-5 { background: #b80018; }
 .fix-chip.diff-5::after { background: #ff2040; box-shadow: 0 0 6px #ff2040; }
+
+/* Blank Gameweek Chip */
+.bgw-chip {
+  background: var(--bg-hover);
+  border: 1px dashed var(--blight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.bgw-chip::after {
+  display: none; /* No glow line for BGW */
+}
+.bgw-text {
+  font-family: var(--f-m);
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--text-2);
+  letter-spacing: 0.02em;
+}
+
+/* Double Gameweek Groups */
+.fix-chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fix-chip-dgw {
+  height: 15px; /* Shorter chip for DGW */
+  padding-top: 1px;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2px;
+}
+.fix-chip-dgw img {
+  width: 10px;
+  height: 10px;
+}
+.fix-chip-dgw .fix-ha {
+  font-size: 0.4rem;
+}
+.fix-chip-dgw::after {
+  bottom: 0;
+  height: 2px;
+}
 
 /* ── Pagination ───────────────────────────────────────────────── */
 .pagination { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 18px; }
