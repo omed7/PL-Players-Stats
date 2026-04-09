@@ -4,12 +4,13 @@ on:
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - 'fpl_fetcher.py'
 
 jobs:
   update-data:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout repository
