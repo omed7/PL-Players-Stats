@@ -223,8 +223,9 @@ function renderWatchlistDrawer() {
   emptyEl?.classList.add("hidden");
   const pfx = pfxFor();
   const frag = document.createDocumentFragment();
+  const playerMap = new Map(state.players.map((p) => [p.name, p]));
   [...state.watchlist].forEach((name) => {
-    const p = state.players.find((pl) => pl.name === name);
+    const p = playerMap.get(name);
     if (!p) return;
     const pts = p[`${pfx}points`] ?? 0;
     const xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2);
@@ -1016,8 +1017,7 @@ function renderTable(pfxArg) {
 
     // Feature 6: row click → player modal (ignore clicks on buttons/chips)
     tr.addEventListener("click", (e) => {
-      if (e.target.closest(".star-btn, .cmp-add-btn, .fix-chip"))
-        return;
+      if (e.target.closest(".star-btn, .cmp-add-btn, .fix-chip")) return;
       openPlayerModal(p);
     });
 
