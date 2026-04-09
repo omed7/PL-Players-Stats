@@ -152,8 +152,6 @@ def get_fpl_data():
             for f in upcoming:
                 gw = f['event']
                 if gw not in seen_gws:
-                    if len(seen_gws) >= 5:
-                        break
                     seen_gws.append(gw)
                 is_home  = f.get('is_home', True)
                 opp_id   = f['team_a'] if is_home else f['team_h']

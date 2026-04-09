@@ -57,7 +57,7 @@ function applyTheme(t) {
     .forEach((s) => s.classList.toggle("active", s.dataset.theme === t));
 }
 function loadTheme() {
-  applyTheme(localStorage.getItem(THEME_KEY) || "terminal");
+  applyTheme(localStorage.getItem(THEME_KEY) || "green");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -158,7 +158,14 @@ function renderFDRHeatmap() {
   Object.values(teamFixtures).forEach((fixtures) => {
     fixtures.forEach((f) => allGWs.add(f.gw));
   });
-  const gws = Array.from(allGWs).sort((a, b) => a - b);
+
+  let gws = [];
+  if (allGWs.size > 0) {
+    const minGw = Math.min(...Array.from(allGWs));
+    for (let i = minGw; i <= 38; i++) {
+      gws.push(i);
+    }
+  }
 
   if (gws.length === 0) {
     tbody.innerHTML =
@@ -236,9 +243,9 @@ function renderFDRHeatmap() {
       const fixes = t.byGW[gw] || [];
 
       let html =
-        '<div class="gw-slot" style="margin:0 auto; padding:0; border:none;">';
+        '<div class="gw-slot">';
       if (fixes.length === 0) {
-        html += `<div class="bgw-chip" style="width:34px; height:42px; margin:0 auto;" title="GW${gw}: Blank Gameweek">BGW</div>`;
+        html += `<div class="bgw-chip" title="GW${gw}: Blank Gameweek">BGW</div>`;
       } else {
         fixes.forEach((f) => {
           const ha = f.is_home ? "H" : "A";
@@ -1306,11 +1313,13 @@ function syncSortHeaders() {
   el.headers.forEach((th) => {
     const col = th.getAttribute("data-sort");
     th.classList.remove("active-sort", "asc", "desc");
-    th.querySelector(".sort-icon").textContent = "";
+    const icon = th.querySelector(".sort-icon");
+    if (icon) icon.textContent = "";
     if (col === state.sortColumn) {
       th.classList.add("active-sort", state.sortDirection);
-      th.querySelector(".sort-icon").textContent =
-        state.sortDirection === "asc" ? "▲" : "▼";
+      if (icon) {
+        icon.textContent = state.sortDirection === "asc" ? "▲" : "▼";
+      }
     }
   });
 }
@@ -1329,7 +1338,7 @@ function syncSliderUI() {
 
 document.addEventListener("DOMContentLoaded", () => {
   el.tbody = document.getElementById("table-body");
-  el.headers = document.querySelectorAll("th");
+  el.headers = document.querySelectorAll("#players-table th");
   el.btnPrev = document.getElementById("btn-prev");
   el.btnNext = document.getElementById("btn-next");
   el.pageInfo = document.getElementById("page-info");
