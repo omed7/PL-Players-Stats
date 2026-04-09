@@ -4,14 +4,13 @@
    TOKENS + THEMES
    ══════════════════════════════════════════════════════════════════ */
 :root,
-[data-theme="terminal"] {
+[data-theme="green"] {
   --teal: #00ff00;
   --teal-dim: rgba(0, 255, 0, 0.13);
   --teal-bar: rgba(0, 255, 0, 0.2);
   --teal-hover-bar: rgba(0, 255, 0, 0.28);
   --glow: rgba(0, 255, 0, 0.1);
   --stripe: rgba(0, 255, 0, 0.025);
-  --pos-mid: #00ff00;
   --bg-0: #000000;
   --bg-1: #0a0a0a;
   --bg-2: #111111;
@@ -19,29 +18,27 @@
   --border: #333333;
   --blight: #444444;
 }
-[data-theme="hacker"] {
-  --teal: #39ff14;
-  --teal-dim: rgba(57, 255, 20, 0.13);
-  --teal-bar: rgba(57, 255, 20, 0.2);
-  --teal-hover-bar: rgba(57, 255, 20, 0.28);
-  --glow: rgba(57, 255, 20, 0.1);
-  --stripe: rgba(57, 255, 20, 0.025);
-  --pos-mid: #39ff14;
-  --bg-0: #050505;
-  --bg-1: #0c0c0c;
-  --bg-2: #141414;
-  --bg-hover: #1f1f1f;
-  --border: #224422;
-  --blight: #336633;
+[data-theme="orange"] {
+  --teal: #ff8c00;
+  --teal-dim: rgba(255, 140, 0, 0.13);
+  --teal-bar: rgba(255, 140, 0, 0.2);
+  --teal-hover-bar: rgba(255, 140, 0, 0.28);
+  --glow: rgba(255, 140, 0, 0.1);
+  --stripe: rgba(255, 140, 0, 0.025);
+  --bg-0: #1a0a00;
+  --bg-1: #2e1100;
+  --bg-2: #451a00;
+  --bg-hover: #5c2300;
+  --border: #8a3400;
+  --blight: #6a2d34;
 }
-[data-theme="oceanic"] {
+[data-theme="lightblue"] {
   --teal: #00bcd4;
   --teal-dim: rgba(0, 188, 212, 0.13);
   --teal-bar: rgba(0, 188, 212, 0.2);
   --teal-hover-bar: rgba(0, 188, 212, 0.28);
   --glow: rgba(0, 188, 212, 0.1);
   --stripe: rgba(0, 188, 212, 0.025);
-  --pos-mid: #00bcd4;
   --bg-0: #00111a;
   --bg-1: #001a26;
   --bg-2: #002b3d;
@@ -49,44 +46,13 @@
   --border: #005577;
   --blight: #007799;
 }
-[data-theme="dracula"] {
-  --teal: #bd93f9;
-  --teal-dim: rgba(189, 147, 249, 0.13);
-  --teal-bar: rgba(189, 147, 249, 0.2);
-  --teal-hover-bar: rgba(189, 147, 249, 0.28);
-  --glow: rgba(189, 147, 249, 0.1);
-  --stripe: rgba(189, 147, 249, 0.025);
-  --pos-mid: #bd93f9;
-  --bg-0: #282a36;
-  --bg-1: #383a59;
-  --bg-2: #44475a;
-  --bg-hover: #50536b;
-  --border: #6272a4;
-  --blight: #7b8bc2;
-}
-[data-theme="high-contrast"] {
-  --teal: #ffffff;
-  --teal-dim: rgba(255, 255, 255, 0.13);
-  --teal-bar: rgba(255, 255, 255, 0.2);
-  --teal-hover-bar: rgba(255, 255, 255, 0.28);
-  --glow: rgba(255, 255, 255, 0.1);
-  --stripe: rgba(255, 255, 255, 0.025);
-  --pos-mid: #ffffff;
-  --bg-0: #000000;
-  --bg-1: #111111;
-  --bg-2: #222222;
-  --bg-hover: #333333;
-  --border: #555555;
-  --blight: #777777;
-}
-[data-theme="cyberpunk"] {
+[data-theme="yellow"] {
   --teal: #fcee0a;
   --teal-dim: rgba(252, 238, 10, 0.13);
   --teal-bar: rgba(252, 238, 10, 0.2);
   --teal-hover-bar: rgba(252, 238, 10, 0.28);
   --glow: rgba(252, 238, 10, 0.1);
   --stripe: rgba(252, 238, 10, 0.025);
-  --pos-mid: #fcee0a;
   --bg-0: #0c0518;
   --bg-1: #170c2e;
   --bg-2: #231247;
@@ -94,65 +60,19 @@
   --border: #542a8a;
   --blight: #733ab3;
 }
-[data-theme="sunset"] {
-  --teal: #ff4500;
-  --teal-dim: rgba(255, 69, 0, 0.13);
-  --teal-bar: rgba(255, 69, 0, 0.2);
-  --teal-hover-bar: rgba(255, 69, 0, 0.28);
-  --glow: rgba(255, 69, 0, 0.1);
-  --stripe: rgba(255, 69, 0, 0.025);
-  --pos-mid: #ff4500;
-  --bg-0: #1c0c0d;
-  --bg-1: #2d1213;
-  --bg-2: #3f181a;
-  --bg-hover: #542023;
-  --border: #7a2e32;
-  --blight: #a13d42;
-}
-[data-theme="forest"] {
-  --teal: #228b22;
-  --teal-dim: rgba(34, 139, 34, 0.13);
-  --teal-bar: rgba(34, 139, 34, 0.2);
-  --teal-hover-bar: rgba(34, 139, 34, 0.28);
-  --glow: rgba(34, 139, 34, 0.1);
-  --stripe: rgba(34, 139, 34, 0.025);
-  --pos-mid: #228b22;
-  --bg-0: #081208;
-  --bg-1: #0d1f0d;
-  --bg-2: #132e13;
-  --bg-hover: #1b401b;
-  --border: #2a5c2a;
-  --blight: #3b803b;
-}
-[data-theme="midnight"] {
-  --teal: #4169e1;
-  --teal-dim: rgba(65, 105, 225, 0.13);
-  --teal-bar: rgba(65, 105, 225, 0.2);
-  --teal-hover-bar: rgba(65, 105, 225, 0.28);
-  --glow: rgba(65, 105, 225, 0.1);
-  --stripe: rgba(65, 105, 225, 0.025);
-  --pos-mid: #4169e1;
-  --bg-0: #050814;
-  --bg-1: #0a1128;
-  --bg-2: #101a3b;
-  --bg-hover: #182652;
-  --border: #253b7a;
-  --blight: #3452a3;
-}
-[data-theme="magma"] {
-  --teal: #ff8c00;
-  --teal-dim: rgba(255, 140, 0, 0.13);
-  --teal-bar: rgba(255, 140, 0, 0.2);
-  --teal-hover-bar: rgba(255, 140, 0, 0.28);
-  --glow: rgba(255, 140, 0, 0.1);
-  --stripe: rgba(255, 140, 0, 0.025);
-  --pos-mid: #ff8c00;
-  --bg-0: #1a0a00;
-  --bg-1: #2e1100;
-  --bg-2: #451a00;
-  --bg-hover: #5c2300;
-  --border: #8a3400;
-  --blight: #b84600;
+[data-theme="softred"] {
+  --teal: #ff6b6b;
+  --teal-dim: rgba(255, 107, 107, 0.13);
+  --teal-bar: rgba(255, 107, 107, 0.2);
+  --teal-hover-bar: rgba(255, 107, 107, 0.28);
+  --glow: rgba(255, 107, 107, 0.1);
+  --stripe: rgba(255, 107, 107, 0.025);
+  --bg-0: #1a0a0c;
+  --bg-1: #2a1114;
+  --bg-2: #3a181c;
+  --bg-hover: #4a1f24;
+  --border: #5a262c;
+  --blight: #6a2d34;
 }
 
 :root {
@@ -166,6 +86,7 @@
   --red: #ff5c6c;
   --pos-gk: #ffb84d;
   --pos-def: #5b9cf6;
+  --pos-mid: #00d9a3;
   --pos-fwd: #ff6b6b;
   --text-1: #dce8f5;
   --text-2: #4e6685;
@@ -1340,27 +1261,65 @@ tbody tr:hover td.sticky-col {
   border-color: var(--amber) !important;
 }
 
+#fdr-table {
+  border-spacing: 6px;
+  border-collapse: separate;
+  min-width: 0;
+}
 #fdr-table th {
   text-align: center;
+  padding: 12px 6px;
+  background: transparent !important;
+  border-bottom: none;
+  font-size: 0.8rem;
+  color: var(--text-2);
 }
 #fdr-table td {
-  padding: 4px;
+  padding: 0;
   text-align: center;
+  border-bottom: none;
+  background-color: transparent !important;
+  background-image: none !important;
+  height: auto;
 }
-#fdr-table td .fix-chip {
+#fdr-table td.sticky-col {
+  background: var(--bg-1) !important;
+  border-right: none;
+  border-radius: 8px;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+}
+#fdr-table td.sticky-col,
+#fdr-table th.sticky-col {
+  min-width: 80px !important;
+  max-width: 100px !important;
+  padding: 0 12px;
+}
+#fdr-table td .gw-slot {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+#fdr-table td .fix-chip,
+#fdr-table td .bgw-chip {
   margin: 0 auto;
-  width: 34px;
-  height: 42px;
-  padding-top: 5px;
-  border-radius: 6px;
+  width: 44px;
+  height: 48px;
+  padding-top: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+#fdr-table td .bgw-chip {
+  line-height: 36px;
 }
 #fdr-table td .fix-chip img {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
 }
 #fdr-table td .fix-ha {
-  font-size: 0.55rem;
-  margin-top: 1px;
+  font-size: 0.6rem;
+  margin-top: 2px;
 }
 
 /* ══════════════════════════════════════════════════════════════════
