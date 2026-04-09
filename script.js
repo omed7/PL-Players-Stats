@@ -100,7 +100,6 @@ function renderFreshness(fetchedAt) {
 
 function buildFixtureChipsHTML(player) {
   const fixtures = player.fixtures || [];
-  if (!fixtures.length) return '';
 
   // Group by GW to detect DGWs — only use what the FPL API actually returned.
   // Never infer blanks from nextGWs: nextGWs is just a number range and the
@@ -108,23 +107,33 @@ function buildFixtureChipsHTML(player) {
   const byGW = {};
   fixtures.forEach(f => { (byGW[f.gw] = byGW[f.gw] || []).push(f); });
 
-  const gws = Object.keys(byGW).map(Number).sort((a, b) => a - b).slice(0, 5);
+  // Calculate actual upcoming GWs from the global state if not already done
+  if (!state.actualGWs) {
+    const allGWs = new Set();
+    state.players.forEach(p => {
+      (p.fixtures || []).forEach(f => allGWs.add(f.gw));
+    });
+    state.actualGWs = Array.from(allGWs).sort((a, b) => a - b).slice(0, 5);
+  }
+
+  const gws = state.actualGWs;
   if (!gws.length) return '';
 
   let html = '<div class="fixture-chips">';
   gws.forEach(gw => {
-    const fixes = byGW[gw];
+    const fixes = byGW[gw] || [];
     html += '<div class="gw-slot">';
-    if (fixes.length >= 2) {
-      html += `<span class="dgw-badge" title="GW${gw}: Double Gameweek">DGW</span>`;
+    if (fixes.length === 0) {
+      html += `<div class="bgw-chip" title="GW${gw}: Blank Gameweek">BGW</div>`;
+    } else {
+      fixes.forEach(f => {
+        const ha = f.is_home ? 'H' : 'A';
+        html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
+          <img src="${f.opponent_logo}" alt="${f.opponent}">
+          <span class="fix-ha">${ha}</span>
+        </div>`;
+      });
     }
-    fixes.forEach(f => {
-      const ha = f.is_home ? 'H' : 'A';
-      html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
-        <img src="${f.opponent_logo}" alt="${f.opponent}">
-        <span class="fix-ha">${ha}</span>
-      </div>`;
-    });
     html += '</div>';
   });
   html += '</div>';
@@ -557,6 +566,7 @@ async function fetchPlayers() {
       state.deadline  = data.deadline   || null;
       state.fetchedAt = data.fetched_at || null;
     }
+    state.actualGWs = null; // Reset cached GWs
 
     // Derive price slider range from actual data
     const prices   = state.players.map(p => p.price).filter(Boolean);
@@ -832,7 +842,7 @@ function renderTable(pfxArg) {
 
     // Feature 6: row click → player modal (ignore clicks on buttons/chips)
     tr.addEventListener('click', e => {
-      if (e.target.closest('.star-btn, .cmp-add-btn, .fix-chip, .dgw-badge')) return;
+      if (e.target.closest('.star-btn, .cmp-add-btn, .fix-chip, .bgw-chip')) return;
       openPlayerModal(p);
     });
 
