@@ -664,7 +664,7 @@ function closePlayerModal() {
 
 async function fetchPlayers() {
   try {
-    const res = await fetch('players.json?v=' + Date.now());
+    const res = await fetch("players.json");
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
