@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 from datetime import datetime, timezone
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -58,11 +59,7 @@ def get_fpl_data():
         (e['id'] for e in response['events'] if e['is_current']),
         next((e['id'] for e in response['events'] if e['is_next']), 1)
     )
-    next_gw_start = next(
-        (e['id'] for e in response['events'] if e['is_next']),
-        current_gw + 1
-    )
-    next_gws = list(range(next_gw_start, next_gw_start + 5))
+    next_gws = list(range(current_gw, current_gw + 5))
 
     target_event = (
         next((e for e in response['events'] if e['is_next']), None) or
@@ -195,6 +192,7 @@ def get_fpl_data():
             }
             record.update(season_fields)
             players_data.append(record)
+            time.sleep(0.05)
         except Exception as e:
             print(f"Failed to fetch {fpl_name}: {e}")
             continue
