@@ -124,12 +124,20 @@ def get_fpl_data():
 
             gw_history = [
                 {
-                    "gw":      m.get('round', 0),
-                    "pts":     int(m.get('total_points', 0)),
-                    "xG":      round(float(m.get('expected_goals', 0)), 2),
-                    "xA":      round(float(m.get('expected_assists', 0)), 2),
-                    "minutes": int(m.get('minutes', 0)),
-                    "bonus":   int(m.get('bonus', 0)),
+                    "gw":         m.get('round', 0),
+                    "pts":        int(m.get('total_points', 0)),
+                    "xG":         round(float(m.get('expected_goals', 0)), 2),
+                    "xA":         round(float(m.get('expected_assists', 0)), 2),
+                    "minutes":    int(m.get('minutes', 0)),
+                    "bonus":      int(m.get('bonus', 0)),
+                    "xGI":        round(float(m.get('expected_goal_involvements', 0)), 2),
+                    "xGC":        round(float(m.get('expected_goals_conceded', 0)), 2),
+                    "creativity": round(float(m.get('creativity', 0)), 1),
+                    "threat":     round(float(m.get('threat', 0)), 1),
+                    "ict":        round(float(m.get('ict_index', 0)), 1),
+                    "bps":        int(m.get('bps', 0)),
+                    "saves":      int(m.get('saves', 0)),
+                    "defcon":     int(m.get('clearances_blocks_interceptions', 0)),
                 }
                 for m in history[-10:]
             ]
