@@ -1,6 +1,5 @@
 import requests
 import json
-import time
 from datetime import datetime, timezone
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
