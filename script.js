@@ -745,7 +745,18 @@ function populateTeamFilter() {
     btn.className =
       "team-logo-btn" + (state.selectedTeams.includes(name) ? " selected" : "");
     btn.title = name;
-    btn.innerHTML = `<img src="${logo}" alt="${name}"><span class="team-abbr">${name}</span>`;
+
+    const img = document.createElement("img");
+    img.src = logo;
+    img.alt = name;
+
+    const span = document.createElement("span");
+    span.className = "team-abbr";
+    span.textContent = name;
+
+    btn.appendChild(img);
+    btn.appendChild(span);
+
     btn.addEventListener("click", () => {
       if (state.selectedTeams.length === 0) {
         state.selectedTeams = [name];
