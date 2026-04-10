@@ -927,6 +927,11 @@ tbody tr:hover td.sticky-col {
   color: var(--amber);
   white-space: nowrap;
 }
+.transfer-trend {
+  font-size: 0.7rem;
+  line-height: 1;
+  margin-top: 1px;
+}
 .player-info {
   display: flex;
   flex-direction: column;
@@ -1286,7 +1291,7 @@ tbody tr:hover td.sticky-col {
   background: var(--bg-1) !important;
   border-right: none;
   border-radius: 8px;
-  box-shadow: 2px 0 6px rgba(0,0,0,0.2);
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
 }
 #fdr-table td.sticky-col,
 #fdr-table th.sticky-col {
@@ -1307,7 +1312,7 @@ tbody tr:hover td.sticky-col {
   height: 48px;
   padding-top: 6px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 #fdr-table td .bgw-chip {
   line-height: 36px;
