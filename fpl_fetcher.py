@@ -88,6 +88,11 @@ def get_fpl_data():
         cost_change_event = round((player.get('cost_change_event', 0) or 0) / 10, 1)
         cost_change_start = round((player.get('cost_change_start', 0) or 0) / 10, 1)
 
+        # ── Feature: Transfer Trends
+        transfers_in_event = int(player.get('transfers_in_event', 0))
+        transfers_out_event = int(player.get('transfers_out_event', 0))
+        net_transfers = transfers_in_event - transfers_out_event
+
         # ── Feature 1: season totals — all free from bootstrap, no extra API calls
         s_mins  = int(player.get('minutes', 0))
         season_fields = {
@@ -174,6 +179,9 @@ def get_fpl_data():
                 "ownership":          ownership,
                 "cost_change_event":  cost_change_event,
                 "cost_change_start":  cost_change_start,
+                "transfers_in_event": transfers_in_event,
+                "transfers_out_event": transfers_out_event,
+                "net_transfers":      net_transfers,
 
                 "last_5_minutes":    stats_5["minutes"],   "last_5_min_pct":    stats_5["min_pct"],
                 "last_5_xG":         round(stats_5["xG"],2),   "last_5_xA":    round(stats_5["xA"],2),

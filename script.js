@@ -242,8 +242,7 @@ function renderFDRHeatmap() {
       const td = document.createElement("td");
       const fixes = t.byGW[gw] || [];
 
-      let html =
-        '<div class="gw-slot">';
+      let html = '<div class="gw-slot">';
       if (fixes.length === 0) {
         html += `<div class="bgw-chip" title="GW${gw}: Blank Gameweek">BGW</div>`;
       } else {
@@ -1233,6 +1232,13 @@ function renderTable(pfxArg) {
       cmpTxt = cmpIdx + 1;
     }
 
+    let trendHtml = "";
+    if (p.net_transfers > 50000) {
+      trendHtml = `<span class="transfer-trend" title="Hot: +${p.net_transfers.toLocaleString()} transfers">❤️‍🩹</span>`;
+    } else if (p.net_transfers < -50000) {
+      trendHtml = `<span class="transfer-trend" title="Cold: ${p.net_transfers.toLocaleString()} transfers">💔</span>`;
+    }
+
     const td = document.createElement("td");
     td.className = "sticky-col";
     td.innerHTML = `
@@ -1240,6 +1246,7 @@ function renderTable(pfxArg) {
         <div class="team-logo-wrap">
           <img src="${p.logo}" alt="${p.team}" class="team-logo">
           <span class="player-price">&pound;${p.price.toFixed(1)}m</span>
+          ${trendHtml}
         </div>
         <div class="player-info">
           <div class="player-name-row">
