@@ -910,7 +910,9 @@ function closePlayerModal() {
 
 async function fetchPlayers() {
   try {
-    const res = await fetch("players.json?v=" + new Date().getTime());
+    const res = await fetch("players.json", {
+      cache: "no-store"
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
@@ -1592,6 +1594,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ── Boot ──
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(console.error);
+  }
   loadWatchlist();
   syncWatchlistHeader();
   fetchPlayers();
