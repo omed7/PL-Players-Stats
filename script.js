@@ -392,8 +392,9 @@ function renderWatchlistDrawer() {
   emptyEl?.classList.add("hidden");
   const pfx = pfxFor();
   const frag = document.createDocumentFragment();
+  const playerMap = new Map(state.players.map((p) => [p.name, p]));
   [...state.watchlist].forEach((name) => {
-    const p = state.players.find((pl) => pl.name === name);
+    const p = playerMap.get(name);
     if (!p) return;
     const pts = p[`${pfx}points`] ?? 0;
     const xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2);
@@ -911,7 +912,7 @@ function closePlayerModal() {
 async function fetchPlayers() {
   try {
     const res = await fetch("players.json", {
-      cache: "no-store"
+      cache: "no-store",
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
