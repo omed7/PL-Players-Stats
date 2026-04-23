@@ -428,14 +428,17 @@ function renderWatchlistDrawer() {
 
 const CMP_STAT_DEFS = [
   { key: "points", lbl: "Points", bestLow: false },
+  { key: "goals", lbl: "Goals", bestLow: false },
+  { key: "assists", lbl: "Assists", bestLow: false },
+  { key: "clean_sheets", lbl: "CS", bestLow: false },
+  { key: "ppg", lbl: "PPG", bestLow: false },
   { key: "xG", lbl: "xG", bestLow: false },
   { key: "xA", lbl: "xA", bestLow: false },
   { key: "xGI", lbl: "xGI", bestLow: false },
-  { key: "ict", lbl: "ICT", bestLow: false },
   { key: "creativity", lbl: "Creativity", bestLow: false },
   { key: "threat", lbl: "Threat", bestLow: false },
-  { key: "bps", lbl: "BPS", bestLow: false },
-  { key: "xGC", lbl: "xGC", bestLow: true },
+  { key: "influence", lbl: "Influence", bestLow: false },
+  { key: "saves", lbl: "Saves", bestLow: false },
 ];
 
 function toggleCompare(name) {
@@ -485,13 +488,17 @@ function syncCmpBar() {
 
 const RADAR_STATS = [
   { key: "points", lbl: "PTS" },
+  { key: "goals", lbl: "GLS" },
+  { key: "assists", lbl: "AST" },
+  { key: "clean_sheets", lbl: "CS" },
+  { key: "ppg", lbl: "PPG" },
   { key: "xG", lbl: "xG" },
+  { key: "xA", lbl: "xA" },
   { key: "xGI", lbl: "xGI" },
   { key: "creativity", lbl: "CRE" },
-  { key: "bps", lbl: "BPS" },
   { key: "threat", lbl: "THR" },
-  { key: "ict", lbl: "ICT" },
-  { key: "xA", lbl: "xA" },
+  { key: "influence", lbl: "INF" },
+  { key: "saves", lbl: "SVS" },
 ];
 
 function buildRadarSVG(players, pfx) {
@@ -586,12 +593,6 @@ function openCompareModal() {
     const vals = players.map((p) => parseFloat(p[`${pfx}${key}`] ?? 0));
     statMaxes[key] = bestLow ? Math.min(...vals) : Math.max(...vals, 0.01);
   });
-  const valMax = Math.max(
-    ...players.map((p) =>
-      p.price > 0 ? (p[`${pfx}points`] ?? 0) / p.price : 0,
-    ),
-    0.01,
-  );
   const cols = `120px ${players.map(() => "1fr").join(" ")} 14px`;
 
   let tableHtml = `<div class="cmp-stat-table">
@@ -600,16 +601,10 @@ function openCompareModal() {
       ${players.map((p, i) => `<div style="font-family:var(--f-d);font-size:0.75rem;font-weight:700;color:${CMP[i].color};padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div>`).join("")}
       <div></div>
     </div>`;
-  [...CMP_STAT_DEFS, { key: "value", lbl: "Pts/£m", bestLow: false }].forEach(
+  CMP_STAT_DEFS.forEach(
     ({ key, lbl, bestLow }) => {
-      const vals = players.map((p) =>
-        key === "value"
-          ? p.price > 0
-            ? (p[`${pfx}points`] ?? 0) / p.price
-            : 0
-          : parseFloat(p[`${pfx}${key}`] ?? 0),
-      );
-      const max = key === "value" ? valMax : statMaxes[key] || 0.01;
+      const vals = players.map((p) => parseFloat(p[`${pfx}${key}`] ?? 0));
+      const max = statMaxes[key] || 0.01;
       const best = bestLow ? Math.min(...vals) : Math.max(...vals);
       tableHtml += `<div class="cmp-stat-row" style="grid-template-columns:${cols}">
       <div class="cmp-stat-key-cell">${lbl}</div>
@@ -751,7 +746,7 @@ function openPlayerModal(p) {
     { key: "xG", label: "xG" },
     { key: "xA", label: "xA" },
     { key: "xGI", label: "xGI" },
-    { key: "xGC", label: "xGC" },
+    { key: "influence", label: "Inf" },
     { key: "creativity", label: "Cre" },
     { key: "threat", label: "Thr" },
     { key: "ict", label: "ICT" },
@@ -1098,6 +1093,7 @@ function applyFiltersAndSort() {
     "xG",
     "xA",
     "xGI",
+    "influence",
     "creativity",
     "threat",
     "ict",
@@ -1159,13 +1155,14 @@ function renderTable(pfxArg) {
   vis("col-xg", !isGK);
   vis("col-xa", !isGK);
   vis("col-xgi", !isGK);
+  vis("col-influence", !isGK);
   vis("col-creativity", !isGK);
   vis("col-threat", !isGK);
   vis("col-ict", !isGK);
   vis("col-defcon", !isGK && !isSeason); // DefCon hidden in season (no data)
   // Season-only columns
-  vis("col-goals", isSeason && !isGK);
-  vis("col-assists", isSeason && !isGK);
+  vis("col-goals", !isGK);
+  vis("col-assists", !isGK);
   vis("col-cs", isSeason);
   vis("col-ppg", isSeason);
 
@@ -1191,7 +1188,7 @@ function renderTable(pfxArg) {
     const xG = (p[`${pfx}xG`] ?? 0).toFixed(2);
     const xA = (p[`${pfx}xA`] ?? 0).toFixed(2);
     const xGI = (p[`${pfx}xGI`] ?? 0).toFixed(2);
-    const xGC = (p[`${pfx}xGC`] ?? 0).toFixed(2);
+    const influence = (p[`${pfx}influence`] ?? 0).toFixed(1);
     const creat = (p[`${pfx}creativity`] ?? 0).toFixed(1);
     const threat = (p[`${pfx}threat`] ?? 0).toFixed(1);
     const ict = (p[`${pfx}ict`] ?? 0).toFixed(1);
@@ -1295,17 +1292,15 @@ function renderTable(pfxArg) {
     tr.appendChild(statTd(saves, maxes.saves, !isGK));
     tr.appendChild(statTd(pts, maxes.points));
     // Season-only columns (hidden unless season mode)
-    tr.appendChild(statTd(goals, maxes.goals, !isSeason || isGK));
-    tr.appendChild(statTd(assists, maxes.assists, !isSeason || isGK));
+    tr.appendChild(statTd(goals, maxes.goals, isGK));
+    tr.appendChild(statTd(assists, maxes.assists, isGK));
     tr.appendChild(statTd(cs, maxes.clean_sheets, !isSeason));
     tr.appendChild(statTd(ppg, maxes.ppg, !isSeason));
     // Standard columns
     tr.appendChild(statTd(xG, maxes.xG, isGK));
     tr.appendChild(statTd(xA, maxes.xA, isGK));
     tr.appendChild(statTd(xGI, maxes.xGI, isGK));
-    const xgcTd = document.createElement("td");
-    xgcTd.textContent = xGC;
-    tr.appendChild(xgcTd);
+    tr.appendChild(statTd(influence, maxes.influence, isGK));
     tr.appendChild(statTd(creat, maxes.creativity, isGK));
     tr.appendChild(statTd(threat, maxes.threat, isGK));
     tr.appendChild(statTd(ict, maxes.ict, isGK));

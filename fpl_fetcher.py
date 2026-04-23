@@ -13,18 +13,29 @@ def calc_stats(match_list):
     return {
         "minutes":    mins,
         "min_pct":    min_pct,
+        "goals":      sum(int(m.get('goals_scored', 0))                    for m in match_list),
+        "assists":    sum(int(m.get('assists', 0))                         for m in match_list),
+        "ppg":        round(sum(int(m.get('total_points', 0)) for m in match_list) / max(sum(1 for m in match_list if int(m.get('minutes', 0)) > 0), 1), 2),
+        "clean_sheets": sum(int(m.get('clean_sheets', 0))                  for m in match_list),
         "xG":         sum(float(m.get('expected_goals', 0))               for m in match_list),
         "xA":         sum(float(m.get('expected_assists', 0))              for m in match_list),
         "xGI":        sum(float(m.get('expected_goal_involvements', 0))    for m in match_list),
-        "xGC":        sum(float(m.get('expected_goals_conceded', 0))       for m in match_list),
         "creativity": sum(float(m.get('creativity', 0))                    for m in match_list),
         "threat":     sum(float(m.get('threat', 0))                        for m in match_list),
+        "influence":  sum(float(m.get('influence', 0))                     for m in match_list),
         "ict":        sum(float(m.get('ict_index', 0))                     for m in match_list),
         "bps":        sum(int(m.get('bps', 0))                             for m in match_list),
         "bonus":      sum(int(m.get('bonus', 0))                           for m in match_list),
         "points":     sum(int(m.get('total_points', 0))                    for m in match_list),
         "saves":      sum(int(m.get('saves', 0))                           for m in match_list),
-        "defcon":     sum(int(m.get('clearances_blocks_interceptions', 0)) for m in match_list),
+        "defcon":     sum(
+            int(m.get('clearances_blocks_interceptions', 0)) +
+            int(m.get('tackles', 0)) +
+            int(m.get('recoveries', 0)) +
+            int(m.get('saves', 0)) +
+            (int(m.get('clean_sheets', 0)) * 5)
+            for m in match_list
+        ),
     }
 
 
@@ -107,7 +118,7 @@ def get_fpl_data():
             "season_xG":           round(float(player.get('expected_goals', 0) or 0), 2),
             "season_xA":           round(float(player.get('expected_assists', 0) or 0), 2),
             "season_xGI":          round(float(player.get('expected_goal_involvements', 0) or 0), 2),
-            "season_xGC":          round(float(player.get('expected_goals_conceded', 0) or 0), 2),
+            "season_influence":    round(float(player.get('influence', 0) or 0), 1),
             "season_creativity":   round(float(player.get('creativity', 0) or 0), 1),
             "season_threat":       round(float(player.get('threat', 0) or 0), 1),
             "season_ict":          round(float(player.get('ict_index', 0) or 0), 1),
@@ -136,13 +147,13 @@ def get_fpl_data():
                     "minutes":    int(m.get('minutes', 0)),
                     "bonus":      int(m.get('bonus', 0)),
                     "xGI":        round(float(m.get('expected_goal_involvements', 0)), 2),
-                    "xGC":        round(float(m.get('expected_goals_conceded', 0)), 2),
+                    "influence":  round(float(m.get('influence', 0)), 1),
                     "creativity": round(float(m.get('creativity', 0)), 1),
                     "threat":     round(float(m.get('threat', 0)), 1),
                     "ict":        round(float(m.get('ict_index', 0)), 1),
                     "bps":        int(m.get('bps', 0)),
                     "saves":      int(m.get('saves', 0)),
-                    "defcon":     int(m.get('clearances_blocks_interceptions', 0)),
+                    "defcon":     int(m.get('clearances_blocks_interceptions', 0)) + int(m.get('tackles', 0)) + int(m.get('recoveries', 0)) + int(m.get('saves', 0)) + (int(m.get('clean_sheets', 0)) * 5),
                 }
                 for m in history[-10:]
             ]
@@ -185,8 +196,9 @@ def get_fpl_data():
 
                 "last_5_minutes":    stats_5["minutes"],   "last_5_min_pct":    stats_5["min_pct"],
                 "last_5_xG":         round(stats_5["xG"],2),   "last_5_xA":    round(stats_5["xA"],2),
-                "last_5_xGI":        round(stats_5["xGI"],2),  "last_5_xGC":   round(stats_5["xGC"],2),
-                "last_5_creativity": round(stats_5["creativity"],2),
+                "last_5_goals":      stats_5["goals"], "last_5_assists": stats_5["assists"], "last_5_clean_sheets": stats_5["clean_sheets"], "last_5_ppg": stats_5["ppg"],
+                "last_5_xGI":        round(stats_5["xGI"],2),
+                "last_5_influence":  round(stats_5["influence"],2), "last_5_creativity": round(stats_5["creativity"],2),
                 "last_5_threat":     round(stats_5["threat"],2), "last_5_ict":  round(stats_5["ict"],2),
                 "last_5_bps":        stats_5["bps"],   "last_5_bonus":  stats_5["bonus"],
                 "last_5_points":     stats_5["points"],"last_5_saves":  stats_5["saves"],
@@ -194,8 +206,9 @@ def get_fpl_data():
 
                 "last_10_minutes":    stats_10["minutes"],  "last_10_min_pct":    stats_10["min_pct"],
                 "last_10_xG":         round(stats_10["xG"],2),  "last_10_xA":  round(stats_10["xA"],2),
-                "last_10_xGI":        round(stats_10["xGI"],2), "last_10_xGC": round(stats_10["xGC"],2),
-                "last_10_creativity": round(stats_10["creativity"],2),
+                "last_10_goals":      stats_10["goals"], "last_10_assists": stats_10["assists"], "last_10_clean_sheets": stats_10["clean_sheets"], "last_10_ppg": stats_10["ppg"],
+                "last_10_xGI":        round(stats_10["xGI"],2),
+                "last_10_influence":  round(stats_10["influence"],2), "last_10_creativity": round(stats_10["creativity"],2),
                 "last_10_threat":     round(stats_10["threat"],2),"last_10_ict":round(stats_10["ict"],2),
                 "last_10_bps":        stats_10["bps"],  "last_10_bonus":  stats_10["bonus"],
                 "last_10_points":     stats_10["points"],"last_10_saves": stats_10["saves"],
