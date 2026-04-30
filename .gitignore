@@ -4,3 +4,4 @@ __pycache__/
 server.log
 server.pid
 players.json
+node_modules/
