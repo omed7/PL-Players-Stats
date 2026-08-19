@@ -66,21 +66,35 @@ def write_json_atomically(payload, output_path):
         raise
 
 
-def validate_completed_history(history, player_name):
-    """Require completed history for every eligible public player record."""
+def validate_completed_history(history, player_name, allow_empty):
+    """Validate one eligible-player history without discarding zero-minute rows."""
     if not isinstance(history, list):
         raise RuntimeError(f"FPL player history for {player_name} must be a list")
-    if not history:
+    if not history and not allow_empty:
         raise RuntimeError(f"FPL player history for {player_name} has no completed history")
     return history
 
 
-def validate_fetch_completeness(element_count, player_record_count, season_is_live):
-    """Fail closed on incomplete eligible-player output; allow only true preseason emptiness."""
+def validate_fetch_completeness(
+    element_count, player_record_count, empty_history_count, season_is_live
+):
+    """Fail closed on incomplete output while allowing only verified all-empty preseason history."""
     if element_count == 0:
         if season_is_live:
             raise RuntimeError("Fetcher found zero eligible players during a live season")
         return
+    if not season_is_live and empty_history_count == element_count:
+        if player_record_count != 0:
+            raise RuntimeError(
+                "Fetcher built player records despite all eligible histories being empty"
+            )
+        return
+    if empty_history_count:
+        if season_is_live:
+            raise RuntimeError(
+                "Fetcher found eligible players with no completed history during a live season"
+            )
+        raise RuntimeError("Fetcher found mixed empty histories before the season is live")
     if player_record_count != element_count:
         raise RuntimeError(
             "Fetcher output is incomplete: "
@@ -214,6 +228,7 @@ def get_fpl_data():
     season_max_mins = max(current_gw * 90, 1)
 
     players_data = []
+    empty_history_count = 0
     elements = [p for p in response["elements"] if p["minutes"] > 0]
     print(f"Processing {len(elements)} players (GW {current_gw})...")
 
@@ -273,8 +288,13 @@ def get_fpl_data():
                 f"FPL player history for {fpl_name}",
             )
             history = validate_completed_history(
-                history_resp.get("history"), fpl_name
+                history_resp.get("history"),
+                fpl_name,
+                allow_empty=not season_is_live,
             )
+            if not history:
+                empty_history_count += 1
+                continue
             history = sorted(
                 history,
                 key=lambda match: (
@@ -374,6 +394,7 @@ def get_fpl_data():
     validate_fetch_completeness(
         element_count=len(elements),
         player_record_count=len(players_data),
+        empty_history_count=empty_history_count,
         season_is_live=season_is_live,
     )
 
