@@ -125,6 +125,52 @@ def build_fixture_record(fixture, teams):
     }
 
 
+def build_match_history_record(match):
+    """Build one completed player-match record with stable fixture and venue facts."""
+    fixture_id = match.get("fixture")
+    opponent_team_id = match.get("opponent_team")
+    was_home = match.get("was_home")
+
+    if not isinstance(fixture_id, int) or fixture_id <= 0:
+        raise ValueError("History record is missing a valid fixture ID")
+    if not isinstance(opponent_team_id, int) or opponent_team_id <= 0:
+        raise ValueError("History record is missing a valid opponent team ID")
+    if not isinstance(was_home, bool):
+        raise ValueError("History record is missing a valid venue flag")
+
+    return {
+        "fixture_id": fixture_id,
+        "gw": match.get("round"),
+        "opponent_team_id": opponent_team_id,
+        "was_home": was_home,
+        "kickoff_time": match.get("kickoff_time"),
+        "pts": int(match.get("total_points", 0)),
+        "xG": round(float(match.get("expected_goals", 0)), 2),
+        "xA": round(float(match.get("expected_assists", 0)), 2),
+        "minutes": int(match.get("minutes", 0)),
+        "bonus": int(match.get("bonus", 0)),
+        "xGI": round(float(match.get("expected_goal_involvements", 0)), 2),
+        "influence": round(float(match.get("influence", 0)), 1),
+        "creativity": round(float(match.get("creativity", 0)), 1),
+        "threat": round(float(match.get("threat", 0)), 1),
+        "ict": round(float(match.get("ict_index", 0)), 1),
+        "bps": int(match.get("bps", 0)),
+        "saves": int(match.get("saves", 0)),
+        "defcon": int(match.get("defensive_contribution", 0)),
+        "goals": int(match.get("goals_scored", 0)),
+        "assists": int(match.get("assists", 0)),
+        "clean_sheets": int(match.get("clean_sheets", 0)),
+    }
+
+
+def sort_match_history(records):
+    """Return records in stable chronological order, falling back to fixture ID."""
+    return sorted(
+        records,
+        key=lambda record: (record.get("kickoff_time") or "", record["fixture_id"]),
+    )
+
+
 def get_fpl_data():
     print("Initializing session...")
     session = requests.Session()
@@ -232,33 +278,26 @@ def get_fpl_data():
                 f"FPL player history for {fpl_name}",
             )
             successful_history_response_count += 1
-            history = history_resp.get("history", [])
+            history = sorted(
+                history_resp.get("history", []),
+                key=lambda match: (
+                    match.get("kickoff_time") or "",
+                    match.get("fixture") or 0,
+                ),
+            )
             if not history:
                 empty_history_count += 1
                 continue
 
+            match_history = sort_match_history(
+                [build_match_history_record(match) for match in history]
+            )
             stats_5 = calc_stats(history[-5:])
             stats_10 = calc_stats(history[-10:])
 
-            gw_history = [
-                {
-                    "gw": m.get("round", 0),
-                    "pts": int(m.get("total_points", 0)),
-                    "xG": round(float(m.get("expected_goals", 0)), 2),
-                    "xA": round(float(m.get("expected_assists", 0)), 2),
-                    "minutes": int(m.get("minutes", 0)),
-                    "bonus": int(m.get("bonus", 0)),
-                    "xGI": round(float(m.get("expected_goal_involvements", 0)), 2),
-                    "influence": round(float(m.get("influence", 0)), 1),
-                    "creativity": round(float(m.get("creativity", 0)), 1),
-                    "threat": round(float(m.get("threat", 0)), 1),
-                    "ict": round(float(m.get("ict_index", 0)), 1),
-                    "bps": int(m.get("bps", 0)),
-                    "saves": int(m.get("saves", 0)),
-                    "defcon": int(m.get("defensive_contribution", 0)),
-                }
-                for m in history[-10:]
-            ]
+            # Keep the legacy field temporarily so older deployed clients can still
+            # render player detail while new consumers use the complete match history.
+            gw_history = match_history[-10:]
 
             fixtures_raw = history_resp.get("fixtures", [])
             upcoming = sorted(
@@ -327,6 +366,7 @@ def get_fpl_data():
                 "last_10_saves": stats_10["saves"],
                 "last_10_defcon": stats_10["defcon"],
                 "gw_history": gw_history,
+                "match_history": match_history,
                 "fixtures": fixtures_data,
             }
             record.update(season_fields)
@@ -346,6 +386,7 @@ def get_fpl_data():
 
     fetched_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     output = {
+        "schema_version": 2,
         "fetched_at": fetched_at,
         "next_gws": next_gws,
         "current_gw": current_gw,

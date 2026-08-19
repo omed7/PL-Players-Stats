@@ -15,6 +15,7 @@ const state = {
   currentGW: null,
   deadline: null,
   fetchedAt: null,
+  schemaVersion: null,
   loadError: false,
   watchlist: new Set(),
   watchlistOnly: false,
@@ -677,21 +678,28 @@ function openPlayerModal(p) {
       ${statTile("BPS", p.season_bps ?? "—")}
     </div>`;
 
-  // Recent form: GW pts bar chart (with toggle)
-  const gwHist = p.gw_history || [];
+  // Recent form: completed-match bar chart (with toggle). Schema v2 carries
+  // full history; select the most recent 10 completed matches chronologically.
+  const historyUtils = window.FPLHistoryUtils;
+  const matchHist =
+    state.schemaVersion >= 2 &&
+    typeof historyUtils?.selectRecentMatches === "function"
+      ? historyUtils.selectRecentMatches(p.match_history || [], { limit: 10 })
+      : p.gw_history || [];
+  const labelForMatch = historyUtils?.matchLabel || ((record) => `GW${record?.gw ?? "?"}`);
 
-  // We attach gwHist to a global state variable so we can re-render the chart from the buttons
-  state.currentPDGWHist = gwHist;
+  // Attach the selected history to state for detail-chart consumers.
+  state.currentPDMatchHist = matchHist;
   state.currentPDChartMetric = "pts"; // Default
 
   const formBarsHtml = () => {
-    if (!gwHist.length)
-      return '<p class="pd-empty">No GW history available.</p>';
+    if (!matchHist.length)
+      return '<p class="pd-empty">No match history available.</p>';
     const m = state.currentPDChartMetric;
-    const maxVal = Math.max(...gwHist.map((g) => g[m] ?? 0), 0.01);
+    const maxVal = Math.max(...matchHist.map((g) => g[m] ?? 0), 0.01);
 
     return `<div class="pd-form-bars" id="pd-form-bars-inner">
-      ${gwHist
+      ${matchHist
         .map((g) => {
           const val = g[m] ?? 0;
           const pct = ((val / maxVal) * 100).toFixed(1);
@@ -721,8 +729,8 @@ function openPlayerModal(p) {
 
           return `<div class="pd-form-col">
           <span class="pd-form-pts">${dispVal}</span>
-          <div class="pd-form-bar ${barCls}" style="height:${pct}%" title="GW${g.gw}: ${dispVal}"></div>
-          <span class="pd-form-gw">GW${g.gw}</span>
+          <div class="pd-form-bar ${barCls}" style="height:${pct}%" title="${labelForMatch(g)}: ${dispVal}"></div>
+          <span class="pd-form-gw">${labelForMatch(g)}</span>
         </div>`;
         })
         .join("")}
@@ -745,7 +753,7 @@ function openPlayerModal(p) {
     { key: "bonus", label: "Bns" },
   ];
 
-  const chartToggleHtml = gwHist.length
+  const chartToggleHtml = matchHist.length
     ? `
     <div class="pd-chart-toggles" style="display:flex; gap:4px; margin-bottom:12px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none;">
       ${chartMetrics
@@ -761,12 +769,12 @@ function openPlayerModal(p) {
   `
     : "";
 
-  // GW history table
-  const histRows = gwHist
+  // Completed-match history table
+  const histRows = matchHist
     .map(
       (g) => `
     <tr>
-      <td>GW${g.gw}</td>
+      <td>${labelForMatch(g)}</td>
       <td class="${g.pts >= 9 ? "pts-high" : g.pts >= 6 ? "pts-med" : ""}">${g.pts}</td>
       <td>${g.xG.toFixed(2)}</td>
       <td>${g.xA.toFixed(2)}</td>
@@ -775,10 +783,10 @@ function openPlayerModal(p) {
     </tr>`,
     )
     .join("");
-  const histTable = gwHist.length
+  const histTable = matchHist.length
     ? `<div class="pd-table-wrap">
         <table class="pd-hist-table">
-          <thead><tr><th>GW</th><th>Pts</th><th>xG</th><th>xA</th><th>Mins</th><th>Bonus</th></tr></thead>
+          <thead><tr><th>Match</th><th>Pts</th><th>xG</th><th>xA</th><th>Mins</th><th>Bonus</th></tr></thead>
           <tbody>${histRows}</tbody>
         </table>
       </div>`
@@ -792,9 +800,9 @@ function openPlayerModal(p) {
   const curVal = p.price > 0 ? (curPts / p.price).toFixed(1) : "—";
   const periodLabel =
     state.timeframe === "last_5"
-      ? "Last 5 GWs"
+      ? "Last 5 Matches"
       : state.timeframe === "last_10"
-        ? "Last 10 GWs"
+        ? "Last 10 Matches"
         : "This Season";
 
   body.innerHTML = `
@@ -834,15 +842,15 @@ function openPlayerModal(p) {
 
     <!-- Form bars -->
     <div class="pd-section">
-      <div class="pd-section-title">Recent History (Last ${gwHist.length} GWs)</div>
+      <div class="pd-section-title">Recent History (Last ${matchHist.length} Matches)</div>
       ${chartToggleHtml}
       <div id="pd-chart-container">
         ${formBarsHtml()}
       </div>
     </div>
 
-    <!-- GW history table -->
-    ${histTable ? `<div class="pd-section"><div class="pd-section-title">GW Log</div>${histTable}</div>` : ""}
+    <!-- Match history table -->
+    ${histTable ? `<div class="pd-section"><div class="pd-section-title">Match Log</div>${histTable}</div>` : ""}
 
     <!-- Upcoming fixtures -->
     <div class="pd-section">
@@ -924,12 +932,14 @@ async function fetchPlayers() {
       state.currentGW = null;
       state.deadline = null;
       state.fetchedAt = null;
+      state.schemaVersion = 1;
     } else {
       state.players = data.players || [];
       state.nextGWs = data.next_gws || [];
       state.currentGW = data.current_gw || null;
       state.deadline = data.deadline || null;
       state.fetchedAt = data.fetched_at || null;
+      state.schemaVersion = data.schema_version || 1;
     }
     state.actualGWs = null;
 

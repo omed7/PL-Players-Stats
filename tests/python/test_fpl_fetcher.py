@@ -1,6 +1,11 @@
 import unittest
 
-from fpl_fetcher import build_fixture_record, build_player_identity
+from fpl_fetcher import (
+    build_fixture_record,
+    build_match_history_record,
+    build_player_identity,
+    sort_match_history,
+)
 
 
 class PlayerIdentityTests(unittest.TestCase):
@@ -26,6 +31,63 @@ class PlayerIdentityTests(unittest.TestCase):
                 {"id": None, "team": 7},
                 {"short_name": "LIV", "logo": ""},
             )
+
+
+class MatchHistoryRecordTests(unittest.TestCase):
+    def test_builds_a_full_completed_match_record_with_venue_and_stable_ids(self):
+        record = build_match_history_record(
+            {
+                "fixture": 450,
+                "round": 4,
+                "opponent_team": 11,
+                "was_home": False,
+                "kickoff_time": "2026-09-12T14:00:00Z",
+                "total_points": 8,
+                "expected_goals": "0.42",
+                "expected_assists": "0.17",
+                "expected_goal_involvements": "0.59",
+                "minutes": 0,
+                "goals_scored": 1,
+                "assists": 0,
+                "clean_sheets": 0,
+                "bonus": 2,
+                "influence": "38.4",
+                "creativity": "19.2",
+                "threat": "42.0",
+                "ict_index": "9.9",
+                "bps": 27,
+                "saves": 0,
+                "defensive_contribution": 6,
+            }
+        )
+
+        self.assertEqual(record["fixture_id"], 450)
+        self.assertEqual(record["opponent_team_id"], 11)
+        self.assertFalse(record["was_home"])
+        self.assertEqual(record["minutes"], 0)
+        self.assertEqual(record["goals"], 1)
+        self.assertEqual(record["kickoff_time"], "2026-09-12T14:00:00Z")
+
+    def test_rejects_match_history_without_a_stable_fixture_or_venue_fact(self):
+        with self.assertRaises(ValueError):
+            build_match_history_record(
+                {"fixture": None, "opponent_team": 11, "was_home": True}
+            )
+        with self.assertRaises(ValueError):
+            build_match_history_record(
+                {"fixture": 450, "opponent_team": 11, "was_home": None}
+            )
+
+    def test_sorts_history_by_kickoff_then_fixture_id(self):
+        records = [
+            {"fixture_id": 22, "kickoff_time": "2026-08-15T14:00:00Z"},
+            {"fixture_id": 21, "kickoff_time": "2026-08-15T14:00:00Z"},
+            {"fixture_id": 30, "kickoff_time": "2026-08-22T14:00:00Z"},
+        ]
+        self.assertEqual(
+            [record["fixture_id"] for record in sort_match_history(records)],
+            [21, 22, 30],
+        )
 
 
 class FixtureRecordTests(unittest.TestCase):
