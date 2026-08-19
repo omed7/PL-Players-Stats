@@ -1,0 +1,41 @@
+flowchart LR
+    subgraph Existing[Existing delivery path]
+      U[Visitor browser]
+      APP[Static FPL Omed application]
+      LS[(Browser local storage)]
+      DATA[players.json]
+      U --> APP
+      APP <--> LS
+      APP --> DATA
+    end
+
+    subgraph Proposed[Proposed account foundation]
+      AUTH[Supabase Auth\nmagic-link session]
+      ADAPTER[Auth and preference adapter]
+      DB[(Supabase Postgres\nRLS enabled)]
+      PROFILE[profiles]
+      PREFS[user_preferences]
+      WATCH[watchlist_items\nelement_id key]
+      AUTH --> ADAPTER
+      ADAPTER --> DB
+      DB --> PROFILE
+      DB --> PREFS
+      DB --> WATCH
+    end
+
+    subgraph External[External configuration]
+      SMTP[Production SMTP]
+      REDIRECT[Approved production redirect URL]
+      SMTP --> AUTH
+      REDIRECT --> AUTH
+    end
+
+    APP -. proposed sign-in and sync .-> ADAPTER
+    ADAPTER -. first sign-in set-union merge .-> LS
+
+    classDef existing fill:#1f2937,stroke:#94a3b8,color:#f8fafc;
+    classDef proposed fill:#0f766e,stroke:#5eead4,color:#f8fafc;
+    classDef boundary fill:#4c1d95,stroke:#c4b5fd,color:#f8fafc;
+    class U,APP,LS,DATA existing;
+    class AUTH,ADAPTER,DB,PROFILE,PREFS,WATCH proposed;
+    class SMTP,REDIRECT boundary;
