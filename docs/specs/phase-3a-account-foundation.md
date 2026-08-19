@@ -1,6 +1,6 @@
 # Feature Specification — Phase 3A: Account Foundation and Preference Sync
 
-**Status:** Foundation provisioned — client authentication implementation pending email configuration
+**Status:** Foundation provisioned — public email sign-in deferred pending production SMTP
 **Owner:** Manus AI
 **Date:** 2026-08-19
 **Related issue / PR:** N/A
@@ -121,7 +121,7 @@ The release check includes a deployed magic-link flow, redirect handling, first-
 |---|---|---|
 | Account specification reviewed | Draft complete | This document |
 | Supabase project connected | Complete | `fpl-omed` (`ghowrpjnoraohyjpmvuo`), OPM, `eu-central-1` |
-| Production SMTP configured | Pending | Authentication email configuration is still required |
+| Production SMTP configured | Deferred | User elected to defer public email sign-in pending an SMTP provider |
 | Migrations and RLS applied | Complete | `create_account_foundation`; security advisor returned no findings |
 | Two-user RLS integration passes | Pending | Requires two authenticated test users after Auth/email setup |
 | Browser/account checks complete | Pending | Browser verification record |
@@ -136,4 +136,5 @@ The release check includes a deployed magic-link flow, redirect handling, first-
 | 2026-08-19 | Use set union for first-sign-in watchlist migration. | Existing local user choices must not be lost. | Server inserts must be idempotent. |
 | 2026-08-19 | Keep Custom FDR and FPL Team ID outside 3A. | The first account release must prove auth, RLS, and preference sync with minimum scope. | Those features remain separate future increments. |
 | 2026-08-19 | Require production SMTP and deployed-link verification before public magic links. | Authentication reliability is a user-facing privacy and access requirement. | Client implementation remains gated until Auth configuration is available. |
-| 2026-08-19 | Create the dedicated `fpl-omed` Supabase project in OPM, `eu-central-1`. | Isolates FPL Omed user data while retaining the approved organization boundary. | The owner-only preference schema is now provisioned; client auth is the next gated increment. |
+| 2026-08-19 | Create the dedicated `fpl-omed` Supabase project in OPM, `eu-central-1`. | Isolates FPL Omed user data while retaining the approved organization boundary. | The owner-only preference schema is now provisioned. |
+| 2026-08-19 | Defer production SMTP and public email sign-in. | No SMTP provider or verified sender is currently available. | Do not add or expose account UI, magic-link calls, or public Supabase client configuration until production email delivery is ready. |
