@@ -1,0 +1,44 @@
+%% Purpose: decide how FPL Omed can move public FPL data from committed JSON snapshots to Supabase without exposing privileged credentials or losing last-known-good data.
+%% Evidence: fpl_fetcher.py, .github/workflows/update_data.yml, script.js, players.json, and docs/specs/phase-7-supabase-first-public-data.md.
+%% Solid elements/edges are current; dashed elements/edges are proposed.
+flowchart LR
+  subgraph external[Third-party boundary]
+    FPL[FPL public API]
+  end
+
+  subgraph current[Current production path]
+    GA[GitHub Actions scheduled workflow]
+    Fetcher[Python fetcher and validator]
+    Snapshot[Committed players.json]
+    Vercel[Vercel static hosting]
+    Browser[Public browser]
+  end
+
+  subgraph supabase[Supabase boundary]
+    Auth[Supabase Auth]
+    Accounts[Owner-only profiles, preferences, watchlist]
+    PublicData[Proposed public FPL snapshots]
+    Publisher[Proposed server-only publisher]
+  end
+
+  FPL --> GA
+  GA --> Fetcher
+  Fetcher --> Snapshot
+  Snapshot --> Vercel
+  Vercel --> Browser
+
+  Auth --> Accounts
+  Browser -. future authenticated user data .-> Auth
+
+  FPL -. proposed validated ingestion .-> Publisher
+  Publisher -. privileged atomic publication .-> PublicData
+  Browser -. publishable-key read only .-> PublicData
+  Snapshot -. temporary migration fallback .-> Browser
+
+  classDef current fill:#e8f1ff,stroke:#2563eb,color:#0f172a;
+  classDef proposed fill:#fff7e6,stroke:#d97706,color:#0f172a,stroke-dasharray: 5 5;
+  classDef boundary fill:#f1f5f9,stroke:#64748b,color:#0f172a;
+  class FPL external;
+  class GA,Fetcher,Snapshot,Vercel,Browser current;
+  class Auth,Accounts boundary;
+  class PublicData,Publisher proposed;
