@@ -46,6 +46,7 @@ const maxMFor = () =>
     : state.timeframe === "last_10"
       ? 900
       : (state.currentGW || 38) * 90;
+const uiStateUtils = () => window.FPLUIStateUtils;
 
 const focusableSelector = [
   "button:not([disabled])",
@@ -1358,13 +1359,19 @@ function renderTable(pfxArg) {
   vis("col-ppg", isSeason);
 
   if (!state.filteredPlayers.length) {
+    const dashboardState = uiStateUtils()?.classifyDashboardState({
+      loadError: state.loadError,
+      isPreseason: isPreseasonEmptyDataset(),
+      filteredPlayerCount: state.filteredPlayers.length,
+    });
+    const emptyMessages = {
+      error: "Player data is temporarily unavailable. Use “Try again” above to reload.",
+      preseason:
+        "The season has not started yet. Player statistics will appear after the opening matches.",
+      no_results: "No players match the current filters.",
+    };
     const tr = document.createElement("tr");
-    const emptyMessage = state.loadError
-      ? "Player data is temporarily unavailable. Use “Try again” above to reload."
-      : isPreseasonEmptyDataset()
-        ? "The season has not started yet. Player statistics will appear after the opening matches."
-        : "No players match the current filters.";
-    tr.innerHTML = `<td colspan="20" style="text-align:center;color:var(--text-2);padding:36px;font-family:var(--f-m);font-size:0.82rem;">${emptyMessage}</td>`;
+    tr.innerHTML = `<td colspan="20" style="text-align:center;color:var(--text-2);padding:36px;font-family:var(--f-m);font-size:0.82rem;">${emptyMessages[dashboardState] || emptyMessages.no_results}</td>`;
     el.tbody.appendChild(tr);
     return;
   }
