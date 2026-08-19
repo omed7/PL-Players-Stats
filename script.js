@@ -16,6 +16,7 @@ const state = {
   deadline: null,
   fetchedAt: null,
   schemaVersion: null,
+  dataSource: null,
   loadError: false,
   watchlist: new Set(),
   watchlistOnly: false,
@@ -1115,6 +1116,7 @@ function clearLoadedDataset() {
   state.deadline = null;
   state.fetchedAt = null;
   state.schemaVersion = null;
+  state.dataSource = null;
   state.actualGWs = null;
   clearCountdown();
   clearFreshness();
@@ -1131,10 +1133,11 @@ async function fetchPlayers() {
   el.error?.classList.add("hidden");
 
   try {
-    const res = await fetch("players.json", { cache: "no-store" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const payload = await res.json();
-    const classified = window.FPLSchemaUtils?.classifyPlayerDataset(payload);
+    const loader = window.FPLPublicDataLoader?.loadPlayerDataset;
+    const classified = await loader?.({
+      config: window.FPLPublicDataConfig,
+      classifyDataset: window.FPLSchemaUtils?.classifyPlayerDataset,
+    });
 
     if (!classified?.compatible) {
       clearLoadedDataset();
@@ -1146,6 +1149,10 @@ async function fetchPlayers() {
     }
 
     const data = classified.dataset;
+    state.dataSource = classified.source;
+    if (classified.source === "static" && classified.fallbackReason) {
+      console.warn(`Using temporary static player-data fallback: ${classified.fallbackReason}`);
+    }
     state.players = data.players;
     migrateLegacyWatchlist();
     syncWatchlistHeader();
