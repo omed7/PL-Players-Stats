@@ -1,0 +1,34 @@
+flowchart LR
+    subgraph Source[Existing official data path]
+      API[FPL official API]
+      FETCH[fpl_fetcher.py]
+      VALIDATE[Schema and completeness validation]
+      SNAPSHOT[players.json\nschema_version 2]
+      API --> FETCH --> VALIDATE --> SNAPSHOT
+    end
+
+    subgraph Public[Existing / approved public application]
+      APP[FPL Omed browser]
+      HISTORY[Match-history selector\nLast N Matches]
+      OFFICIAL[Official FPL difficulty]
+      SNAPSHOT --> APP
+      APP --> HISTORY
+      SNAPSHOT --> OFFICIAL
+    end
+
+    subgraph Deferred[Proposed future account-only Custom FDR]
+      AUTH[Supabase Auth\nSMTP-gated]
+      RATING[Custom-FDR rating adapter]
+      RLS[(Supabase RLS\nuser-owned ratings)]
+      CUSTOM[Custom FDR mode]
+      AUTH --> RATING --> RLS --> CUSTOM
+    end
+
+    APP -. future authenticated path .-> AUTH
+    CUSTOM -. future explicit selection .-> APP
+    OFFICIAL -. fallback for missing custom data .-> APP
+
+    classDef existing fill:#1f2937,stroke:#94a3b8,color:#f8fafc;
+    classDef proposed fill:#7c2d12,stroke:#fdba74,color:#f8fafc;
+    class API,FETCH,VALIDATE,SNAPSHOT,APP,HISTORY,OFFICIAL existing;
+    class AUTH,RATING,RLS,CUSTOM proposed;
