@@ -1,6 +1,6 @@
 # Feature Specification — Phase 3A: Account Foundation and Preference Sync
 
-**Status:** Draft — external configuration required before implementation
+**Status:** Foundation provisioned — client authentication implementation pending email configuration
 **Owner:** Manus AI
 **Date:** 2026-08-19
 **Related issue / PR:** N/A
@@ -120,10 +120,10 @@ The release check includes a deployed magic-link flow, redirect handling, first-
 | Check | Result | Link / evidence |
 |---|---|---|
 | Account specification reviewed | Draft complete | This document |
-| Supabase project connected | Pending | User action required |
-| Production SMTP configured | Pending | User action required |
-| Migrations and RLS applied | Pending | Supabase migration record |
-| Two-user RLS integration passes | Pending | Test output |
+| Supabase project connected | Complete | `fpl-omed` (`ghowrpjnoraohyjpmvuo`), OPM, `eu-central-1` |
+| Production SMTP configured | Pending | Authentication email configuration is still required |
+| Migrations and RLS applied | Complete | `create_account_foundation`; security advisor returned no findings |
+| Two-user RLS integration passes | Pending | Requires two authenticated test users after Auth/email setup |
 | Browser/account checks complete | Pending | Browser verification record |
 | Deployed email-link verification complete | Pending | Production delivery record |
 | Durable documentation updated | Pending | ADR/spec update if needed |
@@ -135,4 +135,5 @@ The release check includes a deployed magic-link flow, redirect handling, first-
 | 2026-08-19 | Use FPL `element_id` for persisted watchlist rows. | Names can change and are not durable identifiers. | Player display names remain display-only. |
 | 2026-08-19 | Use set union for first-sign-in watchlist migration. | Existing local user choices must not be lost. | Server inserts must be idempotent. |
 | 2026-08-19 | Keep Custom FDR and FPL Team ID outside 3A. | The first account release must prove auth, RLS, and preference sync with minimum scope. | Those features remain separate future increments. |
-| 2026-08-19 | Require production SMTP and deployed-link verification before public magic links. | Authentication reliability is a user-facing privacy and access requirement. | Implementation is blocked until Supabase configuration is available. |
+| 2026-08-19 | Require production SMTP and deployed-link verification before public magic links. | Authentication reliability is a user-facing privacy and access requirement. | Client implementation remains gated until Auth configuration is available. |
+| 2026-08-19 | Create the dedicated `fpl-omed` Supabase project in OPM, `eu-central-1`. | Isolates FPL Omed user data while retaining the approved organization boundary. | The owner-only preference schema is now provisioned; client auth is the next gated increment. |
