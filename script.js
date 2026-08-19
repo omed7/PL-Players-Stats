@@ -66,6 +66,16 @@ function loadTheme() {
 // ─── COUNTDOWN ────────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 
+let countdownIntervalId = null;
+
+function clearCountdown() {
+  if (countdownIntervalId) clearInterval(countdownIntervalId);
+  countdownIntervalId = null;
+  document.getElementById("gw-num").textContent = "—";
+  document.getElementById("cd-time").textContent = "—";
+  document.getElementById("gw-countdown").classList.add("hidden");
+}
+
 function startCountdown(deadlineStr, gwNum) {
   const gwNumEl = document.getElementById("gw-num");
   const timeEl = document.getElementById("cd-time");
@@ -85,7 +95,8 @@ function startCountdown(deadlineStr, gwNum) {
     timeEl.textContent = d > 0 ? `${d}d ${h}h ${m}m` : `${h}h ${m}m ${s}s`;
   }
   tick();
-  setInterval(tick, 1000);
+  if (countdownIntervalId) clearInterval(countdownIntervalId);
+  countdownIntervalId = setInterval(tick, 1000);
   if (wrap) wrap.classList.remove("hidden");
 }
 
@@ -270,6 +281,13 @@ function renderFDRHeatmap() {
 
   tbody.innerHTML = "";
   tbody.appendChild(frag);
+}
+
+function clearFreshness() {
+  const el = document.getElementById("s-updated");
+  if (!el) return;
+  el.textContent = "Updated —";
+  el.removeAttribute("title");
 }
 
 function renderFreshness(fetchedAt) {
@@ -911,6 +929,19 @@ function isPreseasonEmptyDataset() {
   );
 }
 
+function clearLoadedDataset() {
+  state.players = [];
+  state.filteredPlayers = [];
+  state.nextGWs = [];
+  state.currentGW = null;
+  state.deadline = null;
+  state.fetchedAt = null;
+  state.schemaVersion = null;
+  state.actualGWs = null;
+  clearCountdown();
+  clearFreshness();
+}
+
 function setLoadError(message) {
   state.loadError = true;
   if (el.errorText) el.errorText.textContent = message;
@@ -924,23 +955,25 @@ async function fetchPlayers() {
   try {
     const res = await fetch("players.json", { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const payload = await res.json();
+    const classified = window.FPLSchemaUtils?.classifyPlayerDataset(payload);
 
-    if (Array.isArray(data)) {
-      state.players = data;
-      state.nextGWs = [];
-      state.currentGW = null;
-      state.deadline = null;
-      state.fetchedAt = null;
-      state.schemaVersion = 1;
-    } else {
-      state.players = data.players || [];
-      state.nextGWs = data.next_gws || [];
-      state.currentGW = data.current_gw || null;
-      state.deadline = data.deadline || null;
-      state.fetchedAt = data.fetched_at || null;
-      state.schemaVersion = data.schema_version || 1;
+    if (!classified?.compatible) {
+      clearLoadedDataset();
+      setLoadError(
+        "Player data format is temporarily incompatible. Please try again shortly.",
+      );
+      applyFiltersAndSort();
+      return;
     }
+
+    const data = classified.dataset;
+    state.players = data.players;
+    state.nextGWs = data.next_gws || [];
+    state.currentGW = data.current_gw || null;
+    state.deadline = data.deadline || null;
+    state.fetchedAt = data.fetched_at || null;
+    state.schemaVersion = classified.schemaVersion;
     state.actualGWs = null;
 
     // Derive price slider range from actual data.
@@ -961,8 +994,7 @@ async function fetchPlayers() {
     initCountdown(state.deadline, state.currentGW);
   } catch (error) {
     console.error(error);
-    state.players = [];
-    state.filteredPlayers = [];
+    clearLoadedDataset();
     setLoadError("Player data is temporarily unavailable. Please try again shortly.");
     applyFiltersAndSort();
   }
