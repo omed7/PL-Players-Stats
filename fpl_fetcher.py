@@ -1,7 +1,10 @@
-import requests
 import json
+import os
 import time
 from datetime import datetime, timezone
+from pathlib import Path
+
+import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -37,6 +40,66 @@ def calc_stats(match_list):
     }
 
 
+def fetch_json(session, url, timeout, label):
+    """Fetch one JSON resource and raise a contextual error on any failure."""
+    try:
+        response = session.get(url, timeout=timeout)
+        response.raise_for_status()
+        return response.json()
+    except Exception as error:
+        raise RuntimeError(f"Failed to fetch {label}: {error}") from error
+
+
+def write_json_atomically(payload, output_path):
+    """Write a completed snapshot before replacing the previously valid output."""
+    output_path = Path(output_path)
+    temp_path = output_path.with_suffix(output_path.suffix + ".tmp")
+    try:
+        with open(temp_path, "w", encoding="utf-8") as output_file:
+            json.dump(payload, output_file, indent=2)
+            output_file.flush()
+            os.fsync(output_file.fileno())
+        os.replace(temp_path, output_path)
+    except Exception:
+        if temp_path.exists():
+            temp_path.unlink()
+        raise
+
+
+def build_player_identity(player, team_info):
+    """Return durable FPL identifiers alongside display fields for one player."""
+    element_id = player.get("id")
+    team_id = player.get("team")
+    if not isinstance(element_id, int) or element_id <= 0:
+        raise ValueError("Player is missing a valid FPL element ID")
+    if not isinstance(team_id, int) or team_id <= 0:
+        raise ValueError("Player is missing a valid FPL team ID")
+    return {
+        "element_id": element_id,
+        "team_id": team_id,
+        "team": team_info["short_name"],
+        "logo": team_info["logo"],
+    }
+
+
+def build_fixture_record(fixture, teams):
+    """Build one UI fixture record from a source fixture with explicit opponent ID."""
+    is_home = fixture.get("is_home", True)
+    opponent_id = fixture.get("team_a") if is_home else fixture.get("team_h")
+    if not isinstance(opponent_id, int) or opponent_id <= 0:
+        raise ValueError("Fixture is missing a valid opponent team ID")
+    opponent = teams.get(opponent_id, {"short_name": "?", "logo": ""})
+    return {
+        "fixture_id": fixture.get("id"),
+        "gw": fixture.get("event"),
+        "opponent_id": opponent_id,
+        "opponent": opponent["short_name"],
+        "opponent_logo": opponent["logo"],
+        "difficulty": fixture.get("difficulty", 3),
+        "is_home": is_home,
+    }
+
+
 def get_fpl_data():
     print("Initializing session...")
     session = requests.Session()
@@ -50,14 +113,12 @@ def get_fpl_data():
     req_timeout = 10
 
     print("Fetching FPL master list...")
-    try:
-        response = session.get(
-            "https://fantasy.premierleague.com/api/bootstrap-static/",
-            timeout=req_timeout,
-        ).json()
-    except Exception as e:
-        print(f"Fatal: failed to fetch bootstrap data: {e}")
-        return
+    response = fetch_json(
+        session,
+        "https://fantasy.premierleague.com/api/bootstrap-static/",
+        req_timeout,
+        "FPL bootstrap data",
+    )
 
     teams = {
         team["id"]: {
@@ -135,7 +196,12 @@ def get_fpl_data():
             f"https://fantasy.premierleague.com/api/element-summary/{player_id}/"
         )
         try:
-            history_resp = session.get(history_url, timeout=req_timeout).json()
+            history_resp = fetch_json(
+                session,
+                history_url,
+                req_timeout,
+                f"FPL player history for {fpl_name}",
+            )
             history = history_resp.get("history", [])
             if not history:
                 continue
@@ -178,23 +244,12 @@ def get_fpl_data():
                 gw = f["event"]
                 if gw not in seen_gws:
                     seen_gws.append(gw)
-                is_home = f.get("is_home", True)
-                opp_id = f["team_a"] if is_home else f["team_h"]
-                opp_info = teams.get(opp_id, {"short_name": "?", "logo": ""})
-                fixtures_data.append(
-                    {
-                        "gw": gw,
-                        "opponent": opp_info["short_name"],
-                        "opponent_logo": opp_info["logo"],
-                        "difficulty": f.get("difficulty", 3),
-                        "is_home": is_home,
-                    }
-                )
+                fixtures_data.append(build_fixture_record(f, teams))
 
+            identity = build_player_identity(player, team_info)
             record = {
+                **identity,
                 "name": fpl_name,
-                "team": team_info["short_name"],
-                "logo": team_info["logo"],
                 "position": pos,
                 "price": price,
                 "status_pct": status_pct,
@@ -250,6 +305,14 @@ def get_fpl_data():
             print(f"Failed to fetch {fpl_name}: {e}")
             continue
 
+    if elements:
+        success_ratio = len(players_data) / len(elements)
+        if success_ratio < 0.9:
+            raise RuntimeError(
+                "Fetcher output is unexpectedly incomplete: "
+                f"{len(players_data)}/{len(elements)} player records succeeded"
+            )
+
     fetched_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     output = {
         "fetched_at": fetched_at,
@@ -258,8 +321,7 @@ def get_fpl_data():
         "deadline": deadline,
         "players": players_data,
     }
-    with open("players.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, indent=2)
+    write_json_atomically(output, "players.json")
     print(
         f"Done. {len(players_data)} players saved. GW={current_gw}, fetched_at={fetched_at}"
     )

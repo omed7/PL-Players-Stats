@@ -1306,7 +1306,8 @@ tbody tr:hover td.sticky-col {
   width: 100%;
 }
 #fdr-table td .fix-chip,
-#fdr-table td .bgw-chip {
+#fdr-table td .bgw-chip,
+#fdr-table td .fixture-unknown {
   margin: 0 auto;
   width: 44px;
   height: 48px;
@@ -1314,7 +1315,8 @@ tbody tr:hover td.sticky-col {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
-#fdr-table td .bgw-chip {
+#fdr-table td .bgw-chip,
+#fdr-table td .fixture-unknown {
   line-height: 36px;
 }
 #fdr-table td .fix-chip img {
@@ -1912,7 +1914,8 @@ tbody tr:hover td.sticky-col {
     margin-left: 1px;
   }
   .fix-chip,
-  .bgw-chip {
+  .bgw-chip,
+  .fixture-unknown {
     width: 19px;
     height: 28px;
     padding-top: 2px;
@@ -1971,7 +1974,8 @@ tbody tr:hover td.sticky-col {
 /* ══════════════════════════════════════════════════════════════════
    FEATURE 4 — DGW / BGW CHIPS
    ══════════════════════════════════════════════════════════════════ */
-.bgw-chip {
+.bgw-chip,
+.fixture-unknown {
   width: 22px;
   height: 32px;
   border-radius: 4px;
@@ -1981,10 +1985,20 @@ tbody tr:hover td.sticky-col {
   font-family: var(--f-m);
   font-size: 0.55rem;
   font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* A confirmed blank must use .bgw-chip. TBC is deliberately neutral: source
+   data is incomplete or unassigned, so the application does not claim a BGW. */
+.bgw-chip {
   background: rgba(45, 55, 72, 0.4);
   color: var(--text-2);
   border: 1px dashed var(--blight);
-  flex-shrink: 0;
+}
+.fixture-unknown {
+  background: rgba(120, 95, 30, 0.16);
+  color: var(--amber);
+  border: 1px dashed rgba(255, 184, 77, 0.55);
 }
 
 /* ══════════════════════════════════════════════════════════════════

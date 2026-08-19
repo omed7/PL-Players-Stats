@@ -107,6 +107,29 @@ async function initCountdown(storedDeadline, storedGW) {
 }
 
 // ─── Data freshness ───────────────────────────────────────────────────────────
+
+function renderFixtureSlotHTML(fixtures, gameweek) {
+  const classifier = window.FPLFixtureUtils?.classifyFixtureSlot;
+  const slot = classifier
+    ? classifier(fixtures)
+    : { status: fixtures?.length ? "known" : "unknown", fixtures: fixtures || [] };
+
+  let html = '<div class="gw-slot">';
+  if (slot.status === "unknown") {
+    html += `<div class="fixture-unknown" title="GW${gameweek}: fixture data unavailable">TBC</div>`;
+  } else {
+    slot.fixtures.forEach((fixture) => {
+      const homeAway = fixture.is_home ? "H" : "A";
+      html += `<div class="fix-chip diff-${fixture.difficulty}" title="GW${gameweek} vs ${fixture.opponent} (${homeAway}) FDR:${fixture.difficulty}">
+        <img src="${fixture.opponent_logo}" alt="${fixture.opponent}">
+        <span class="fix-ha">${homeAway}</span>
+      </div>`;
+    });
+  }
+  html += "</div>";
+  return html;
+}
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── FDR HEATMAP ──────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -153,19 +176,13 @@ function renderFDRHeatmap() {
     }
   });
 
-  // Calculate global upcoming GWs (all remaining)
+  // Render only gameweeks observed in the source data. Do not manufacture a
+  // numeric range: absence of a fixture is not evidence of a blank gameweek.
   const allGWs = new Set();
   Object.values(teamFixtures).forEach((fixtures) => {
-    fixtures.forEach((f) => allGWs.add(f.gw));
+    fixtures.forEach((fixture) => allGWs.add(fixture.gw));
   });
-
-  let gws = [];
-  if (allGWs.size > 0) {
-    const minGw = Math.min(...Array.from(allGWs));
-    for (let i = minGw; i <= 38; i++) {
-      gws.push(i);
-    }
-  }
+  const gws = Array.from(allGWs).sort((a, b) => a - b);
 
   if (gws.length === 0) {
     tbody.innerHTML =
@@ -242,21 +259,7 @@ function renderFDRHeatmap() {
       const td = document.createElement("td");
       const fixes = t.byGW[gw] || [];
 
-      let html = '<div class="gw-slot">';
-      if (fixes.length === 0) {
-        html += `<div class="bgw-chip" title="GW${gw}: Blank Gameweek">BGW</div>`;
-      } else {
-        fixes.forEach((f) => {
-          const ha = f.is_home ? "H" : "A";
-          html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
-            <img src="${f.opponent_logo}" alt="${f.opponent}">
-            <span class="fix-ha">${ha}</span>
-          </div>`;
-        });
-      }
-      html += "</div>";
-
-      td.innerHTML = html;
+      td.innerHTML = renderFixtureSlotHTML(fixes, gw);
       tr.appendChild(td);
     });
 
@@ -294,15 +297,13 @@ function buildFixtureChipsHTML(player) {
     (byGW[f.gw] = byGW[f.gw] || []).push(f);
   });
 
-  // Calculate actual upcoming GWs from the global state if not already done
+  // Use only gameweeks present in source fixture data. Missing records remain
+  // unknown and cannot be rendered as confirmed blank gameweeks.
   if (!state.actualGWs) {
-    const allGWs = new Set();
-    state.players.forEach((p) => {
-      (p.fixtures || []).forEach((f) => allGWs.add(f.gw));
-    });
-    state.actualGWs = Array.from(allGWs)
-      .sort((a, b) => a - b)
-      .slice(0, 5);
+    state.actualGWs = window.FPLFixtureUtils?.upcomingGameweeksFromPlayers(
+      state.players,
+      5,
+    ) || [];
   }
 
   const gws = state.actualGWs;
@@ -310,20 +311,7 @@ function buildFixtureChipsHTML(player) {
 
   let html = '<div class="fixture-chips">';
   gws.forEach((gw) => {
-    const fixes = byGW[gw] || [];
-    html += '<div class="gw-slot">';
-    if (fixes.length === 0) {
-      html += `<div class="bgw-chip" title="GW${gw}: Blank Gameweek">BGW</div>`;
-    } else {
-      fixes.forEach((f) => {
-        const ha = f.is_home ? "H" : "A";
-        html += `<div class="fix-chip diff-${f.difficulty}" title="GW${gw} vs ${f.opponent} (${ha}) FDR:${f.difficulty}">
-          <img src="${f.opponent_logo}" alt="${f.opponent}">
-          <span class="fix-ha">${ha}</span>
-        </div>`;
-      });
-    }
-    html += "</div>";
+    html += renderFixtureSlotHTML(byGW[gw] || [], gw);
   });
   html += "</div>";
   return html;
@@ -1276,7 +1264,7 @@ function renderTable(pfxArg) {
 
     // Feature 6: row click → player modal (ignore clicks on buttons/chips)
     tr.addEventListener("click", (e) => {
-      if (e.target.closest(".star-btn, .cmp-add-btn, .fix-chip, .bgw-chip"))
+      if (e.target.closest(".star-btn, .cmp-add-btn, .fix-chip, .fixture-unknown"))
         return;
       openPlayerModal(p);
     });

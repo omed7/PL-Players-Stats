@@ -4,7 +4,9 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "test": "jest"
+    "test": "npm run test:js && npm run test:python",
+    "test:js": "jest --runInBand",
+    "test:python": "python3 -m unittest discover -s tests/python -p 'test_*.py'"
   },
   "repository": {
     "type": "git",
