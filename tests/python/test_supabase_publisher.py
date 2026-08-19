@@ -44,6 +44,14 @@ class SnapshotValidationTests(unittest.TestCase):
         }
         self.assertEqual(snapshot_hash(VALID_SNAPSHOT), snapshot_hash(reordered))
 
+    def test_hash_ignores_a_changed_fetch_timestamp_for_unchanged_content(self):
+        later_fetch = {**VALID_SNAPSHOT, "fetched_at": "2026-08-20T03:00:00Z"}
+        self.assertEqual(snapshot_hash(VALID_SNAPSHOT), snapshot_hash(later_fetch))
+
+    def test_hash_changes_when_player_content_changes(self):
+        changed_players = {**VALID_SNAPSHOT, "players": [{"element_id": 101}]}
+        self.assertNotEqual(snapshot_hash(VALID_SNAPSHOT), snapshot_hash(changed_players))
+
 
 class SnapshotPublicationTests(unittest.TestCase):
     def test_requires_service_role_key_before_http_publication(self):
