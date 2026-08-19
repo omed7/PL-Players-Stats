@@ -25,6 +25,7 @@ const state = {
   fdrSortMode: "avg", // 'avg' | 'alpha'
 };
 const el = {};
+let activeDialog = null;
 
 const CMP = [
   { color: "#00d9a3", fill: "rgba(0,217,163,0.18)", cls: "slot-0" },
@@ -45,6 +46,75 @@ const maxMFor = () =>
     : state.timeframe === "last_10"
       ? 900
       : (state.currentGW || 38) * 90;
+
+const focusableSelector = [
+  "button:not([disabled])",
+  "[href]",
+  "input:not([disabled])",
+  "select:not([disabled])",
+  "textarea:not([disabled])",
+  '[tabindex]:not([tabindex="-1"])',
+].join(", ");
+
+function activateDialog(containerId, initialFocusSelector) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  activeDialog = {
+    container,
+    invoker:
+      document.activeElement instanceof HTMLElement ? document.activeElement : null,
+  };
+  container.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  const initialFocus = container.querySelector(initialFocusSelector);
+  (initialFocus || container).focus();
+}
+
+function deactivateDialog(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.setAttribute("aria-hidden", "true");
+  document.body.style.overflow = "";
+  const invoker =
+    activeDialog?.container === container ? activeDialog.invoker : null;
+  activeDialog = null;
+  if (invoker?.isConnected) invoker.focus();
+}
+
+function handleDialogKeyboard(event) {
+  if (!activeDialog) return;
+
+  if (event.key === "Escape") {
+    event.preventDefault();
+    const { id } = activeDialog.container;
+    if (id === "wl-drawer") closeWatchlist();
+    if (id === "cmp-overlay") closeCompareModal();
+    if (id === "pd-overlay") closePlayerModal();
+    return;
+  }
+
+  if (event.key !== "Tab") return;
+  const focusable = [
+    ...activeDialog.container.querySelectorAll(focusableSelector),
+  ];
+  if (!focusable.length) {
+    event.preventDefault();
+    activeDialog.container.focus();
+    return;
+  }
+
+  const first = focusable[0];
+  const last = focusable.at(-1);
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ─── THEMES ───────────────────────────────────────────────────────────────────
@@ -395,11 +465,16 @@ function toggleWatch(elementId) {
   saveWatchlist();
   syncWatchlistHeader();
   renderWatchlistDrawer();
-  document
-    .querySelectorAll(`[data-watch="${elementId}"]`)
-    .forEach((button) =>
-      button.classList.toggle("active", state.watchlist.has(elementId)),
+  const playerName = playerByElementId(elementId)?.name || "player";
+  const watched = state.watchlist.has(elementId);
+  document.querySelectorAll(`[data-watch="${elementId}"]`).forEach((button) => {
+    button.classList.toggle("active", watched);
+    button.setAttribute("aria-pressed", String(watched));
+    button.setAttribute(
+      "aria-label",
+      `${watched ? "Remove" : "Add"} ${playerName} ${watched ? "from" : "to"} watchlist`,
     );
+  });
 }
 
 function syncWatchlistHeader() {
@@ -416,12 +491,22 @@ function syncWatchlistHeader() {
 }
 function openWatchlist() {
   renderWatchlistDrawer();
-  document.getElementById("wl-drawer").classList.add("open");
-  document.getElementById("wl-backdrop").classList.remove("hidden");
+  const drawer = document.getElementById("wl-drawer");
+  drawer.inert = false;
+  drawer.classList.add("open");
+  const backdrop = document.getElementById("wl-backdrop");
+  backdrop.classList.remove("hidden");
+  backdrop.setAttribute("aria-hidden", "false");
+  activateDialog("wl-drawer", "#btn-wl-close");
 }
 function closeWatchlist() {
-  document.getElementById("wl-drawer").classList.remove("open");
-  document.getElementById("wl-backdrop").classList.add("hidden");
+  const drawer = document.getElementById("wl-drawer");
+  drawer.classList.remove("open");
+  drawer.inert = true;
+  const backdrop = document.getElementById("wl-backdrop");
+  backdrop.classList.add("hidden");
+  backdrop.setAttribute("aria-hidden", "true");
+  deactivateDialog("wl-drawer");
 }
 
 function renderWatchlistDrawer() {
@@ -458,7 +543,7 @@ function renderWatchlistDrawer() {
           </div>
           <div class="wl-card-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% owned &middot; ${pts} pts &middot; ${val} pts/&pound;m &middot; xGI ${xgi}</div>
         </div>
-        <button class="wl-card-remove" title="Remove">&times;</button>
+        <button type="button" class="wl-card-remove" title="Remove" aria-label="Remove ${p.name} from watchlist">&times;</button>
       </div>
       ${buildFixtureChipsHTML(p) ? `<div class="wl-card-chips">${buildFixtureChipsHTML(p)}</div>` : ""}`;
     card
@@ -501,14 +586,25 @@ function toggleCompare(elementId) {
 function syncAllCmpButtons() {
   document.querySelectorAll(".cmp-add-btn").forEach((btn) => {
     const elementId = Number(btn.dataset.cmp);
+    const playerName = playerByElementId(elementId)?.name || "player";
     const idx = state.compareSet.indexOf(elementId);
+    const selected = idx !== -1;
     btn.className = "cmp-add-btn";
-    if (idx !== -1) {
+    btn.disabled = !selected && state.compareSet.length >= 3;
+    btn.setAttribute("aria-pressed", String(selected));
+    btn.setAttribute(
+      "aria-label",
+      selected
+        ? `Remove ${playerName} from comparison`
+        : btn.disabled
+          ? `Comparison is full; ${playerName} is not selected`
+          : `Add ${playerName} to comparison`,
+    );
+    if (selected) {
       btn.classList.add(CMP[idx].cls);
       btn.textContent = idx + 1;
     } else {
       btn.textContent = "+";
-      btn.disabled = state.compareSet.length >= 3;
     }
   });
 }
@@ -680,11 +776,11 @@ function openCompareModal() {
 
   body.innerHTML = `<div class="cmp-layout">${colsHtml}<div class="cmp-radar-wrap">${buildRadarSVG(players, pfx)}</div>${tableHtml}</div>`;
   document.getElementById("cmp-overlay").classList.remove("hidden");
-  document.body.style.overflow = "hidden";
+  activateDialog("cmp-overlay", "#btn-cmp-modal-close");
 }
 function closeCompareModal() {
   document.getElementById("cmp-overlay").classList.add("hidden");
-  document.body.style.overflow = "";
+  deactivateDialog("cmp-overlay");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -948,11 +1044,13 @@ function openPlayerModal(p) {
     initialActive.style.borderColor = "var(--teal)";
     initialActive.style.background = "var(--teal-dim)";
   }
+
+  activateDialog("pd-overlay", "#btn-pd-close");
 }
 
 function closePlayerModal() {
   document.getElementById("pd-overlay").classList.add("hidden");
-  document.body.style.overflow = "";
+  deactivateDialog("pd-overlay");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1320,6 +1418,7 @@ function renderTable(pfxArg) {
     const fixChips = buildFixtureChipsHTML(p);
 
     const tr = document.createElement("tr");
+    tr.tabIndex = -1;
     tr.style.setProperty("--ri", i);
     tr.style.cursor = "pointer"; // signals clickability for Feature 6
 
@@ -1350,8 +1449,8 @@ function renderTable(pfxArg) {
           <div class="player-name-row">
             <span class="pos-badge pos-${p.position}">${p.position}</span>
             <span class="player-name-text">${p.name}</span>
-            <button class="star-btn ${watched ? "active" : ""}" data-watch="${p.element_id}" title="Watchlist">&#9733;</button>
-            <button class="${cmpClass}" data-cmp="${p.element_id}" title="Compare" ${cmpFull ? "disabled" : ""}>${cmpTxt}</button>
+            <button type="button" class="star-btn ${watched ? "active" : ""}" data-watch="${p.element_id}" title="Watchlist" aria-label="${watched ? "Remove" : "Add"} ${p.name} ${watched ? "from" : "to"} watchlist" aria-pressed="${watched}">&#9733;</button>
+            <button type="button" class="${cmpClass}" data-cmp="${p.element_id}" title="Compare" aria-label="${cmpIdx !== -1 ? `Remove ${p.name} from comparison` : cmpFull ? `Comparison is full; ${p.name} is not selected` : `Add ${p.name} to comparison`}" aria-pressed="${cmpIdx !== -1}" ${cmpFull ? "disabled" : ""}>${cmpTxt}</button>
           </div>
           <div class="player-meta-row">
             <span class="own-badge">${own}%</span>
@@ -1376,6 +1475,7 @@ function renderTable(pfxArg) {
     tr.addEventListener("click", (e) => {
       if (e.target.closest(".star-btn, .cmp-add-btn, .fix-chip, .fixture-unknown"))
         return;
+      tr.focus();
       openPlayerModal(p);
     });
 
@@ -1415,10 +1515,15 @@ function renderTable(pfxArg) {
 function syncSortHeaders() {
   el.headers.forEach((th) => {
     const col = th.getAttribute("data-sort");
+    const active = col === state.sortColumn;
     th.classList.remove("active-sort", "asc", "desc");
+    th.setAttribute(
+      "aria-sort",
+      active ? (state.sortDirection === "asc" ? "ascending" : "descending") : "none",
+    );
     const icon = th.querySelector(".sort-icon");
     if (icon) icon.textContent = "";
-    if (col === state.sortColumn) {
+    if (active) {
       th.classList.add("active-sort", state.sortDirection);
       if (icon) {
         icon.textContent = state.sortDirection === "asc" ? "▲" : "▼";
@@ -1441,7 +1546,8 @@ function syncSliderUI() {
 
 document.addEventListener("DOMContentLoaded", () => {
   el.tbody = document.getElementById("table-body");
-  el.headers = document.querySelectorAll("#players-table th");
+  el.headers = document.querySelectorAll("#players-table th[data-sort]");
+  el.sortButtons = document.querySelectorAll("#players-table .sort-btn");
   el.btnPrev = document.getElementById("btn-prev");
   el.btnNext = document.getElementById("btn-next");
   el.pageInfo = document.getElementById("page-info");
@@ -1553,9 +1659,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("pd-overlay").addEventListener("click", (e) => {
     if (e.target === e.currentTarget) closePlayerModal();
   });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closePlayerModal();
-  });
+  document.addEventListener("keydown", handleDialogKeyboard);
 
   // ── Price range ──
   el.priceMinSlider.addEventListener("input", () => {
@@ -1644,9 +1748,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ── Sort ──
-  el.headers.forEach((th) => {
-    th.addEventListener("click", () => {
-      const col = th.getAttribute("data-sort");
+  el.sortButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const col = button.closest("th")?.getAttribute("data-sort");
       if (!col) return;
       if (state.sortColumn === col)
         state.sortDirection = state.sortDirection === "asc" ? "desc" : "asc";
