@@ -42,6 +42,12 @@ jobs:
       - name: Run FPL fetcher script
         run: python fpl_fetcher.py
 
+      - name: Publish validated snapshot to Supabase
+        env:
+          SUPABASE_URL: https://ghowrpjnoraohyjpmvuo.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python supabase_publisher.py
+
       - name: Commit and push changed data
         run: |
           git config --global user.name 'omed7'
