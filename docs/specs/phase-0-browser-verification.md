@@ -29,3 +29,18 @@ The document head exposes the expected canonical URL, descriptive metadata, `sum
 ## Data-load failure check
 
 A local browser test replaced the `players.json` request with a simulated network failure. The page exposed an assertive error alert reading, “Player data is temporarily unavailable. Please try again shortly.” It also displayed a keyboard-accessible **Try again** control and a matching non-misleading table state. This test confirms that a source failure is distinct from the valid preseason empty-data state.
+
+
+## Live deployment observation
+
+Immediately after the successful GitHub Actions check, the live Vercel browser session still displayed the prior title and generic empty-table message. This is not accepted as release verification. The next verification step is to clear the live service-worker cache and independently inspect the server response to distinguish cached assets from deployment propagation.
+
+
+## Deployment blocker
+
+The production URL did not yet expose the latest metadata or social asset after the main-branch release commit and successful GitHub Actions test. Direct asset verification returned `404`. GitHub deployment-status APIs are unavailable to the current token, and the Vercel dashboard requires an authenticated session. Production publication therefore remains an explicit blocker, not a completed release check.
+
+
+## Vercel deployment diagnosis
+
+Vercel now exposes the correct `pl-players-stats` project and recorded the public-launch commit `08a6cb7` as a Git production deployment. Its state is **BLOCKED**, not a build failure. The deployment metadata names `Manus AI <manus-ai@users.noreply.github.com>` as the commit author. Vercel’s Hobby-team collaboration guidance states that a private-repository deployment must be authored by the Hobby team owner whose Vercel account is linked to the Git provider. The next trigger commit must therefore be authored as the connected GitHub/Vercel owner, `omed7`, using the owner-associated noreply email.
