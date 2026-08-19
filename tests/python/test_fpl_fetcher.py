@@ -160,38 +160,160 @@ class FetchReliabilityTests(unittest.TestCase):
             self.assertFalse((Path(temp_dir) / "players.json.tmp").exists())
 
 
+class HistoryResponseIntegrityTests(unittest.TestCase):
+    def test_rejects_empty_history_for_an_eligible_player_during_live_season(self):
+        from fpl_fetcher import validate_completed_history
+
+        with self.assertRaisesRegex(RuntimeError, "has no completed history"):
+            validate_completed_history([], "Test Player", allow_empty=False)
+
+    def test_allows_empty_history_before_the_season_is_live(self):
+        from fpl_fetcher import validate_completed_history
+
+        self.assertEqual(
+            validate_completed_history([], "Test Player", allow_empty=True), []
+        )
+
+    def test_rejects_a_non_list_history_payload(self):
+        from fpl_fetcher import validate_completed_history
+
+        with self.assertRaisesRegex(RuntimeError, "must be a list"):
+            validate_completed_history({}, "Test Player", allow_empty=False)
+
+    def test_preserves_a_zero_minute_completed_row(self):
+        from fpl_fetcher import validate_completed_history
+
+        history = [{"fixture": 450, "minutes": 0}]
+
+        self.assertIs(
+            validate_completed_history(history, "Test Player", allow_empty=False),
+            history,
+        )
+
+
+class ProcessedPlayerIntegrityTests(unittest.TestCase):
+    def test_aborts_before_write_when_one_of_ten_eligible_histories_is_invalid(self):
+        from unittest.mock import patch
+        from fpl_fetcher import get_fpl_data
+
+        elements = [
+            {
+                "id": player_id,
+                "web_name": f"Player {player_id}",
+                "team": 1,
+                "element_type": 2,
+                "minutes": 90,
+                "now_cost": 50,
+            }
+            for player_id in range(1, 11)
+        ]
+        bootstrap = {
+            "teams": [{"id": 1, "short_name": "TST", "code": 1}],
+            "events": [
+                {
+                    "id": 1,
+                    "is_current": True,
+                    "is_next": False,
+                    "finished": False,
+                    "deadline_time": "2026-08-21T17:30:00Z",
+                }
+            ],
+            "elements": elements,
+        }
+
+        def history_for(player_id):
+            fixture_id = None if player_id == 10 else player_id
+            return {
+                "history": [
+                    {
+                        "fixture": fixture_id,
+                        "round": 1,
+                        "opponent_team": 1,
+                        "was_home": True,
+                        "kickoff_time": "2026-08-15T14:00:00Z",
+                        "minutes": 90,
+                    }
+                ],
+                "fixtures": [],
+            }
+
+        def fake_fetch_json(_session, url, _timeout, _label):
+            if "bootstrap-static" in url:
+                return bootstrap
+            player_id = int(url.rstrip("/").split("/")[-1])
+            return history_for(player_id)
+
+        with patch("fpl_fetcher.fetch_json", side_effect=fake_fetch_json), patch(
+            "fpl_fetcher.time.sleep"
+        ), patch("fpl_fetcher.write_json_atomically") as write_json:
+            with self.assertRaisesRegex(
+                RuntimeError, "Failed to process eligible player Player 10 \\(10\\)"
+            ):
+                get_fpl_data()
+
+        write_json.assert_not_called()
+
+
 class FetchCompletenessTests(unittest.TestCase):
-    def test_allows_zero_player_output_before_the_first_current_gameweek(self):
+    def test_allows_zero_eligible_players_before_the_season_is_live(self):
+        from fpl_fetcher import validate_fetch_completeness
+
+        validate_fetch_completeness(
+            element_count=0,
+            player_record_count=0,
+            empty_history_count=0,
+            season_is_live=False,
+        )
+
+    def test_allows_all_eligible_histories_to_be_empty_before_the_season_is_live(self):
         from fpl_fetcher import validate_fetch_completeness
 
         validate_fetch_completeness(
             element_count=400,
             player_record_count=0,
-            successful_history_response_count=400,
             empty_history_count=400,
             season_is_live=False,
         )
 
-    def test_rejects_empty_output_after_the_season_is_live(self):
+    def test_rejects_zero_eligible_players_after_the_season_is_live(self):
         from fpl_fetcher import validate_fetch_completeness
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaisesRegex(RuntimeError, "zero eligible players"):
             validate_fetch_completeness(
-                element_count=400,
+                element_count=0,
                 player_record_count=0,
-                successful_history_response_count=400,
-                empty_history_count=400,
+                empty_history_count=0,
                 season_is_live=True,
             )
 
-    def test_rejects_failed_player_history_requests(self):
+    def test_rejects_any_missing_eligible_player_record(self):
         from fpl_fetcher import validate_fetch_completeness
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaisesRegex(RuntimeError, "399/400 player records"):
             validate_fetch_completeness(
                 element_count=400,
-                player_record_count=0,
-                successful_history_response_count=0,
+                player_record_count=399,
                 empty_history_count=0,
+                season_is_live=True,
+            )
+
+    def test_accepts_an_exactly_complete_live_season_output(self):
+        from fpl_fetcher import validate_fetch_completeness
+
+        validate_fetch_completeness(
+            element_count=400,
+            player_record_count=400,
+            empty_history_count=0,
+            season_is_live=True,
+        )
+
+    def test_rejects_mixed_empty_and_nonempty_preseason_histories(self):
+        from fpl_fetcher import validate_fetch_completeness
+
+        with self.assertRaisesRegex(RuntimeError, "mixed empty histories"):
+            validate_fetch_completeness(
+                element_count=400,
+                player_record_count=1,
+                empty_history_count=399,
                 season_is_live=False,
             )
