@@ -341,28 +341,65 @@ function buildFixtureChipsHTML(player) {
 // ─── WATCHLIST ────────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const WL_KEY = "fpl_watchlist_v1";
+const WL_KEY = "fpl_watchlist_v2";
+const LEGACY_WL_KEY = "fpl_watchlist_v1";
+
+function persistenceUtils() {
+  return window.FPLPersistenceUtils;
+}
+
 function loadWatchlist() {
   try {
-    state.watchlist = new Set(JSON.parse(localStorage.getItem(WL_KEY) || "[]"));
+    const stored = JSON.parse(localStorage.getItem(WL_KEY) || "[]");
+    state.watchlist = new Set(persistenceUtils()?.normalizeElementIds(stored) || []);
   } catch {
     state.watchlist = new Set();
   }
 }
+
+function migrateLegacyWatchlist() {
+  if (localStorage.getItem(WL_KEY) !== null) return;
+
+  let legacyNames;
+  try {
+    const rawLegacy = localStorage.getItem(LEGACY_WL_KEY);
+    if (rawLegacy === null) return;
+    legacyNames = JSON.parse(rawLegacy);
+  } catch {
+    return;
+  }
+
+  const resolved = persistenceUtils()?.resolveLegacyWatchlist(
+    legacyNames,
+    state.players,
+  );
+  if (!resolved?.complete) return;
+
+  state.watchlist = new Set(resolved.elementIds);
+  saveWatchlist();
+}
+
 function saveWatchlist() {
   localStorage.setItem(WL_KEY, JSON.stringify([...state.watchlist]));
 }
 
-function toggleWatch(name) {
-  state.watchlist.has(name)
-    ? state.watchlist.delete(name)
-    : state.watchlist.add(name);
+function playerByElementId(elementId) {
+  return state.players.find((player) => player.element_id === elementId);
+}
+
+function toggleWatch(elementId) {
+  if (!persistenceUtils()?.isValidElementId(elementId)) return;
+  state.watchlist.has(elementId)
+    ? state.watchlist.delete(elementId)
+    : state.watchlist.add(elementId);
   saveWatchlist();
   syncWatchlistHeader();
   renderWatchlistDrawer();
   document
-    .querySelectorAll(`[data-watch="${name}"]`)
-    .forEach((b) => b.classList.toggle("active", state.watchlist.has(name)));
+    .querySelectorAll(`[data-watch="${elementId}"]`)
+    .forEach((button) =>
+      button.classList.toggle("active", state.watchlist.has(elementId)),
+    );
 }
 
 function syncWatchlistHeader() {
@@ -378,6 +415,7 @@ function syncWatchlistHeader() {
   }
 }
 function openWatchlist() {
+  renderWatchlistDrawer();
   document.getElementById("wl-drawer").classList.add("open");
   document.getElementById("wl-backdrop").classList.remove("hidden");
 }
@@ -400,9 +438,10 @@ function renderWatchlistDrawer() {
   emptyEl?.classList.add("hidden");
   const pfx = pfxFor();
   const frag = document.createDocumentFragment();
-  const playerMap = new Map(state.players.map((p) => [p.name, p]));
-  [...state.watchlist].forEach((name) => {
-    const p = playerMap.get(name);
+  const playerMap =
+    persistenceUtils()?.indexPlayersByElementId(state.players) || new Map();
+  [...state.watchlist].forEach((elementId) => {
+    const p = playerMap.get(elementId);
     if (!p) return;
     const pts = p[`${pfx}points`] ?? 0;
     const xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2);
@@ -424,7 +463,7 @@ function renderWatchlistDrawer() {
       ${buildFixtureChipsHTML(p) ? `<div class="wl-card-chips">${buildFixtureChipsHTML(p)}</div>` : ""}`;
     card
       .querySelector(".wl-card-remove")
-      .addEventListener("click", () => toggleWatch(name));
+      .addEventListener("click", () => toggleWatch(elementId));
     frag.appendChild(card);
   });
   body.appendChild(frag);
@@ -449,10 +488,11 @@ const CMP_STAT_DEFS = [
   { key: "saves", lbl: "Saves", bestLow: false },
 ];
 
-function toggleCompare(name) {
-  const idx = state.compareSet.indexOf(name);
+function toggleCompare(elementId) {
+  if (!persistenceUtils()?.isValidElementId(elementId)) return;
+  const idx = state.compareSet.indexOf(elementId);
   if (idx !== -1) state.compareSet.splice(idx, 1);
-  else if (state.compareSet.length < 3) state.compareSet.push(name);
+  else if (state.compareSet.length < 3) state.compareSet.push(elementId);
   else return;
   syncAllCmpButtons();
   syncCmpBar();
@@ -460,8 +500,8 @@ function toggleCompare(name) {
 
 function syncAllCmpButtons() {
   document.querySelectorAll(".cmp-add-btn").forEach((btn) => {
-    const name = btn.dataset.cmp;
-    const idx = state.compareSet.indexOf(name);
+    const elementId = Number(btn.dataset.cmp);
+    const idx = state.compareSet.indexOf(elementId);
     btn.className = "cmp-add-btn";
     if (idx !== -1) {
       btn.classList.add(CMP[idx].cls);
@@ -483,8 +523,8 @@ function syncCmpBar() {
   }
   bar.classList.remove("hidden");
   playersEl.innerHTML = "";
-  state.compareSet.forEach((name, i) => {
-    const p = state.players.find((pl) => pl.name === name);
+  state.compareSet.forEach((elementId, i) => {
+    const p = playerByElementId(elementId);
     if (!p) return;
     const chip = document.createElement("div");
     chip.className = "cmp-bar-chip";
@@ -570,7 +610,7 @@ function buildRadarSVG(players, pfx) {
 
 function openCompareModal() {
   const players = state.compareSet
-    .map((name) => state.players.find((p) => p.name === name))
+    .map((elementId) => playerByElementId(elementId))
     .filter(Boolean);
   if (players.length < 2) return;
   const pfx = pfxFor();
@@ -969,6 +1009,8 @@ async function fetchPlayers() {
 
     const data = classified.dataset;
     state.players = data.players;
+    migrateLegacyWatchlist();
+    syncWatchlistHeader();
     state.nextGWs = data.next_gws || [];
     state.currentGW = data.current_gw || null;
     state.deadline = data.deadline || null;
@@ -1115,7 +1157,7 @@ function applyFiltersAndSort() {
   // watchlistOnly restricts the pool but all other filters still apply
   const pool =
     state.watchlistOnly && state.watchlist.size > 0
-      ? state.players.filter((p) => state.watchlist.has(p.name))
+      ? state.players.filter((p) => state.watchlist.has(p.element_id))
       : state.players;
 
   state.filteredPlayers = pool.filter((p) => baseFilter(p, pfx, maxM));
@@ -1272,8 +1314,8 @@ function renderTable(pfxArg) {
       injHtml = `<span class="inj-badge ${cls}">&#9888; ${p.status_pct}%</span>`;
     }
 
-    const watched = state.watchlist.has(p.name);
-    const cmpIdx = state.compareSet.indexOf(p.name);
+    const watched = state.watchlist.has(p.element_id);
+    const cmpIdx = state.compareSet.indexOf(p.element_id);
     const cmpFull = state.compareSet.length >= 3 && cmpIdx === -1;
     const fixChips = buildFixtureChipsHTML(p);
 
@@ -1308,8 +1350,8 @@ function renderTable(pfxArg) {
           <div class="player-name-row">
             <span class="pos-badge pos-${p.position}">${p.position}</span>
             <span class="player-name-text">${p.name}</span>
-            <button class="star-btn ${watched ? "active" : ""}" data-watch="${p.name}" title="Watchlist">&#9733;</button>
-            <button class="${cmpClass}" data-cmp="${p.name}" title="Compare" ${cmpFull ? "disabled" : ""}>${cmpTxt}</button>
+            <button class="star-btn ${watched ? "active" : ""}" data-watch="${p.element_id}" title="Watchlist">&#9733;</button>
+            <button class="${cmpClass}" data-cmp="${p.element_id}" title="Compare" ${cmpFull ? "disabled" : ""}>${cmpTxt}</button>
           </div>
           <div class="player-meta-row">
             <span class="own-badge">${own}%</span>
@@ -1322,11 +1364,11 @@ function renderTable(pfxArg) {
 
     td.querySelector(".star-btn").addEventListener("click", (e) => {
       e.stopPropagation();
-      toggleWatch(p.name);
+      toggleWatch(p.element_id);
     });
     td.querySelector(".cmp-add-btn").addEventListener("click", function (e) {
       e.stopPropagation();
-      if (!this.disabled) toggleCompare(p.name);
+      if (!this.disabled) toggleCompare(p.element_id);
     });
     tr.appendChild(td);
 
