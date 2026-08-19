@@ -37,9 +37,10 @@ def validate_snapshot(snapshot):
 
 
 def snapshot_hash(snapshot):
-    """Return a deterministic content hash for an already validated snapshot."""
+    """Return a stable hash of FPL content, excluding volatile fetch metadata."""
+    content_payload = {key: value for key, value in snapshot.items() if key != "fetched_at"}
     canonical_payload = json.dumps(
-        snapshot, sort_keys=True, separators=(",", ":"), ensure_ascii=True
+        content_payload, sort_keys=True, separators=(",", ":"), ensure_ascii=True
     )
     return hashlib.sha256(canonical_payload.encode("utf-8")).hexdigest()
 
