@@ -96,3 +96,40 @@ class FetchReliabilityTests(unittest.TestCase):
                 {"players": [{"element_id": 1}]},
             )
             self.assertFalse((Path(temp_dir) / "players.json.tmp").exists())
+
+
+class FetchCompletenessTests(unittest.TestCase):
+    def test_allows_zero_player_output_before_the_first_current_gameweek(self):
+        from fpl_fetcher import validate_fetch_completeness
+
+        validate_fetch_completeness(
+            element_count=400,
+            player_record_count=0,
+            successful_history_response_count=400,
+            empty_history_count=400,
+            season_is_live=False,
+        )
+
+    def test_rejects_empty_output_after_the_season_is_live(self):
+        from fpl_fetcher import validate_fetch_completeness
+
+        with self.assertRaises(RuntimeError):
+            validate_fetch_completeness(
+                element_count=400,
+                player_record_count=0,
+                successful_history_response_count=400,
+                empty_history_count=400,
+                season_is_live=True,
+            )
+
+    def test_rejects_failed_player_history_requests(self):
+        from fpl_fetcher import validate_fetch_completeness
+
+        with self.assertRaises(RuntimeError):
+            validate_fetch_completeness(
+                element_count=400,
+                player_record_count=0,
+                successful_history_response_count=0,
+                empty_history_count=0,
+                season_is_live=False,
+            )

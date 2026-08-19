@@ -66,6 +66,31 @@ def write_json_atomically(payload, output_path):
         raise
 
 
+def validate_fetch_completeness(
+    element_count,
+    player_record_count,
+    successful_history_response_count,
+    empty_history_count,
+    season_is_live,
+):
+    """Reject incomplete active-season snapshots but allow verified preseason emptiness."""
+    if element_count == 0:
+        return
+    if successful_history_response_count != element_count:
+        raise RuntimeError(
+            "Fetcher could not retrieve every player history: "
+            f"{successful_history_response_count}/{element_count} responses succeeded"
+        )
+    if not season_is_live and empty_history_count == element_count:
+        return
+    success_ratio = player_record_count / element_count
+    if success_ratio < 0.9:
+        raise RuntimeError(
+            "Fetcher output is unexpectedly incomplete: "
+            f"{player_record_count}/{element_count} player records succeeded"
+        )
+
+
 def build_player_identity(player, team_info):
     """Return durable FPL identifiers alongside display fields for one player."""
     element_id = player.get("id")
@@ -129,10 +154,12 @@ def get_fpl_data():
     }
     positions = {1: "GK", 2: "DEF", 3: "MID", 4: "FWD"}
 
+    events = response["events"]
     current_gw = next(
-        (e["id"] for e in response["events"] if e["is_current"]),
-        next((e["id"] for e in response["events"] if e["is_next"]), 1),
+        (e["id"] for e in events if e["is_current"]),
+        next((e["id"] for e in events if e["is_next"]), 1),
     )
+    season_is_live = any(e.get("is_current") or e.get("finished") for e in events)
     next_gws = list(range(current_gw, current_gw + 5))
 
     target_event = next((e for e in response["events"] if e["is_next"]), None) or next(
@@ -144,6 +171,8 @@ def get_fpl_data():
     season_max_mins = max(current_gw * 90, 1)
 
     players_data = []
+    successful_history_response_count = 0
+    empty_history_count = 0
     elements = [p for p in response["elements"] if p["minutes"] > 0]
     print(f"Processing {len(elements)} players (GW {current_gw})...")
 
@@ -202,8 +231,10 @@ def get_fpl_data():
                 req_timeout,
                 f"FPL player history for {fpl_name}",
             )
+            successful_history_response_count += 1
             history = history_resp.get("history", [])
             if not history:
+                empty_history_count += 1
                 continue
 
             stats_5 = calc_stats(history[-5:])
@@ -305,13 +336,13 @@ def get_fpl_data():
             print(f"Failed to fetch {fpl_name}: {e}")
             continue
 
-    if elements:
-        success_ratio = len(players_data) / len(elements)
-        if success_ratio < 0.9:
-            raise RuntimeError(
-                "Fetcher output is unexpectedly incomplete: "
-                f"{len(players_data)}/{len(elements)} player records succeeded"
-            )
+    validate_fetch_completeness(
+        element_count=len(elements),
+        player_record_count=len(players_data),
+        successful_history_response_count=successful_history_response_count,
+        empty_history_count=empty_history_count,
+        season_is_live=season_is_live,
+    )
 
     fetched_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     output = {
