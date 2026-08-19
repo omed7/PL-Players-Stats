@@ -769,6 +769,29 @@ input[type="range"]:not(.dr-input)::-moz-range-thumb {
   font-family: var(--f-m);
   font-size: 0.8rem;
   margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.error p {
+  margin: 0;
+}
+.error button {
+  flex-shrink: 0;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  padding: 6px 10px;
+  cursor: pointer;
+  font: inherit;
+}
+.error button:hover,
+.error button:focus-visible {
+  background: rgba(255, 92, 108, 0.14);
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 .hidden {
   display: none !important;

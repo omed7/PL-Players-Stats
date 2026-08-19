@@ -3,7 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FPL Omed</title>
+    <title>FPL Omed — Fantasy Premier League Player Intelligence</title>
+    <meta name="description" content="Explore Fantasy Premier League player statistics, fixtures, form, and official fixture difficulty in one focused dashboard." />
+    <link rel="canonical" href="https://fpl-omed.vercel.app/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FPL Omed" />
+    <meta property="og:title" content="FPL Omed — Fantasy Premier League Player Intelligence" />
+    <meta property="og:description" content="Explore Fantasy Premier League player statistics, fixtures, form, and official fixture difficulty in one focused dashboard." />
+    <meta property="og:url" content="https://fpl-omed.vercel.app/" />
+    <meta property="og:image" content="https://fpl-omed.vercel.app/assets/social/fpl-omed-social.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="FPL Omed — Fantasy Premier League Player Intelligence" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FPL Omed — Fantasy Premier League Player Intelligence" />
+    <meta name="twitter:description" content="Explore Fantasy Premier League player statistics, fixtures, form, and official fixture difficulty in one focused dashboard." />
+    <meta name="twitter:image" content="https://fpl-omed.vercel.app/assets/social/fpl-omed-social.png" />
+    <meta name="twitter:image:alt" content="FPL Omed — Fantasy Premier League Player Intelligence" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -226,8 +242,9 @@
 
     <!-- ── Main ──────────────────────────────────────────────────── -->
     <main class="main-content" id="main-content">
-      <div id="error-message" class="error hidden">
-        Failed to load — serve over HTTP: <code>python3 -m http.server</code>
+      <div id="error-message" class="error hidden" role="alert" aria-live="assertive">
+        <p id="error-message-text">Player data is temporarily unavailable.</p>
+        <button id="btn-retry-load" type="button">Try again</button>
       </div>
 
       <div class="table-container">

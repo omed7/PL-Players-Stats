@@ -15,6 +15,7 @@ const state = {
   currentGW: null,
   deadline: null,
   fetchedAt: null,
+  loadError: false,
   watchlist: new Set(),
   watchlistOnly: false,
   compareSet: [],
@@ -892,11 +893,28 @@ function closePlayerModal() {
 // ─── DATA FETCH ───────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 
+function isPreseasonEmptyDataset() {
+  const deadlineTime = Date.parse(state.deadline || "");
+  return (
+    state.players.length === 0 &&
+    state.currentGW === 1 &&
+    Number.isFinite(deadlineTime) &&
+    deadlineTime > Date.now()
+  );
+}
+
+function setLoadError(message) {
+  state.loadError = true;
+  if (el.errorText) el.errorText.textContent = message;
+  el.error?.classList.remove("hidden");
+}
+
 async function fetchPlayers() {
+  state.loadError = false;
+  el.error?.classList.add("hidden");
+
   try {
-    const res = await fetch("players.json", {
-      cache: "no-store",
-    });
+    const res = await fetch("players.json", { cache: "no-store" });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
@@ -913,9 +931,9 @@ async function fetchPlayers() {
       state.deadline = data.deadline || null;
       state.fetchedAt = data.fetched_at || null;
     }
-    state.actualGWs = null; // Reset cached GWs
+    state.actualGWs = null;
 
-    // Derive price slider range from actual data
+    // Derive price slider range from actual data.
     const prices = state.players.map((p) => p.price).filter(Boolean);
     const minPrice = Math.floor(Math.min(...prices, 3.0) * 10);
     const maxPrice = Math.ceil(Math.max(...prices, 15.0) * 10);
@@ -931,9 +949,12 @@ async function fetchPlayers() {
     populateTeamFilter();
     applyFiltersAndSort();
     initCountdown(state.deadline, state.currentGW);
-  } catch (e) {
-    console.error(e);
-    el.error?.classList.remove("hidden");
+  } catch (error) {
+    console.error(error);
+    state.players = [];
+    state.filteredPlayers = [];
+    setLoadError("Player data is temporarily unavailable. Please try again shortly.");
+    applyFiltersAndSort();
   }
 }
 
@@ -1156,7 +1177,12 @@ function renderTable(pfxArg) {
 
   if (!state.filteredPlayers.length) {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td colspan="20" style="text-align:center;color:var(--text-2);padding:36px;font-family:var(--f-m);font-size:0.82rem;">No players match the current filters.</td>`;
+    const emptyMessage = state.loadError
+      ? "Player data is temporarily unavailable. Use “Try again” above to reload."
+      : isPreseasonEmptyDataset()
+        ? "The season has not started yet. Player statistics will appear after the opening matches."
+        : "No players match the current filters.";
+    tr.innerHTML = `<td colspan="20" style="text-align:center;color:var(--text-2);padding:36px;font-family:var(--f-m);font-size:0.82rem;">${emptyMessage}</td>`;
     el.tbody.appendChild(tr);
     return;
   }
@@ -1336,6 +1362,8 @@ document.addEventListener("DOMContentLoaded", () => {
   el.btnNext = document.getElementById("btn-next");
   el.pageInfo = document.getElementById("page-info");
   el.error = document.getElementById("error-message");
+  el.errorText = document.getElementById("error-message-text");
+  el.btnRetryLoad = document.getElementById("btn-retry-load");
   el.minsSlider = document.getElementById("minutes-slider");
   el.minsToggle = document.getElementById("minutes-toggle");
   el.minsLabel = document.getElementById("minutes-label");
@@ -1575,6 +1603,10 @@ document.addEventListener("DOMContentLoaded", () => {
       updatePagination();
       renderTable();
     }
+  });
+
+  el.btnRetryLoad.addEventListener("click", () => {
+    fetchPlayers();
   });
 
   // ── Boot ──
