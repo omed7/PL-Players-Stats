@@ -44,3 +44,20 @@ The production URL did not yet expose the latest metadata or social asset after 
 ## Vercel deployment diagnosis
 
 Vercel now exposes the correct `pl-players-stats` project and recorded the public-launch commit `08a6cb7` as a Git production deployment. Its state is **BLOCKED**, not a build failure. The deployment metadata names `Manus AI <manus-ai@users.noreply.github.com>` as the commit author. Vercel’s Hobby-team collaboration guidance states that a private-repository deployment must be authored by the Hobby team owner whose Vercel account is linked to the Git provider. The next trigger commit must therefore be authored as the connected GitHub/Vercel owner, `omed7`, using the owner-associated noreply email.
+
+
+## Protected production verification
+
+The owner-authored Git trigger produced deployment `dpl_EmfGNXm4DKE9KPNyDA3HndfkBfPp` in **READY** state. Its protected production URL loaded successfully through a temporary Vercel inspection link. The page rendered the intentional preseason state, and the deployed document exposed the expected canonical URL, description, Open Graph title/image, and `summary_large_image` Twitter card.
+
+The deployment is currently protected by Vercel authentication; the inspection link used for verification expires after 23 hours. The old `fpl-omed.vercel.app` site is a separate legacy deployment and should not be used as the launch URL unless it is explicitly moved or redirected to this Vercel project.
+
+
+## Final metadata verification
+
+The subsequent owner-authored deployment `dpl_vCJMSfB2taGG2Qy7kEZ9hWiwexfC` is **READY**. Its deployed canonical URL, Open Graph URL/image, Twitter image, and visitor-counter path now all use `https://pl-players-stats-omed7s-projects.vercel.app/`. The social image resolves from the same production domain.
+
+
+## Anonymous public-launch verification
+
+After disabling Vercel Authentication with user approval, the production URL loaded without a Vercel login or temporary access token. It rendered the expected preseason state. The deployed Open Graph image returned HTTP `200` with `image/png` content from the canonical production domain. Password protection and trusted-IP protection remain disabled as previously configured.
