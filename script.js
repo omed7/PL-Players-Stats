@@ -836,12 +836,23 @@ function openPlayerModal(p) {
   // Recent form: completed-match bar chart (with toggle). Schema v2 carries
   // full history; select the most recent 10 completed matches chronologically.
   const historyUtils = window.FPLHistoryUtils;
-  const matchHist =
+  const supportsMatchControls =
     state.schemaVersion >= 2 &&
-    typeof historyUtils?.selectRecentMatches === "function"
-      ? historyUtils.selectRecentMatches(p.match_history || [], { limit: 10 })
-      : p.gw_history || [];
-  const labelForMatch = historyUtils?.matchLabel || ((record) => `GW${record?.gw ?? "?"}`);
+    typeof historyUtils?.selectRecentMatches === "function";
+  const historyVenue = ["all", "home", "away"].includes(state.currentPDVenue)
+    ? state.currentPDVenue
+    : "all";
+  const historyLimit = [5, 10].includes(state.currentPDMatchLimit)
+    ? state.currentPDMatchLimit
+    : 10;
+  const matchHist = supportsMatchControls
+    ? historyUtils.selectRecentMatches(p.match_history || [], {
+        venue: historyVenue,
+        limit: historyLimit,
+      })
+    : p.gw_history || [];
+  const labelForMatch =
+    historyUtils?.matchLabel || ((record) => `GW${record?.gw ?? "?"}`);
 
   // Attach the selected history to state for detail-chart consumers.
   state.currentPDMatchHist = matchHist;
@@ -907,6 +918,20 @@ function openPlayerModal(p) {
     { key: "defcon", label: "DefCon" },
     { key: "bonus", label: "Bns" },
   ];
+
+  const historyControlsHtml = supportsMatchControls
+    ? `<div class="pd-history-controls" aria-label="Match history controls" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+        <div class="seg-group" aria-label="Match count">
+          <button type="button" data-history-limit="5" aria-pressed="${historyLimit === 5}">Last 5 Matches</button>
+          <button type="button" data-history-limit="10" aria-pressed="${historyLimit === 10}">Last 10 Matches</button>
+        </div>
+        <div class="seg-group" aria-label="Venue">
+          <button type="button" data-history-venue="all" aria-pressed="${historyVenue === "all"}">All Venues</button>
+          <button type="button" data-history-venue="home" aria-pressed="${historyVenue === "home"}">Home</button>
+          <button type="button" data-history-venue="away" aria-pressed="${historyVenue === "away"}">Away</button>
+        </div>
+      </div>`
+    : "";
 
   const chartToggleHtml = matchHist.length
     ? `
@@ -997,7 +1022,8 @@ function openPlayerModal(p) {
 
     <!-- Form bars -->
     <div class="pd-section">
-      <div class="pd-section-title">Recent History (Last ${matchHist.length} Matches)</div>
+      <div class="pd-section-title">Recent History (${historyVenue === "all" ? "All Venues" : historyVenue === "home" ? "Home" : "Away"} · Last ${matchHist.length} Matches)</div>
+      ${historyControlsHtml}
       ${chartToggleHtml}
       <div id="pd-chart-container">
         ${formBarsHtml()}
@@ -1015,6 +1041,19 @@ function openPlayerModal(p) {
 
   document.getElementById("pd-overlay").classList.remove("hidden");
   document.body.style.overflow = "hidden";
+
+  document.querySelectorAll("[data-history-limit]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.currentPDMatchLimit = Number(button.dataset.historyLimit);
+      openPlayerModal(p);
+    });
+  });
+  document.querySelectorAll("[data-history-venue]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.currentPDVenue = button.dataset.historyVenue;
+      openPlayerModal(p);
+    });
+  });
 
   // Attach event listeners to toggle buttons
   const toggleBtns = document.querySelectorAll(".pd-chart-toggle-btn");
