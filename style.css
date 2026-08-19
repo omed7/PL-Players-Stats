@@ -822,6 +822,11 @@ table {
   min-width: 700px;
 }
 
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
 th {
   font-family: var(--f-d);
   font-size: 0.75rem;
@@ -833,7 +838,7 @@ th {
   padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--blight);
-  cursor: pointer;
+  cursor: default;
   user-select: none;
   white-space: nowrap;
   position: sticky;
@@ -846,6 +851,22 @@ th:hover {
 }
 th.active-sort {
   color: var(--teal);
+}
+.sort-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  margin: 0;
+  padding: 0;
+  text-align: inherit;
+  text-transform: inherit;
+}
+.sort-btn:hover {
+  color: var(--text-1);
 }
 .sort-icon {
   font-size: 0.65rem;
