@@ -109,7 +109,15 @@ Use two separate browser profiles and two separate Google accounts. Do not reuse
 
 Keep the public-launch/marketing posture **on hold** until the user expressly approves it, even after OAuth verification succeeds.
 
-## 7. What to report back
+## 7. Activation completion record — 2026-08-20
+
+Google OAuth provider configuration was completed in the `fpl-omed` project and the one-line browser release gate was enabled through [PR #62](https://github.com/omed7/PL-Players-Stats/pull/62). The canonical deployment reached `READY` at main commit `cb6a9e305e5c35679ce190e88e0f2af811946a9f`.
+
+The deployed Google flow was verified through the canonical origin. The authenticated session persisted after redirect and reload; a temporary theme change completed a successful cloud preference write-and-read round trip, then was restored. A second Google account was also checked and behaved independently from the first account. The owner-only RLS policies for `profiles`, `user_preferences`, and `watchlist_items` were reviewed through bounded policy metadata without querying user records. See `docs/verification/google-oauth-production-activation-20260820.md` for the complete evidence.
+
+Public/marketing launch remains **on hold**. Do not enable email/password, magic links, phone, anonymous, or additional social providers without a separately approved specification and verification plan.
+
+## 8. What to report back
 
 After completing the owner-controlled setup, reply with one of these non-sensitive status messages:
 
