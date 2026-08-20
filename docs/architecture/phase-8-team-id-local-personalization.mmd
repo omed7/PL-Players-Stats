@@ -1,0 +1,37 @@
+%% Phase 8 account-free Team ID personalisation
+%% Purpose: show the proposed public-team lookup and this-device preferences boundary.
+flowchart LR
+  User[Visitor] -->|numeric public Team ID| Browser
+
+  subgraph Browser[Browser — FPL Omed]
+    UI[Connect Team UI\nMy Squad filter]
+    Local[(Local profile\nTeam ID + element IDs + display prefs)]
+    PublicReader[Existing Supabase-first\nplayer reader]
+    UI <--> Local
+    UI -->|same-origin GET| TeamLoader[Team data loader]
+    TeamLoader --> PublicReader
+  end
+
+  subgraph Vercel[Vercel — proposed same-origin function]
+    Proxy["api/fpl-team — minimises response"]
+  end
+
+  subgraph FPL[FPL public data boundary]
+    Bootstrap[bootstrap-static\nevent metadata]
+    Picks["entry/{id}/event/{gw}/picks — public pick data"]
+  end
+
+  subgraph Supabase[Existing public data boundary]
+    Snapshot[current_fpl_snapshot\nvalidated player snapshot]
+  end
+
+  TeamLoader --> Proxy
+  Proxy --> Bootstrap
+  Proxy --> Picks
+  PublicReader --> Snapshot
+
+  note1[No FPL password\nNo email account\nNo cloud preference storage] -.-> Browser
+  note2[Team ID is public\nnot a credential] -.-> Proxy
+
+  classDef proposed fill:#fff4cc,stroke:#ad7b00,color:#3b2900;
+  class TeamLoader,Proxy,Local,UI proposed;

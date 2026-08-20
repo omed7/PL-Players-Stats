@@ -25,12 +25,17 @@ const state = {
   priceMax: 15.0,
   fdrSortMode: "avg", // 'avg' | 'alpha'
   accountSession: null,
+  teamProfile: null,
+  teamPicks: [],
+  squadElementIds: new Set(),
+  mySquadOnly: false,
 };
 const el = {};
 let activeDialog = null;
 let accountAuth = null;
 let accountSync = null;
 let accountUnsubscribe = null;
+let teamDataLoader = null;
 
 const CMP = [
   { color: "#00d9a3", fill: "rgba(0,217,163,0.18)", cls: "slot-0" },
@@ -53,6 +58,7 @@ const maxMFor = () =>
       : (state.currentGW || 38) * 90;
 const uiStateUtils = () => window.FPLUIStateUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
+const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
 const focusableSelector = [
   "button:not([disabled])",
@@ -338,10 +344,13 @@ function openFDRHeatmap() {
   document.querySelector(".controls-top").classList.add("hidden");
   document.querySelector(".search-wrap").classList.add("hidden");
   document.querySelector(".price-section").classList.add("hidden");
+  document.querySelector(".fpl-team-section")?.classList.add("hidden");
   document.querySelector(".summary-strip").classList.add("hidden");
   document.getElementById("btn-fdr").classList.add("hidden");
   document.getElementById("btn-fdr-close").classList.remove("hidden");
   document.getElementById("fdr-container").classList.remove("hidden");
+  document.getElementById("btn-fdr-sort-avg").classList.toggle("active", state.fdrSortMode === "avg");
+  document.getElementById("btn-fdr-sort-alpha").classList.toggle("active", state.fdrSortMode === "alpha");
   renderFDRHeatmap();
 }
 
@@ -350,6 +359,7 @@ function closeFDRHeatmap() {
   document.querySelector(".controls-top").classList.remove("hidden");
   document.querySelector(".search-wrap").classList.remove("hidden");
   document.querySelector(".price-section").classList.remove("hidden");
+  document.querySelector(".fpl-team-section")?.classList.remove("hidden");
   document.querySelector(".summary-strip").classList.remove("hidden");
   document.getElementById("btn-fdr").classList.remove("hidden");
   document.getElementById("btn-fdr-close").classList.add("hidden");
@@ -543,6 +553,34 @@ function loadWatchlist() {
   }
 }
 
+function loadTeamProfile() {
+  const utils = teamProfileUtils();
+  if (!utils) return;
+  try {
+    const stored = JSON.parse(localStorage.getItem(utils.TEAM_PROFILE_KEY) || "null");
+    const profile = utils.normalizeProfile(stored);
+    if (!profile) return;
+    state.teamProfile = profile;
+    state.watchlist = new Set(profile.watchlistElementIds);
+    state.fdrSortMode = profile.fdrSortMode;
+  } catch {
+    state.teamProfile = null;
+  }
+}
+
+function saveTeamProfile() {
+  const utils = teamProfileUtils();
+  if (!utils || !state.teamProfile?.teamId) return;
+  const profile = utils.createProfile({
+    teamId: state.teamProfile.teamId,
+    watchlistElementIds: [...state.watchlist],
+    fdrSortMode: state.fdrSortMode,
+  });
+  if (!profile) return;
+  state.teamProfile = profile;
+  localStorage.setItem(utils.TEAM_PROFILE_KEY, JSON.stringify(profile));
+}
+
 function migrateLegacyWatchlist() {
   if (localStorage.getItem(WL_KEY) !== null) return;
 
@@ -567,6 +605,7 @@ function migrateLegacyWatchlist() {
 
 function saveWatchlist({ elementId = null, watched = null, sync = true } = {}) {
   localStorage.setItem(WL_KEY, JSON.stringify([...state.watchlist]));
+  saveTeamProfile();
   if (
     sync &&
     state.accountSession &&
@@ -606,6 +645,123 @@ function toggleWatch(elementId) {
       `${watched ? "Remove" : "Add"} ${playerName} ${watched ? "from" : "to"} watchlist`,
     );
   });
+}
+
+function setTeamStatus(message = "", isError = false) {
+  const status = document.getElementById("fpl-team-status");
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle("is-error", isError);
+}
+
+function syncTeamProfileUI() {
+  const input = document.getElementById("fpl-team-id");
+  const actions = document.getElementById("fpl-team-actions");
+  const connectButton = document.getElementById("btn-fpl-team-connect");
+  const mySquadButton = document.getElementById("btn-my-squad");
+  const connected = Boolean(state.teamProfile?.teamId);
+  const hasSquad = state.squadElementIds.size > 0;
+  if (input && connected) input.value = String(state.teamProfile.teamId);
+  actions?.classList.toggle("hidden", !connected);
+  if (connectButton) connectButton.textContent = connected ? "Update" : "Connect";
+  if (mySquadButton) {
+    mySquadButton.disabled = !hasSquad;
+    mySquadButton.classList.toggle("active", state.mySquadOnly);
+    mySquadButton.setAttribute("aria-pressed", String(state.mySquadOnly));
+  }
+}
+
+function applyTeamPayload(payload, successMessage) {
+  const utils = teamProfileUtils();
+  if (!utils) return;
+  const profile = utils.createProfile({
+    teamId: payload.teamId,
+    watchlistElementIds: [...state.watchlist],
+    fdrSortMode: state.fdrSortMode,
+  });
+  if (!profile) return;
+  state.teamProfile = profile;
+  state.teamPicks = payload.picks;
+  state.squadElementIds = new Set(payload.picks.map((pick) => pick.element));
+  saveTeamProfile();
+  syncTeamProfileUI();
+  setTeamStatus(successMessage);
+  applyFiltersAndSort();
+}
+
+async function connectFPLTeam(teamIdInput, { isRefresh = false } = {}) {
+  if (!teamDataLoader) return;
+  const submitButton = document.getElementById("btn-fpl-team-connect");
+  const refreshButton = document.getElementById("btn-fpl-team-refresh");
+  const activeButton = isRefresh ? refreshButton : submitButton;
+  if (activeButton) activeButton.disabled = true;
+  setTeamStatus(isRefresh ? "Refreshing public squad…" : "Connecting public team…");
+  try {
+    const payload = await teamDataLoader.load(teamIdInput);
+    applyTeamPayload(
+      payload,
+      `Squad ready for public Team ID ${payload.teamId}.`,
+    );
+  } catch (error) {
+    setTeamStatus(
+      error?.message || "FPL team data is temporarily unavailable. Try again shortly.",
+      true,
+    );
+  } finally {
+    if (activeButton) activeButton.disabled = false;
+  }
+}
+
+function disconnectFPLTeam() {
+  if (!state.teamProfile) return;
+  const confirmed = window.confirm(
+    "Disconnect this public FPL Team ID? This removes the Team ID and this-device Team profile settings.",
+  );
+  if (!confirmed) return;
+  const utils = teamProfileUtils();
+  if (utils) localStorage.removeItem(utils.TEAM_PROFILE_KEY);
+  state.teamProfile = null;
+  state.teamPicks = [];
+  state.squadElementIds = new Set();
+  state.mySquadOnly = false;
+  const input = document.getElementById("fpl-team-id");
+  if (input) input.value = "";
+  syncTeamProfileUI();
+  setTeamStatus("Public Team ID disconnected from this device.");
+  applyFiltersAndSort();
+}
+
+function initialiseTeamProfileControls() {
+  const loaderApi = window.FPLTeamDataLoader;
+  const utils = teamProfileUtils();
+  if (!loaderApi || !utils) return;
+  teamDataLoader = loaderApi.createTeamDataLoader({
+    fetchImpl: window.fetch.bind(window),
+    profileUtils: utils,
+  });
+
+  document.getElementById("fpl-team-form")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    connectFPLTeam(document.getElementById("fpl-team-id")?.value || "");
+  });
+  document.getElementById("btn-fpl-team-refresh")?.addEventListener("click", () => {
+    if (state.teamProfile?.teamId) {
+      connectFPLTeam(state.teamProfile.teamId, { isRefresh: true });
+    }
+  });
+  document.getElementById("btn-fpl-team-disconnect")?.addEventListener("click", disconnectFPLTeam);
+  document.getElementById("btn-my-squad")?.addEventListener("click", () => {
+    if (!state.squadElementIds.size) return;
+    state.mySquadOnly = !state.mySquadOnly;
+    state.currentPage = 1;
+    syncTeamProfileUI();
+    applyFiltersAndSort();
+  });
+
+  syncTeamProfileUI();
+  if (state.teamProfile?.teamId) {
+    connectFPLTeam(state.teamProfile.teamId, { isRefresh: true });
+  }
 }
 
 function syncWatchlistHeader() {
@@ -1428,11 +1584,17 @@ function applyFiltersAndSort() {
   const pfx = pfxFor();
   const maxM = maxMFor();
 
-  // watchlistOnly restricts the pool but all other filters still apply
-  const pool =
-    state.watchlistOnly && state.watchlist.size > 0
-      ? state.players.filter((p) => state.watchlist.has(p.element_id))
-      : state.players;
+  // Watchlist and My Squad restrictions both use durable FPL element IDs.
+  let pool = state.players;
+  if (state.watchlistOnly && state.watchlist.size > 0) {
+    pool = pool.filter((p) => state.watchlist.has(p.element_id));
+  }
+  if (state.mySquadOnly && state.squadElementIds.size > 0) {
+    pool = teamProfileUtils()?.filterPlayersByElementIds(
+      pool,
+      [...state.squadElementIds],
+    ) || [];
+  }
 
   state.filteredPlayers = pool.filter((p) => baseFilter(p, pfx, maxM));
 
@@ -1595,6 +1757,7 @@ function renderTable(pfxArg) {
     }
 
     const watched = state.watchlist.has(p.element_id);
+    const inSquad = state.squadElementIds.has(p.element_id);
     const cmpIdx = state.compareSet.indexOf(p.element_id);
     const cmpFull = state.compareSet.length >= 3 && cmpIdx === -1;
     const fixChips = buildFixtureChipsHTML(p);
@@ -1603,6 +1766,7 @@ function renderTable(pfxArg) {
     tr.tabIndex = -1;
     tr.style.setProperty("--ri", i);
     tr.style.cursor = "pointer"; // signals clickability for Feature 6
+    tr.classList.toggle("squad-player", inSquad);
 
     let cmpClass = "cmp-add-btn",
       cmpTxt = "+";
@@ -1631,6 +1795,7 @@ function renderTable(pfxArg) {
           <div class="player-name-row">
             <span class="pos-badge pos-${p.position}">${p.position}</span>
             <span class="player-name-text">${p.name}</span>
+            ${inSquad ? '<span class="squad-badge">Squad</span>' : ""}
             <button type="button" class="star-btn ${watched ? "active" : ""}" data-watch="${p.element_id}" title="Watchlist" aria-label="${watched ? "Remove" : "Add"} ${p.name} ${watched ? "from" : "to"} watchlist" aria-pressed="${watched}">&#9733;</button>
             <button type="button" class="${cmpClass}" data-cmp="${p.element_id}" title="Compare" aria-label="${cmpIdx !== -1 ? `Remove ${p.name} from comparison` : cmpFull ? `Comparison is full; ${p.name} is not selected` : `Add ${p.name} to comparison`}" aria-pressed="${cmpIdx !== -1}" ${cmpFull ? "disabled" : ""}>${cmpTxt}</button>
           </div>
@@ -1756,6 +1921,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", closeFDRHeatmap);
   document.getElementById("btn-fdr-sort-avg").addEventListener("click", (e) => {
     state.fdrSortMode = "avg";
+    saveTeamProfile();
     document.getElementById("btn-fdr-sort-avg").classList.add("active");
     document.getElementById("btn-fdr-sort-alpha").classList.remove("active");
     renderFDRHeatmap();
@@ -1764,14 +1930,19 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("btn-fdr-sort-alpha")
     .addEventListener("click", (e) => {
       state.fdrSortMode = "alpha";
+      saveTeamProfile();
       document.getElementById("btn-fdr-sort-alpha").classList.add("active");
       document.getElementById("btn-fdr-sort-avg").classList.remove("active");
       renderFDRHeatmap();
     });
 
-  // ── Theme ──
+  // ── Theme + local personalisation ──
   loadTheme();
+  loadWatchlist();
+  loadTeamProfile();
+  syncWatchlistHeader();
   initialiseAccount();
+  initialiseTeamProfileControls();
   document.getElementById("btn-gear").addEventListener("click", (e) => {
     e.stopPropagation();
     document.getElementById("theme-panel").classList.toggle("hidden");
@@ -1996,8 +2167,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch(console.error);
   }
-  loadWatchlist();
-  syncWatchlistHeader();
   fetchPlayers();
 });
 

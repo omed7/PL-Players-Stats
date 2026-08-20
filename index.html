@@ -242,6 +242,23 @@
             <div class="team-logo-grid" id="team-filter-row"></div>
           </div>
         </div>
+        <section class="fpl-team-section" aria-labelledby="fpl-team-title">
+          <div class="fpl-team-heading">
+            <span id="fpl-team-title">FPL Team</span>
+            <button type="button" class="squad-filter-btn" id="btn-my-squad" aria-pressed="false" disabled>My Squad</button>
+          </div>
+          <form class="fpl-team-form" id="fpl-team-form" novalidate>
+            <label for="fpl-team-id">Public Team ID</label>
+            <input id="fpl-team-id" name="teamId" type="text" inputmode="numeric" autocomplete="off" pattern="[0-9]*" placeholder="e.g. 123456" />
+            <button type="submit" id="btn-fpl-team-connect">Connect</button>
+          </form>
+          <p class="fpl-team-note">Public lookup only. Team and preferences stay on this device.</p>
+          <p class="fpl-team-status" id="fpl-team-status" role="status" aria-live="polite"></p>
+          <div class="fpl-team-actions hidden" id="fpl-team-actions">
+            <button type="button" id="btn-fpl-team-refresh">Refresh squad</button>
+            <button type="button" id="btn-fpl-team-disconnect">Disconnect</button>
+          </div>
+        </section>
       </div>
     </div>
 
@@ -460,6 +477,8 @@
     <script src="account_sync_utils.js"></script>
     <script src="account_auth.js"></script>
     <script src="account_sync.js"></script>
+    <script src="team_profile_utils.js"></script>
+    <script src="team_data_loader.js"></script>
     <script src="public_data_loader.js"></script>
     <script src="script.js"></script>
   </body>
