@@ -1,0 +1,48 @@
+---
+title: FPL Omed Google OAuth Account Foundation — Trust Boundary
+---
+flowchart LR
+    Visitor["Visitor browser"]
+
+    subgraph Browser["FPL Omed browser trust boundary"]
+      Config["Non-secret public config\naccountEnabled: false initially"]
+      UI["Account controls\nGoogle-only when enabled"]
+      Auth["account_auth.js\ncanonical redirect only"]
+      Sync["account_sync.js\nlocal/cloud merge"]
+      Local["Browser local storage\ntheme + element_id watchlist"]
+    end
+
+    subgraph Google["Google identity-provider boundary"]
+      Consent["Google OAuth consent\nprovider-managed authentication"]
+    end
+
+    subgraph Supabase["Supabase account-data boundary"]
+      SupaAuth["Supabase Auth\nGoogle provider callback"]
+      RLS["Postgres user data\nprofiles + preferences + watchlist\nowner-only RLS"]
+    end
+
+    Owner["Project owner\nGoogle OAuth client secret"]
+    Existing["Public FPL player data\nSupabase-first reader"]
+
+    Config -->|"flag gates UI"| UI
+    UI -->|"signInWithOAuth: google\nonly when enabled"| Auth
+    Auth -->|"redirect to permitted canonical origin"| SupaAuth
+    SupaAuth --> Consent
+    Consent --> SupaAuth
+    SupaAuth -->|"authenticated session"| Auth
+    Auth --> Sync
+    Local -->|"valid local element IDs + theme"| Sync
+    Sync -->|"authenticated, RLS-protected reads/writes"| RLS
+    RLS -->|"cloud theme + element IDs"| Sync
+    Sync -->|"preserve anonymous fallback"| Local
+    Existing -. "unchanged; no account data" .-> Visitor
+    Owner -->|"configured only in Supabase dashboard\nproposed verification pending"| SupaAuth
+
+    classDef browser fill:#12302b,stroke:#00d9a3,color:#f4fff7;
+    classDef boundary fill:#172037,stroke:#76b7ff,color:#f4fff7;
+    classDef owner fill:#3b2b14,stroke:#ffb84d,color:#fff7e7;
+    classDef public fill:#21252d,stroke:#9aa4b2,color:#ffffff;
+    class Visitor,Existing public;
+    class Config,UI,Auth,Sync,Local browser;
+    class Consent,SupaAuth,RLS boundary;
+    class Owner owner;

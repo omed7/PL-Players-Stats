@@ -24,9 +24,13 @@ const state = {
   priceMin: 3.0,
   priceMax: 15.0,
   fdrSortMode: "avg", // 'avg' | 'alpha'
+  accountSession: null,
 };
 const el = {};
 let activeDialog = null;
+let accountAuth = null;
+let accountSync = null;
+let accountUnsubscribe = null;
 
 const CMP = [
   { color: "#00d9a3", fill: "rgba(0,217,163,0.18)", cls: "slot-0" },
@@ -48,6 +52,7 @@ const maxMFor = () =>
       ? 900
       : (state.currentGW || 38) * 90;
 const uiStateUtils = () => window.FPLUIStateUtils;
+const accountSyncUtils = () => window.FPLAccountSyncUtils;
 
 const focusableSelector = [
   "button:not([disabled])",
@@ -123,15 +128,124 @@ function handleDialogKeyboard(event) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const THEME_KEY = "fpl_theme_v1";
-function applyTheme(t) {
-  document.documentElement.setAttribute("data-theme", t);
-  localStorage.setItem(THEME_KEY, t);
+function applyTheme(t, { sync = true } = {}) {
+  const normalisedTheme = accountSyncUtils()?.normalizeTheme(t) || "green";
+  document.documentElement.setAttribute("data-theme", normalisedTheme);
+  localStorage.setItem(THEME_KEY, normalisedTheme);
   document
     .querySelectorAll(".theme-swatch")
-    .forEach((s) => s.classList.toggle("active", s.dataset.theme === t));
+    .forEach((s) => s.classList.toggle("active", s.dataset.theme === normalisedTheme));
+  if (sync) syncThemeToAccount(normalisedTheme);
 }
 function loadTheme() {
-  applyTheme(localStorage.getItem(THEME_KEY) || "green");
+  applyTheme(localStorage.getItem(THEME_KEY) || "green", { sync: false });
+}
+
+function setAccountStatus(message, kind = "neutral") {
+  const controls = document.getElementById("account-controls");
+  const status = document.getElementById("account-status");
+  if (!controls || !status) return;
+  status.textContent = message;
+  controls.classList.toggle("is-signed-in", kind === "signed-in");
+  controls.classList.toggle("is-error", kind === "error");
+}
+
+function renderAccountControls() {
+  const controls = document.getElementById("account-controls");
+  const signInButton = document.getElementById("btn-account-sign-in");
+  const signOutButton = document.getElementById("btn-account-sign-out");
+  if (!controls || !signInButton || !signOutButton) return;
+
+  const enabled = accountAuth?.isEnabled?.() === true;
+  controls.classList.toggle("hidden", !enabled);
+  if (!enabled) return;
+
+  const signedIn = Boolean(state.accountSession?.user?.id);
+  signInButton.classList.toggle("hidden", signedIn);
+  signOutButton.classList.toggle("hidden", !signedIn);
+  setAccountStatus(signedIn ? "Signed in" : "Signed out", signedIn ? "signed-in" : "neutral");
+}
+
+function syncThemeToAccount(theme) {
+  if (!state.accountSession || !accountSync) return;
+  accountSync.saveTheme({ session: state.accountSession, theme }).catch(() => {
+    setAccountStatus("Signed in — theme sync unavailable", "error");
+  });
+}
+
+function refreshAccountDependentUI() {
+  syncWatchlistHeader();
+  renderWatchlistDrawer();
+  if (state.players.length) applyFiltersAndSort();
+}
+
+async function applyAccountSession(session) {
+  state.accountSession = session || null;
+  renderAccountControls();
+  if (!state.accountSession || !accountSync) return;
+
+  try {
+    const synced = await accountSync.syncInitialPreferences({
+      session: state.accountSession,
+      localWatchlistElementIds: [...state.watchlist],
+      localTheme: localStorage.getItem(THEME_KEY) || "green",
+    });
+    state.watchlist = new Set(synced.watchlistElementIds);
+    saveWatchlist({ sync: false });
+    applyTheme(synced.effectiveTheme, { sync: false });
+    refreshAccountDependentUI();
+    setAccountStatus("Signed in", "signed-in");
+  } catch (_) {
+    setAccountStatus("Signed in — account sync unavailable", "error");
+  }
+}
+
+function initialiseAccount() {
+  const publicConfig = window.FPLPublicDataConfig;
+  const authApi = window.FPLAccountAuth;
+  const syncApi = window.FPLAccountSync;
+  const utils = accountSyncUtils();
+  if (!publicConfig || !authApi || !syncApi || !utils) return;
+
+  accountAuth = authApi.createAccountAuth({
+    ...publicConfig.account,
+    supabaseUrl: publicConfig.supabaseUrl,
+    supabasePublishableKey: publicConfig.supabasePublishableKey,
+  });
+  if (!accountAuth.isEnabled()) {
+    renderAccountControls();
+    return;
+  }
+
+  accountSync = syncApi.createAccountSync({ client: accountAuth.client, utils });
+  const signInButton = document.getElementById("btn-account-sign-in");
+  const signOutButton = document.getElementById("btn-account-sign-out");
+  signInButton?.addEventListener("click", async () => {
+    setAccountStatus("Redirecting to Google");
+    try {
+      await accountAuth.signInWithGoogle();
+    } catch (_) {
+      setAccountStatus("Google sign-in is unavailable", "error");
+    }
+  });
+  signOutButton?.addEventListener("click", async () => {
+    setAccountStatus("Signing out");
+    try {
+      await accountAuth.signOut();
+    } catch (_) {
+      setAccountStatus("Sign-out is unavailable", "error");
+    }
+  });
+
+  accountUnsubscribe?.();
+  accountUnsubscribe = accountAuth.onAuthStateChange((_event, session) => {
+    applyAccountSession(session);
+  });
+  accountAuth
+    .getSession()
+    .then((session) => applyAccountSession(session))
+    .catch(() => setAccountStatus("Account status unavailable", "error"));
+  renderAccountControls();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -451,8 +565,23 @@ function migrateLegacyWatchlist() {
   saveWatchlist();
 }
 
-function saveWatchlist() {
+function saveWatchlist({ elementId = null, watched = null, sync = true } = {}) {
   localStorage.setItem(WL_KEY, JSON.stringify([...state.watchlist]));
+  if (
+    sync &&
+    state.accountSession &&
+    accountSync &&
+    persistenceUtils()?.isValidElementId(elementId) &&
+    typeof watched === "boolean"
+  ) {
+    accountSync
+      .setWatchlistMembership({
+        session: state.accountSession,
+        elementId,
+        watched,
+      })
+      .catch(() => setAccountStatus("Signed in — watchlist sync unavailable", "error"));
+  }
 }
 
 function playerByElementId(elementId) {
@@ -464,7 +593,7 @@ function toggleWatch(elementId) {
   state.watchlist.has(elementId)
     ? state.watchlist.delete(elementId)
     : state.watchlist.add(elementId);
-  saveWatchlist();
+  saveWatchlist({ elementId, watched: state.watchlist.has(elementId) });
   syncWatchlistHeader();
   renderWatchlistDrawer();
   const playerName = playerByElementId(elementId)?.name || "player";
@@ -1642,6 +1771,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── Theme ──
   loadTheme();
+  initialiseAccount();
   document.getElementById("btn-gear").addEventListener("click", (e) => {
     e.stopPropagation();
     document.getElementById("theme-panel").classList.toggle("hidden");
@@ -1677,8 +1807,20 @@ document.addEventListener("DOMContentLoaded", () => {
     applyFiltersAndSort();
   });
   document.getElementById("btn-wl-clear").addEventListener("click", () => {
+    const idsToRemove = [...state.watchlist];
     state.watchlist.clear();
-    saveWatchlist();
+    saveWatchlist({ sync: false });
+    if (state.accountSession && accountSync) {
+      Promise.all(
+        idsToRemove.map((elementId) =>
+          accountSync.setWatchlistMembership({
+            session: state.accountSession,
+            elementId,
+            watched: false,
+          }),
+        ),
+      ).catch(() => setAccountStatus("Signed in — watchlist sync unavailable", "error"));
+    }
     state.watchlistOnly = false;
     document.getElementById("btn-wl-only").classList.remove("active");
     syncWatchlistHeader();

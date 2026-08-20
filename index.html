@@ -35,6 +35,11 @@
             <span class="cd-sep">·</span>
             <span class="cd-time" id="cd-time">—</span>
           </div>
+          <div class="account-controls hidden" id="account-controls" aria-label="Account controls">
+            <span class="account-status" id="account-status" aria-live="polite">Signed out</span>
+            <button type="button" class="hdr-btn account-btn" id="btn-account-sign-in">Sign in with Google</button>
+            <button type="button" class="hdr-btn account-btn hidden" id="btn-account-sign-out">Sign out</button>
+          </div>
           <button type="button" class="hdr-btn" id="btn-wl-open" title="Watchlist" aria-label="Open watchlist">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path
@@ -451,6 +456,10 @@
     <script src="persistence_utils.js"></script>
     <script src="ui_state_utils.js"></script>
     <script src="public_data_config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="account_sync_utils.js"></script>
+    <script src="account_auth.js"></script>
+    <script src="account_sync.js"></script>
     <script src="public_data_loader.js"></script>
     <script src="script.js"></script>
   </body>

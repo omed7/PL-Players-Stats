@@ -1,6 +1,6 @@
 # Feature Specification — Phase 3A: Account Foundation and Preference Sync
 
-**Status:** Foundation provisioned — public email sign-in deferred pending production SMTP
+**Status:** Superseded on 2026-08-20 by [`phase-3a-google-oauth-account-foundation.md`](phase-3a-google-oauth-account-foundation.md). This file is retained as historical evidence of the deferred email-link/SMTP approach and is not an implementation guide.
 **Owner:** Manus AI
 **Date:** 2026-08-19
 **Related issue / PR:** N/A
