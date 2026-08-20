@@ -4,7 +4,7 @@ window.FPLPublicDataConfig = Object.freeze({
   supabaseUrl: "https://ghowrpjnoraohyjpmvuo.supabase.co",
   supabasePublishableKey: "sb_publishable_ZyrdslSiwccQm66U7wkgPA_HWJMKB6o",
   account: Object.freeze({
-    accountEnabled: false,
+    accountEnabled: true,
     canonicalOrigin: "https://fpl-omed.vercel.app",
   }),
 });
