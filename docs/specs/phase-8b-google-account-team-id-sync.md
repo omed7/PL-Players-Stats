@@ -1,9 +1,9 @@
 # Feature Specification — Google-Account FPL Team ID Sync
 
-**Status:** Approved
+**Status:** Implemented
 **Owner:** Manus AI
 **Date:** 2026-08-20
-**Related issue / PR:** N/A
+**Related issue / PR:** [PR #64](https://github.com/omed7/PL-Players-Stats/pull/64)
 
 ## 1. Outcome
 
@@ -103,13 +103,13 @@ Public/marketing launch remains **on hold**.
 
 | Check | Result | Link / evidence |
 |---|---|---|
-| Tests pass | Pending | |
-| Browser/manual verification complete | Pending | |
-| Accessibility check complete | Pending | |
-| Data invariants reviewed | Pending | |
-| Migration applied and RLS reviewed | Pending | |
-| Deployment/release check complete | Pending | |
-| Durable documentation updated | Pending | |
+| Tests pass | Passed | `npm test`: 72 JavaScript tests and 32 Python tests. |
+| Browser/manual verification complete | Passed | Canonical signed-in session, authenticated wording, reversible FDR round trip, and same-account private-browser restoration verified. |
+| Accessibility check complete | Passed | Existing semantic controls and visible active FDR state retained; anonymous preview smoke passed. |
+| Data invariants reviewed | Passed | No picks/FPL credential/profile/raw FPL response persistence; public Team ID remains optional context. |
+| Migration applied and RLS reviewed | Passed | Migration `20260820030000` applied; bounded live policy metadata confirmed existing owner-only `auth.uid() = user_id` rules. |
+| Deployment/release check complete | Passed | PR #64 merged; canonical Vercel deployment `dpl_6pMMCPeaKSLmvJ6NBaN3TtZJ53Rr` reached `READY`. |
+| Durable documentation updated | Passed | `docs/verification/phase-8b-google-account-team-id-sync-production-20260820.md`. |
 
 ## Decision log
 
