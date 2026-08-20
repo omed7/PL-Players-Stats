@@ -2,7 +2,8 @@
 
 **Date:** 2026-08-20
 **Branch:** `chore/prelaunch-readiness-baseline`
-**Status:** Implemented; pull request pending
+**Status:** Implemented; pull request open
+**Pull request:** [#66](https://github.com/omed7/PL-Players-Stats/pull/66)
 **Launch status:** **Public marketing launch remains on hold.**
 
 ## Scope verified

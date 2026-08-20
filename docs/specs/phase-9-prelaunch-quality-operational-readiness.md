@@ -1,9 +1,9 @@
 # Feature Specification — Phase 9: Pre-launch quality and operational readiness baseline
 
-**Status:** Approved for implementation
+**Status:** Implemented; pull request open
 **Owner:** omed7
 **Date:** 2026-08-20
-**Related issue / PR:** To be created
+**Related issue / PR:** [#66](https://github.com/omed7/PL-Players-Stats/pull/66)
 
 ## 1. Outcome
 
