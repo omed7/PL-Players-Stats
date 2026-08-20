@@ -2375,3 +2375,132 @@ tbody tr:hover td.sticky-col {
   border-color: var(--amber);
   color: var(--amber);
 }
+
+/* ── Public FPL Team ID ─────────────────────────────────────────── */
+.fpl-team-section {
+  flex: 2;
+  min-width: 280px;
+  padding: 10px 12px;
+  background: var(--bg-1);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.fpl-team-heading,
+.fpl-team-form,
+.fpl-team-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fpl-team-heading {
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: var(--f-d);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.fpl-team-form label {
+  font-family: var(--f-m);
+  font-size: 0.66rem;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.fpl-team-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--blight);
+  border-radius: 4px;
+  color: var(--text-1);
+  font-family: var(--f-m);
+  font-size: 0.72rem;
+}
+.fpl-team-form input:focus-visible,
+.fpl-team-form button:focus-visible,
+.fpl-team-actions button:focus-visible,
+.squad-filter-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+.fpl-team-form button,
+.fpl-team-actions button,
+.squad-filter-btn {
+  padding: 6px 9px;
+  background: var(--bg-2);
+  border: 1px solid var(--blight);
+  border-radius: 4px;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: var(--f-d);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.fpl-team-form button:hover,
+.fpl-team-actions button:hover,
+.squad-filter-btn:hover:not(:disabled),
+.squad-filter-btn.active {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: var(--teal-dim);
+}
+.squad-filter-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.fpl-team-note,
+.fpl-team-status {
+  margin: 7px 0 0;
+  font-family: var(--f-m);
+  font-size: 0.64rem;
+  line-height: 1.35;
+}
+.fpl-team-note {
+  color: var(--text-2);
+}
+.fpl-team-status {
+  min-height: 1.2em;
+  color: var(--teal);
+}
+.fpl-team-status.is-error {
+  color: var(--red);
+}
+.fpl-team-actions {
+  margin-top: 8px;
+}
+.squad-player td.sticky-col {
+  box-shadow: inset 3px 0 0 var(--teal);
+}
+.squad-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+  padding: 2px 4px;
+  border: 1px solid var(--teal);
+  border-radius: 3px;
+  color: var(--teal);
+  font-family: var(--f-m);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .fpl-team-section {
+    width: 100%;
+    min-width: 0;
+  }
+  .fpl-team-form {
+    flex-wrap: wrap;
+  }
+  .fpl-team-form label {
+    width: 100%;
+  }
+}
