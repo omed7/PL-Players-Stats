@@ -18,7 +18,12 @@
 
   function createAccountSync({ client, utils } = {}) {
     if (!client?.from) throw new Error("A Supabase browser client is required");
-    if (!utils?.planInitialPreferenceSync || !utils?.normalizeTheme) {
+    if (
+      !utils?.planInitialPreferenceSync ||
+      !utils?.normalizeTheme ||
+      !utils?.normalizePublicTeamId ||
+      !utils?.normalizeFdrSortMode
+    ) {
       throw new Error("Account sync utilities are required");
     }
 
@@ -33,7 +38,7 @@
       const [themeResult, watchlistResult] = await Promise.all([
         client
           .from("user_preferences")
-          .select("theme")
+          .select("theme,fpl_team_id,fdr_sort_mode")
           .eq("user_id", userId)
           .maybeSingle(),
         client
@@ -45,6 +50,8 @@
       const watchlistRows = assertNoError(watchlistResult, "Watchlist retrieval") || [];
       return {
         cloudTheme: themeRow?.theme || null,
+        cloudTeamId: themeRow?.fpl_team_id || null,
+        cloudFdrSortMode: themeRow?.fdr_sort_mode || null,
         cloudWatchlistElementIds: watchlistRows.map((row) => row.element_id),
       };
     }
@@ -62,9 +69,11 @@
       session,
       localWatchlistElementIds = [],
       localTheme,
+      localTeamId,
+      localFdrSortMode,
     } = {}) {
       const userId = sessionUserId(session);
-      const [{ cloudTheme, cloudWatchlistElementIds }] = await Promise.all([
+      const [{ cloudTheme, cloudTeamId, cloudFdrSortMode, cloudWatchlistElementIds }] = await Promise.all([
         readCloudPreferences(userId),
         ensureProfile(userId),
       ]);
@@ -73,22 +82,29 @@
         cloudWatchlistElementIds,
         localTheme,
         cloudTheme,
+        localTeamId,
+        cloudTeamId,
+        localFdrSortMode,
+        cloudFdrSortMode,
       });
 
       await insertWatchlistItems(userId, plan.watchlistElementIdsToInsert);
-      if (plan.themeToPersist) {
+      const preferenceSeed = { user_id: userId };
+      if (plan.themeToPersist) preferenceSeed.theme = plan.themeToPersist;
+      if (plan.teamIdToPersist) preferenceSeed.fpl_team_id = plan.teamIdToPersist;
+      if (plan.fdrSortModeToPersist) preferenceSeed.fdr_sort_mode = plan.fdrSortModeToPersist;
+      if (Object.keys(preferenceSeed).length > 1) {
         const result = await client
           .from("user_preferences")
-          .upsert(
-            { user_id: userId, theme: plan.themeToPersist },
-            { onConflict: "user_id" },
-          );
-        assertNoError(result, "Theme synchronisation");
+          .upsert(preferenceSeed, { onConflict: "user_id" });
+        assertNoError(result, "Preference synchronisation");
       }
 
       return {
         watchlistElementIds: plan.watchlistElementIds,
         effectiveTheme: plan.effectiveTheme,
+        effectiveTeamId: plan.effectiveTeamId,
+        effectiveFdrSortMode: plan.effectiveFdrSortMode,
       };
     }
 
@@ -115,6 +131,42 @@
       assertNoError(result, "Watchlist synchronisation");
     }
 
+    async function saveTeamPreferences({ session, teamId, fdrSortMode } = {}) {
+      const userId = sessionUserId(session);
+      const normalisedTeamId = utils.normalizePublicTeamId(teamId);
+      if (!normalisedTeamId) return;
+      const normalisedFdrSortMode = utils.normalizeFdrSortMode(fdrSortMode) || "avg";
+      const result = await client.from("user_preferences").upsert(
+        {
+          user_id: userId,
+          fpl_team_id: normalisedTeamId,
+          fdr_sort_mode: normalisedFdrSortMode,
+        },
+        { onConflict: "user_id" },
+      );
+      assertNoError(result, "Team preference synchronisation");
+    }
+
+    async function saveFdrSortMode({ session, fdrSortMode } = {}) {
+      const userId = sessionUserId(session);
+      const normalisedFdrSortMode = utils.normalizeFdrSortMode(fdrSortMode);
+      if (!normalisedFdrSortMode) return;
+      const result = await client.from("user_preferences").upsert(
+        { user_id: userId, fdr_sort_mode: normalisedFdrSortMode },
+        { onConflict: "user_id" },
+      );
+      assertNoError(result, "FDR preference synchronisation");
+    }
+
+    async function clearTeamId({ session } = {}) {
+      const userId = sessionUserId(session);
+      const result = await client
+        .from("user_preferences")
+        .update({ fpl_team_id: null })
+        .eq("user_id", userId);
+      assertNoError(result, "Team preference synchronisation");
+    }
+
     async function saveTheme({ session, theme } = {}) {
       const userId = sessionUserId(session);
       const normalisedTheme = utils.normalizeTheme(theme);
@@ -128,6 +180,9 @@
     return {
       syncInitialPreferences,
       setWatchlistMembership,
+      saveTeamPreferences,
+      saveFdrSortMode,
+      clearTeamId,
       saveTheme,
     };
   }

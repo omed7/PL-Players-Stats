@@ -1,0 +1,45 @@
+%% Purpose: Review how an optional public FPL Team ID becomes an owner-only Google-account preference
+%% Evidence: phase-8b specification; account_sync.js; script.js; migration 20260820030000.
+flowchart LR
+  subgraph Browser[Browser trust boundary]
+    UI["FPL Omed UI\nTeam ID + FDR controls"]
+    Local["localStorage\nversioned local profile\nanonymous fallback"]
+    Sync["Account sync adapter\nsession-derived owner only"]
+    Mem["In-memory squad picks\nnever persisted"]
+  end
+
+  subgraph Google[Google boundary]
+    GAuth["Google OAuth\nidentity only"]
+  end
+
+  subgraph Supabase[Supabase boundary]
+    SAuth["Supabase Auth\nGoogle session"]
+    Prefs[("user_preferences\ntheme, fpl_team_id,\nfdr_sort_mode\nowner-only RLS")]
+    Watch[("watchlist_items\nstable element_id\nowner-only RLS")]
+  end
+
+  subgraph Vercel[Vercel / public-data boundary]
+    Proxy["/api/fpl-team\nvalidates public Team ID\nminimises response"]
+  end
+
+  FPL["Official FPL API\npublic bootstrap + picks"]
+
+  UI <--> Local
+  UI --> Sync
+  Sync <--> SAuth
+  GAuth --> SAuth
+  Sync <--> Prefs
+  Sync <--> Watch
+  UI --> Proxy
+  Proxy <--> FPL
+  Proxy --> Mem
+  Mem --> UI
+
+  classDef local fill:#1f2937,stroke:#00d9a3,color:#fff
+  classDef auth fill:#1e3a5f,stroke:#60a5fa,color:#fff
+  classDef data fill:#3f2a1f,stroke:#f59e0b,color:#fff
+  classDef external fill:#3b1f4a,stroke:#c084fc,color:#fff
+  class UI,Local,Sync,Mem local
+  class GAuth,SAuth auth
+  class Prefs,Watch data
+  class Proxy,FPL external

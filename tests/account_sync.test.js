@@ -5,7 +5,10 @@ function resolved(data, error = null) {
   return Promise.resolve({ data, error });
 }
 
-function makeClient({ cloudTheme = "green", cloudIds = [2, 3] } = {}) {
+function makeClient({
+  cloudPreferences = { theme: "green", fpl_team_id: null, fdr_sort_mode: null },
+  cloudIds = [2, 3],
+} = {}) {
   const calls = [];
   const client = {
     from: jest.fn((table) => {
@@ -13,12 +16,18 @@ function makeClient({ cloudTheme = "green", cloudIds = [2, 3] } = {}) {
       if (table === "user_preferences") {
         return {
           select: jest.fn(() => ({
-            eq: jest.fn(() => ({ maybeSingle: jest.fn(() => resolved(cloudTheme ? { theme: cloudTheme } : null)) })),
+            eq: jest.fn(() => ({ maybeSingle: jest.fn(() => resolved(cloudPreferences)) })),
           })),
           upsert: jest.fn((rows, options) => {
             calls.push({ table, action: "upsert", rows, options });
             return resolved(null);
           }),
+          update: jest.fn((rows) => ({
+            eq: jest.fn((column, value) => {
+              calls.push({ table, action: "update", rows, column, value });
+              return resolved(null);
+            }),
+          })),
         };
       }
       if (table === "watchlist_items") {
@@ -52,8 +61,10 @@ function makeClient({ cloudTheme = "green", cloudIds = [2, 3] } = {}) {
 const session = { user: { id: "00000000-0000-4000-8000-000000000001" } };
 
 describe("Supabase account preference adapter", () => {
-  test("merges valid local watchlist IDs, preserves cloud theme, and creates a profile lazily", async () => {
-    const { client, calls } = makeClient();
+  test("uses valid cloud Team ID/FDR values, preserves cloud theme, and creates a profile lazily", async () => {
+    const { client, calls } = makeClient({
+      cloudPreferences: { theme: "green", fpl_team_id: 222, fdr_sort_mode: "alpha" },
+    });
     const sync = createAccountSync({ client, utils });
 
     await expect(
@@ -61,10 +72,14 @@ describe("Supabase account preference adapter", () => {
         session,
         localWatchlistElementIds: [1, 2, "bad"],
         localTheme: "orange",
+        localTeamId: 111,
+        localFdrSortMode: "avg",
       }),
     ).resolves.toEqual({
       watchlistElementIds: [1, 2, 3],
       effectiveTheme: "green",
+      effectiveTeamId: 222,
+      effectiveFdrSortMode: "alpha",
     });
 
     expect(calls).toEqual(
@@ -86,26 +101,84 @@ describe("Supabase account preference adapter", () => {
     expect(calls.some((call) => call.table === "user_preferences" && call.action === "upsert")).toBe(false);
   });
 
-  test("seeds local theme when cloud has no row and synchronises an individual membership by element ID", async () => {
-    const { client, calls } = makeClient({ cloudTheme: null, cloudIds: [] });
+  test("seeds missing cloud theme, Team ID, and FDR sort in one owner-scoped preference write", async () => {
+    const { client, calls } = makeClient({ cloudPreferences: null, cloudIds: [] });
     const sync = createAccountSync({ client, utils });
 
-    await sync.syncInitialPreferences({
-      session,
-      localWatchlistElementIds: [],
-      localTheme: "lightblue",
+    await expect(
+      sync.syncInitialPreferences({
+        session,
+        localWatchlistElementIds: [],
+        localTheme: "lightblue",
+        localTeamId: 88,
+        localFdrSortMode: "alpha",
+      }),
+    ).resolves.toEqual({
+      watchlistElementIds: [],
+      effectiveTheme: "lightblue",
+      effectiveTeamId: 88,
+      effectiveFdrSortMode: "alpha",
     });
-    await sync.setWatchlistMembership({ session, elementId: 99, watched: true });
-    await sync.setWatchlistMembership({ session, elementId: 99, watched: false });
 
     expect(calls).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           table: "user_preferences",
           action: "upsert",
-          rows: { user_id: session.user.id, theme: "lightblue" },
+          rows: {
+            user_id: session.user.id,
+            theme: "lightblue",
+            fpl_team_id: 88,
+            fdr_sort_mode: "alpha",
+          },
           options: { onConflict: "user_id" },
         }),
+      ]),
+    );
+  });
+
+  test("synchronises Team ID/FDR updates and clears only the Team ID for an authenticated user", async () => {
+    const { client, calls } = makeClient();
+    const sync = createAccountSync({ client, utils });
+
+    await sync.saveTeamPreferences({ session, teamId: "99", fdrSortMode: "alpha" });
+    await sync.saveFdrSortMode({ session, fdrSortMode: "avg" });
+    await sync.clearTeamId({ session });
+
+    expect(calls).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          table: "user_preferences",
+          action: "upsert",
+          rows: { user_id: session.user.id, fpl_team_id: 99, fdr_sort_mode: "alpha" },
+          options: { onConflict: "user_id" },
+        }),
+        expect.objectContaining({
+          table: "user_preferences",
+          action: "upsert",
+          rows: { user_id: session.user.id, fdr_sort_mode: "avg" },
+          options: { onConflict: "user_id" },
+        }),
+        expect.objectContaining({
+          table: "user_preferences",
+          action: "update",
+          rows: { fpl_team_id: null },
+          column: "user_id",
+          value: session.user.id,
+        }),
+      ]),
+    );
+  });
+
+  test("synchronises an individual watchlist membership by stable element ID", async () => {
+    const { client, calls } = makeClient();
+    const sync = createAccountSync({ client, utils });
+
+    await sync.setWatchlistMembership({ session, elementId: 99, watched: true });
+    await sync.setWatchlistMembership({ session, elementId: 99, watched: false });
+
+    expect(calls).toEqual(
+      expect.arrayContaining([
         expect.objectContaining({
           table: "watchlist_items",
           action: "upsert",
@@ -124,6 +197,13 @@ describe("Supabase account preference adapter", () => {
     await expect(sync.setWatchlistMembership({ session: null, elementId: 3, watched: true })).rejects.toThrow(
       "authenticated session",
     );
+    await expect(sync.saveTeamPreferences({ session: null, teamId: 3 })).rejects.toThrow(
+      "authenticated session",
+    );
+    await expect(sync.saveFdrSortMode({ session: null, fdrSortMode: "avg" })).rejects.toThrow(
+      "authenticated session",
+    );
+    await expect(sync.clearTeamId({ session: null })).rejects.toThrow("authenticated session");
     expect(client.from).not.toHaveBeenCalled();
   });
 });

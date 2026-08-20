@@ -29,6 +29,7 @@ const state = {
   teamPicks: [],
   squadElementIds: new Set(),
   mySquadOnly: false,
+  teamRequestToken: 0,
 };
 const el = {};
 let activeDialog = null;
@@ -179,6 +180,46 @@ function syncThemeToAccount(theme) {
   });
 }
 
+function syncFdrSortModeToAccount(fdrSortMode) {
+  if (!state.accountSession || !accountSync) return;
+  accountSync.saveFdrSortMode({ session: state.accountSession, fdrSortMode }).catch(() => {
+    setAccountStatus("Signed in — FDR preference sync unavailable", "error");
+  });
+}
+
+function syncTeamPreferencesToAccount(teamId) {
+  if (!state.accountSession || !accountSync) return;
+  accountSync
+    .saveTeamPreferences({
+      session: state.accountSession,
+      teamId,
+      fdrSortMode: state.fdrSortMode,
+    })
+    .catch(() => {
+      setAccountStatus("Signed in — Team ID sync unavailable", "error");
+      setTeamStatus("Team is saved on this device; account sync is temporarily unavailable.", true);
+    });
+}
+
+function restoreTeamProfileFromAccount(teamId, fdrSortMode) {
+  const utils = teamProfileUtils();
+  if (!utils || !teamId) return;
+  const profile = utils.createProfile({
+    teamId,
+    watchlistElementIds: [...state.watchlist],
+    fdrSortMode,
+  });
+  if (!profile) return;
+  state.teamRequestToken += 1;
+  state.teamProfile = profile;
+  state.teamPicks = [];
+  state.squadElementIds = new Set();
+  state.mySquadOnly = false;
+  saveTeamProfile();
+  syncTeamProfileUI();
+  if (teamDataLoader) connectFPLTeam(profile.teamId, { isRefresh: true, syncAccount: false });
+}
+
 function refreshAccountDependentUI() {
   syncWatchlistHeader();
   renderWatchlistDrawer();
@@ -188,6 +229,7 @@ function refreshAccountDependentUI() {
 async function applyAccountSession(session) {
   state.accountSession = session || null;
   renderAccountControls();
+  syncTeamProfileUI();
   if (!state.accountSession || !accountSync) return;
 
   try {
@@ -195,10 +237,16 @@ async function applyAccountSession(session) {
       session: state.accountSession,
       localWatchlistElementIds: [...state.watchlist],
       localTheme: localStorage.getItem(THEME_KEY) || "green",
+      localTeamId: state.teamProfile?.teamId || null,
+      localFdrSortMode: state.teamProfile?.fdrSortMode || state.fdrSortMode,
     });
     state.watchlist = new Set(synced.watchlistElementIds);
+    state.fdrSortMode = synced.effectiveFdrSortMode;
     saveWatchlist({ sync: false });
     applyTheme(synced.effectiveTheme, { sync: false });
+    if (synced.effectiveTeamId) {
+      restoreTeamProfileFromAccount(synced.effectiveTeamId, synced.effectiveFdrSortMode);
+    }
     refreshAccountDependentUI();
     setAccountStatus("Signed in", "signed-in");
   } catch (_) {
@@ -659,9 +707,15 @@ function syncTeamProfileUI() {
   const actions = document.getElementById("fpl-team-actions");
   const connectButton = document.getElementById("btn-fpl-team-connect");
   const mySquadButton = document.getElementById("btn-my-squad");
+  const note = document.getElementById("fpl-team-note");
   const connected = Boolean(state.teamProfile?.teamId);
   const hasSquad = state.squadElementIds.size > 0;
   if (input && connected) input.value = String(state.teamProfile.teamId);
+  if (note) {
+    note.textContent = state.accountSession
+      ? "Public lookup only. Team ID and supported preferences sync with this Google account."
+      : "Public lookup only. Team and preferences stay on this device.";
+  }
   actions?.classList.toggle("hidden", !connected);
   if (connectButton) connectButton.textContent = connected ? "Update" : "Connect";
   if (mySquadButton) {
@@ -671,7 +725,7 @@ function syncTeamProfileUI() {
   }
 }
 
-function applyTeamPayload(payload, successMessage) {
+function applyTeamPayload(payload, successMessage, { syncAccount = true } = {}) {
   const utils = teamProfileUtils();
   if (!utils) return;
   const profile = utils.createProfile({
@@ -684,13 +738,15 @@ function applyTeamPayload(payload, successMessage) {
   state.teamPicks = payload.picks;
   state.squadElementIds = new Set(payload.picks.map((pick) => pick.element));
   saveTeamProfile();
+  if (syncAccount) syncTeamPreferencesToAccount(profile.teamId);
   syncTeamProfileUI();
   setTeamStatus(successMessage);
   applyFiltersAndSort();
 }
 
-async function connectFPLTeam(teamIdInput, { isRefresh = false } = {}) {
+async function connectFPLTeam(teamIdInput, { isRefresh = false, syncAccount = !isRefresh } = {}) {
   if (!teamDataLoader) return;
+  const requestToken = ++state.teamRequestToken;
   const submitButton = document.getElementById("btn-fpl-team-connect");
   const refreshButton = document.getElementById("btn-fpl-team-refresh");
   const activeButton = isRefresh ? refreshButton : submitButton;
@@ -698,9 +754,11 @@ async function connectFPLTeam(teamIdInput, { isRefresh = false } = {}) {
   setTeamStatus(isRefresh ? "Refreshing public squad…" : "Connecting public team…");
   try {
     const payload = await teamDataLoader.load(teamIdInput);
+    if (requestToken !== state.teamRequestToken) return;
     applyTeamPayload(
       payload,
       `Squad ready for public Team ID ${payload.teamId}.`,
+      { syncAccount },
     );
   } catch (error) {
     setTeamStatus(
@@ -712,14 +770,25 @@ async function connectFPLTeam(teamIdInput, { isRefresh = false } = {}) {
   }
 }
 
-function disconnectFPLTeam() {
+async function disconnectFPLTeam() {
   if (!state.teamProfile) return;
   const confirmed = window.confirm(
     "Disconnect this public FPL Team ID? This removes the Team ID and this-device Team profile settings.",
   );
   if (!confirmed) return;
+  if (state.accountSession && accountSync) {
+    setTeamStatus("Disconnecting Team ID from this Google account…");
+    try {
+      await accountSync.clearTeamId({ session: state.accountSession });
+    } catch (_) {
+      setAccountStatus("Signed in — Team ID sync unavailable", "error");
+      setTeamStatus("Team ID remains connected because account sync is temporarily unavailable.", true);
+      return;
+    }
+  }
   const utils = teamProfileUtils();
   if (utils) localStorage.removeItem(utils.TEAM_PROFILE_KEY);
+  state.teamRequestToken += 1;
   state.teamProfile = null;
   state.teamPicks = [];
   state.squadElementIds = new Set();
@@ -727,7 +796,11 @@ function disconnectFPLTeam() {
   const input = document.getElementById("fpl-team-id");
   if (input) input.value = "";
   syncTeamProfileUI();
-  setTeamStatus("Public Team ID disconnected from this device.");
+  setTeamStatus(
+    state.accountSession
+      ? "Public Team ID disconnected from this Google account."
+      : "Public Team ID disconnected from this device.",
+  );
   applyFiltersAndSort();
 }
 
@@ -1922,6 +1995,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-fdr-sort-avg").addEventListener("click", (e) => {
     state.fdrSortMode = "avg";
     saveTeamProfile();
+    syncFdrSortModeToAccount(state.fdrSortMode);
     document.getElementById("btn-fdr-sort-avg").classList.add("active");
     document.getElementById("btn-fdr-sort-alpha").classList.remove("active");
     renderFDRHeatmap();
@@ -1931,6 +2005,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .addEventListener("click", (e) => {
       state.fdrSortMode = "alpha";
       saveTeamProfile();
+      syncFdrSortModeToAccount(state.fdrSortMode);
       document.getElementById("btn-fdr-sort-alpha").classList.add("active");
       document.getElementById("btn-fdr-sort-avg").classList.remove("active");
       renderFDRHeatmap();
