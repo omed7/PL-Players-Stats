@@ -44,4 +44,12 @@ describe("pre-launch public metadata", () => {
     expect(helperIndex).toBeGreaterThan(-1);
     expect(helperIndex).toBeLessThan(controllerIndex);
   });
+
+  test("loads the player-query helper before the browser controller", () => {
+    const helperIndex = indexHtml.indexOf('<script src="player_query_utils.js"></script>');
+    const controllerIndex = indexHtml.indexOf('<script src="script.js"></script>');
+
+    expect(helperIndex).toBeGreaterThan(-1);
+    expect(helperIndex).toBeLessThan(controllerIndex);
+  });
 });

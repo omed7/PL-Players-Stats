@@ -72,6 +72,7 @@ const safePublicPlayer = (player) => ({
   positionClass: safePublicPositionClass(player?.position),
 });
 const playerTableUtils = () => window.FPLPlayerTableUtils;
+const playerQueryUtils = () => window.FPLPlayerQueryUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -1662,91 +1663,31 @@ function syncTeamFilterUI() {
 // ─── FILTER + SORT ────────────────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function baseFilter(p, pfx, maxM) {
-  const isPct = el.minsToggle.checked;
-  const sld = parseInt(el.minsSlider.value, 10);
-  const qLow = state.searchQuery.toLowerCase();
-  const mins = p[`${pfx}minutes`] ?? 0;
-  if (!mins) return false;
-  if (isPct ? Math.round((mins / maxM) * 100) < sld : mins < sld) return false;
-  if (p.price < state.priceMin || p.price > state.priceMax) return false;
-  if (!p.name.toLowerCase().includes(qLow)) return false;
-  if (state.selectedTeams.length && !state.selectedTeams.includes(p.team))
-    return false;
-  if (state.positionFilter !== "All" && p.position !== state.positionFilter)
-    return false;
-  return true;
-}
-
 function applyFiltersAndSort() {
   const pfx = pfxFor();
-  const maxM = maxMFor();
-
-  // Watchlist and My Squad restrictions both use durable FPL element IDs.
-  let pool = state.players;
-  if (state.watchlistOnly && state.watchlist.size > 0) {
-    pool = pool.filter((p) => state.watchlist.has(p.element_id));
-  }
-  if (state.mySquadOnly && state.squadElementIds.size > 0) {
-    pool = teamProfileUtils()?.filterPlayersByElementIds(
-      pool,
-      [...state.squadElementIds],
-    ) || [];
-  }
-
-  state.filteredPlayers = pool.filter((p) => baseFilter(p, pfx, maxM));
-
-  state.filteredPlayers.sort((a, b) => {
-    if (state.sortColumn === "name") {
-      const na = a.name.toLowerCase(),
-        nb = b.name.toLowerCase();
-      return state.sortDirection === "asc"
-        ? na.localeCompare(nb)
-        : nb.localeCompare(na);
-    }
-    let va, vb;
-    if (state.sortColumn === "value") {
-      va = a.price > 0 ? (a[`${pfx}points`] ?? 0) / a.price : 0;
-      vb = b.price > 0 ? (b[`${pfx}points`] ?? 0) / b.price : 0;
-    } else {
-      va = a[`${pfx}${state.sortColumn}`] ?? 0;
-      vb = b[`${pfx}${state.sortColumn}`] ?? 0;
-    }
-    return state.sortDirection === "asc" ? va - vb : vb - va;
+  const query = playerQueryUtils().queryPlayers({
+    players: state.players,
+    prefix: pfx,
+    maxMinutes: maxMFor(),
+    criteria: {
+      minutesMode: el.minsToggle.checked ? "percent" : "raw",
+      minMinutes: parseInt(el.minsSlider.value, 10),
+      priceMin: state.priceMin,
+      priceMax: state.priceMax,
+      searchQuery: state.searchQuery,
+      selectedTeams: state.selectedTeams,
+      positionFilter: state.positionFilter,
+      watchlistOnly: state.watchlistOnly,
+      watchlistElementIds: [...state.watchlist],
+      mySquadOnly: state.mySquadOnly,
+      squadElementIds: [...state.squadElementIds],
+      sortColumn: state.sortColumn,
+      sortDirection: state.sortDirection,
+    },
   });
 
-  // Compute column maxes including new season columns
-  const allCols = [
-    "xG",
-    "xA",
-    "xGI",
-    "influence",
-    "creativity",
-    "threat",
-    "ict",
-    "bps",
-    "bonus",
-    "points",
-    "saves",
-    "defcon",
-    "goals",
-    "assists",
-    "clean_sheets",
-    "ppg",
-  ];
-  allCols.forEach((c) => {
-    state.columnMaxes[c] = Math.max(
-      ...state.filteredPlayers.map((p) => parseFloat(p[`${pfx}${c}`] ?? 0)),
-      0.01,
-    );
-  });
-  state.columnMaxes.value = Math.max(
-    ...state.filteredPlayers.map((p) =>
-      p.price > 0 ? (p[`${pfx}points`] ?? 0) / p.price : 0,
-    ),
-    0.01,
-  );
-
+  state.filteredPlayers = query.players;
+  state.columnMaxes = query.columnMaxes;
   state.currentPage = 1;
   document.getElementById("s-count").textContent =
     `${state.filteredPlayers.length}`;
@@ -1755,12 +1696,15 @@ function applyFiltersAndSort() {
 }
 
 function updatePagination() {
-  const total =
-    Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
-  if (state.currentPage > total) state.currentPage = total;
-  el.pageInfo.textContent = `Page ${state.currentPage} of ${total}`;
-  el.btnPrev.disabled = state.currentPage === 1;
-  el.btnNext.disabled = state.currentPage === total;
+  const pagination = playerQueryUtils().getPagination({
+    totalItems: state.filteredPlayers.length,
+    itemsPerPage: state.itemsPerPage,
+    currentPage: state.currentPage,
+  });
+  state.currentPage = pagination.currentPage;
+  el.pageInfo.textContent = `Page ${pagination.currentPage} of ${pagination.totalPages}`;
+  el.btnPrev.disabled = pagination.currentPage === 1;
+  el.btnNext.disabled = pagination.currentPage === pagination.totalPages;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1812,8 +1756,15 @@ function renderTable(pfxArg) {
     return;
   }
 
-  const start = (state.currentPage - 1) * state.itemsPerPage;
-  const page = state.filteredPlayers.slice(start, start + state.itemsPerPage);
+  const pagination = playerQueryUtils().getPagination({
+    totalItems: state.filteredPlayers.length,
+    itemsPerPage: state.itemsPerPage,
+    currentPage: state.currentPage,
+  });
+  const page = state.filteredPlayers.slice(
+    pagination.startIndex,
+    pagination.endIndex,
+  );
   const valMax = maxes.value || 0.01;
   const bar = (v, max) =>
     max > 0 ? `${Math.min((v / max) * 100, 100).toFixed(1)}%` : "0%";
@@ -2259,9 +2210,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
   el.btnNext.addEventListener("click", () => {
-    const total =
-      Math.ceil(state.filteredPlayers.length / state.itemsPerPage) || 1;
-    if (state.currentPage < total) {
+    const { totalPages } = playerQueryUtils().getPagination({
+      totalItems: state.filteredPlayers.length,
+      itemsPerPage: state.itemsPerPage,
+      currentPage: state.currentPage,
+    });
+    if (state.currentPage < totalPages) {
       state.currentPage++;
       updatePagination();
       renderTable();
