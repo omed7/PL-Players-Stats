@@ -28,4 +28,12 @@ describe("pre-launch public metadata", () => {
     expect(helperIndex).toBeGreaterThan(-1);
     expect(helperIndex).toBeLessThan(controllerIndex);
   });
+
+  test("loads the render-safety helper before the browser controller", () => {
+    const helperIndex = indexHtml.indexOf('<script src="render_utils.js"></script>');
+    const controllerIndex = indexHtml.indexOf('<script src="script.js"></script>');
+
+    expect(helperIndex).toBeGreaterThan(-1);
+    expect(helperIndex).toBeLessThan(controllerIndex);
+  });
 });
