@@ -1,9 +1,9 @@
 # Phase 12 — Player-Table Rendering Seam
 
-**Status:** Draft — implementation approval pending  
-**Owner:** omed7  
-**Date:** 24 August 2026  
-**Related issue / PR:** N/A
+**Status:** Implemented — PR CI passed; deployed-preview verification pending
+**Owner:** omed7
+**Date:** 24 August 2026
+**Related issue / PR:** [PR #70](https://github.com/omed7/PL-Players-Stats/pull/70)
 
 ## 1. Outcome
 
@@ -96,13 +96,13 @@ No database migration, snapshot refresh, environment variable, secret, workflow,
 
 | Check | Result | Link / evidence |
 |---|---|---|
-| Focused tests fail before implementation | Pending implementation |  |
-| Tests pass | Pending implementation |  |
-| Browser/manual verification complete | Pending implementation |  |
-| Accessibility check complete | Pending implementation |  |
-| Data invariants reviewed | Complete for specification | No fixture, schema, identity, privacy, or credential change proposed. |
-| Deployment/release check complete | Pending implementation |  |
-| Durable documentation updated if needed | Complete | This specification. |
+| Focused tests fail before implementation | Complete | The missing utility/module and script tag caused the focused Jest tests to fail as expected. |
+| Tests pass | Complete | `npm test`: 18 Jest suites / 90 JavaScript tests and 32 Python tests passed after the controller correction. |
+| Browser/manual verification complete | Complete locally | Fresh-origin populated dashboard, goalkeeper and season layouts, FDR round trip, and player-detail journey completed. |
+| Accessibility check complete | Complete locally | Player-detail dialog opened from a row and `Escape` dismissed it successfully. |
+| Data invariants reviewed | Complete | No fixture, schema, identity, privacy, credential, workflow, or persisted-user-data change. |
+| Deployment/release check complete | Pending pull-request preview | Required before merge; PR #70 CI passed. |
+| Durable documentation updated if needed | Complete | This completion record and the local verification note. |
 
 ## Decision log
 
