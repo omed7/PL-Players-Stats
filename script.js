@@ -60,6 +60,17 @@ const maxMFor = () =>
       : (state.currentGW || 38) * 90;
 const uiStateUtils = () => window.FPLUIStateUtils;
 const dashboardDataUtils = () => window.FPLDashboardDataUtils;
+const renderUtils = () => window.FPLRenderUtils;
+const escapePublicHTML = (value) => renderUtils()?.escapeHTML(value) ?? "";
+const safePublicImageURL = (value) => renderUtils()?.safeImageURL(value) ?? "";
+const safePublicPositionClass = (value) => renderUtils()?.safePositionClass(value) ?? "UNK";
+const safePublicPlayer = (player) => ({
+  name: escapePublicHTML(player?.name),
+  team: escapePublicHTML(player?.team),
+  logo: safePublicImageURL(player?.logo),
+  position: escapePublicHTML(player?.position),
+  positionClass: safePublicPositionClass(player?.position),
+});
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -369,14 +380,21 @@ function renderFixtureSlotHTML(fixtures, gameweek) {
     ? classifier(fixtures)
     : { status: fixtures?.length ? "known" : "unknown", fixtures: fixtures || [] };
 
+  const safeGameweek = escapePublicHTML(gameweek);
   let html = '<div class="gw-slot">';
   if (slot.status === "unknown") {
-    html += `<div class="fixture-unknown" title="GW${gameweek}: fixture data unavailable">TBC</div>`;
+    html += `<div class="fixture-unknown" title="GW${safeGameweek}: fixture data unavailable">TBC</div>`;
   } else {
     slot.fixtures.forEach((fixture) => {
       const homeAway = fixture.is_home ? "H" : "A";
-      html += `<div class="fix-chip diff-${fixture.difficulty}" title="GW${gameweek} vs ${fixture.opponent} (${homeAway}) FDR:${fixture.difficulty}">
-        <img src="${fixture.opponent_logo}" alt="${fixture.opponent}">
+      const opponent = escapePublicHTML(fixture.opponent);
+      const opponentLogo = safePublicImageURL(fixture.opponent_logo);
+      const difficulty = Number(fixture.difficulty);
+      const safeDifficulty = Number.isInteger(difficulty) && difficulty >= 1 && difficulty <= 5
+        ? difficulty
+        : "unknown";
+      html += `<div class="fix-chip diff-${safeDifficulty}" title="GW${safeGameweek} vs ${opponent} (${homeAway}) FDR:${safeDifficulty}">
+        <img src="${opponentLogo}" alt="${opponent}">
         <span class="fix-ha">${homeAway}</span>
       </div>`;
     });
@@ -453,7 +471,7 @@ function renderFDRHeatmap() {
   theadRow.innerHTML =
     '<th class="sticky-col" style="text-align:left;">Team</th>';
   gws.forEach((gw) => {
-    theadRow.innerHTML += `<th>GW${gw}</th>`;
+    theadRow.innerHTML += `<th>GW${escapePublicHTML(gw)}</th>`;
   });
 
   // Process data for sorting
@@ -505,10 +523,12 @@ function renderFDRHeatmap() {
     // Sticky Team Col
     const tdTeam = document.createElement("td");
     tdTeam.className = "sticky-col";
+    const safeTeamName = escapePublicHTML(t.name);
+    const safeTeamLogo = safePublicImageURL(t.logo);
     tdTeam.innerHTML = `
       <div style="display:flex; align-items:center; gap:8px;">
-        <img src="${t.logo}" alt="${t.name}" style="width:24px; height:24px; object-fit:contain; background:#0d1117; border-radius:3px; padding:1px;">
-        <span style="font-family:var(--f-d); font-size:1rem; font-weight:700;">${t.name}</span>
+        <img src="${safeTeamLogo}" alt="${safeTeamName}" style="width:24px; height:24px; object-fit:contain; background:#0d1117; border-radius:3px; padding:1px;">
+        <span style="font-family:var(--f-d); font-size:1rem; font-weight:700;">${safeTeamName}</span>
       </div>
     `;
     tr.appendChild(tdTeam);
@@ -893,21 +913,23 @@ function renderWatchlistDrawer() {
     const pts = p[`${pfx}points`] ?? 0;
     const xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2);
     const val = p.price > 0 ? (pts / p.price).toFixed(1) : "—";
+    const display = safePublicPlayer(p);
+    const fixtureChips = buildFixtureChipsHTML(p);
     const card = document.createElement("div");
     card.className = "wl-card";
     card.innerHTML = `
       <div class="wl-card-top">
-        <img src="${p.logo}" alt="${p.team}" class="wl-card-logo">
+        <img src="${display.logo}" alt="${display.team}" class="wl-card-logo">
         <div class="wl-card-info">
           <div class="wl-card-name-row">
-            <span class="pos-badge pos-${p.position}">${p.position}</span>
-            <span class="wl-card-name">${p.name}</span>
+            <span class="pos-badge pos-${display.positionClass}">${display.position}</span>
+            <span class="wl-card-name">${display.name}</span>
           </div>
           <div class="wl-card-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% owned &middot; ${pts} pts &middot; ${val} pts/&pound;m &middot; xGI ${xgi}</div>
         </div>
-        <button type="button" class="wl-card-remove" title="Remove" aria-label="Remove ${p.name} from watchlist">&times;</button>
+        <button type="button" class="wl-card-remove" title="Remove" aria-label="Remove ${display.name} from watchlist">&times;</button>
       </div>
-      ${buildFixtureChipsHTML(p) ? `<div class="wl-card-chips">${buildFixtureChipsHTML(p)}</div>` : ""}`;
+      ${fixtureChips ? `<div class="wl-card-chips">${fixtureChips}</div>` : ""}`;
     card
       .querySelector(".wl-card-remove")
       .addEventListener("click", () => toggleWatch(elementId));
@@ -984,10 +1006,11 @@ function syncCmpBar() {
   state.compareSet.forEach((elementId, i) => {
     const p = playerByElementId(elementId);
     if (!p) return;
+    const display = safePublicPlayer(p);
     const chip = document.createElement("div");
     chip.className = "cmp-bar-chip";
     chip.style.borderColor = CMP[i].color;
-    chip.innerHTML = `<img src="${p.logo}" alt="${p.team}">${p.name}`;
+    chip.innerHTML = `<img src="${display.logo}" alt="${display.team}">${display.name}`;
     playersEl.appendChild(chip);
   });
 }
@@ -1060,7 +1083,7 @@ function buildRadarSVG(players, pfx) {
     .map(
       (p, i) =>
         `<g><circle cx="10" cy="${S - 24 + i * 14}" r="5" fill="${CMP[i].fill}" stroke="${CMP[i].color}" stroke-width="1.5"/>
-    <text x="20" y="${S - 21 + i * 14}" font-size="8.5" font-family="'Barlow Condensed',sans-serif" font-weight="700" fill="${CMP[i].color}">${p.name}</text></g>`,
+    <text x="20" y="${S - 21 + i * 14}" font-size="8.5" font-family="'Barlow Condensed',sans-serif" font-weight="700" fill="${CMP[i].color}">${escapePublicHTML(p.name)}</text></g>`,
     )
     .join("");
   return `<svg viewBox="0 0 ${S} ${S}" xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}" overflow="visible">${grid}${axes}${lbls}${polys}${legend}</svg>`;
@@ -1079,14 +1102,15 @@ function openCompareModal() {
     const c = CMP[i],
       pts = p[`${pfx}points`] ?? 0;
     const val = p.price > 0 ? (pts / p.price).toFixed(1) : "—";
+    const display = safePublicPlayer(p);
     colsHtml += `<div class="cmp-player-col">
       <div class="cmp-col-accent" style="background:${c.color}"></div>
       <div class="cmp-col-hdr">
-        <img src="${p.logo}" alt="${p.team}" class="cmp-col-logo">
+        <img src="${display.logo}" alt="${display.team}" class="cmp-col-logo">
         <div>
           <div style="display:flex;align-items:center;gap:5px;">
-            <span class="pos-badge pos-${p.position}">${p.position}</span>
-            <span class="cmp-col-name">${p.name}</span>
+            <span class="pos-badge pos-${display.positionClass}">${display.position}</span>
+            <span class="cmp-col-name">${display.name}</span>
           </div>
           <div class="cmp-col-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% &middot; ${pts} pts &middot; ${val} pts/&pound;m</div>
         </div>
@@ -1104,7 +1128,7 @@ function openCompareModal() {
   let tableHtml = `<div class="cmp-stat-table">
     <div class="cmp-stat-row-header" style="grid-template-columns:${cols}">
       <div class="cmp-stat-key-cell"></div>
-      ${players.map((p, i) => `<div style="font-family:var(--f-d);font-size:0.75rem;font-weight:700;color:${CMP[i].color};padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div>`).join("")}
+      ${players.map((p, i) => `<div style="font-family:var(--f-d);font-size:0.75rem;font-weight:700;color:${CMP[i].color};padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapePublicHTML(p.name)}</div>`).join("")}
       <div></div>
     </div>`;
   CMP_STAT_DEFS.forEach(
@@ -1152,6 +1176,7 @@ function closeCompareModal() {
 function openPlayerModal(p) {
   const pfx = pfxFor();
   const body = document.getElementById("pd-body");
+  const display = safePublicPlayer(p);
 
   // Availability badge
   let availHtml = "";
@@ -1173,9 +1198,9 @@ function openPlayerModal(p) {
   const isSeason = state.timeframe === "season";
   const statTile = (label, value, sub) =>
     `<div class="pd-stat-tile">
-      <span class="pd-stat-val">${value}</span>
-      <span class="pd-stat-lbl">${label}</span>
-      ${sub ? `<span class="pd-stat-sub">${sub}</span>` : ""}
+      <span class="pd-stat-val">${escapePublicHTML(value)}</span>
+      <span class="pd-stat-lbl">${escapePublicHTML(label)}</span>
+      ${sub ? `<span class="pd-stat-sub">${escapePublicHTML(sub)}</span>` : ""}
     </div>`;
 
   const seasonTiles = `
@@ -1214,6 +1239,7 @@ function openPlayerModal(p) {
     : p.gw_history || [];
   const labelForMatch =
     historyUtils?.matchLabel || ((record) => `GW${record?.gw ?? "?"}`);
+  const safeLabelForMatch = (record) => escapePublicHTML(labelForMatch(record));
 
   // Attach the selected history to state for detail-chart consumers.
   state.currentPDMatchHist = matchHist;
@@ -1256,8 +1282,8 @@ function openPlayerModal(p) {
 
           return `<div class="pd-form-col">
           <span class="pd-form-pts">${dispVal}</span>
-          <div class="pd-form-bar ${barCls}" style="height:${pct}%" title="${labelForMatch(g)}: ${dispVal}"></div>
-          <span class="pd-form-gw">${labelForMatch(g)}</span>
+          <div class="pd-form-bar ${barCls}" style="height:${pct}%" title="${safeLabelForMatch(g)}: ${dispVal}"></div>
+          <span class="pd-form-gw">${safeLabelForMatch(g)}</span>
         </div>`;
         })
         .join("")}
@@ -1315,7 +1341,7 @@ function openPlayerModal(p) {
     .map(
       (g) => `
     <tr>
-      <td>${labelForMatch(g)}</td>
+      <td>${safeLabelForMatch(g)}</td>
       <td class="${g.pts >= 9 ? "pts-high" : g.pts >= 6 ? "pts-med" : ""}">${g.pts}</td>
       <td>${g.xG.toFixed(2)}</td>
       <td>${g.xA.toFixed(2)}</td>
@@ -1349,14 +1375,14 @@ function openPlayerModal(p) {
   body.innerHTML = `
     <!-- Header -->
     <div class="pd-header">
-      <img src="${p.logo}" alt="${p.team}" class="pd-logo">
+      <img src="${display.logo}" alt="${display.team}" class="pd-logo">
       <div class="pd-header-info">
         <div class="pd-name-row">
-          <span class="pos-badge pos-${p.position}">${p.position}</span>
-          <span class="pd-name">${p.name}</span>
+          <span class="pos-badge pos-${display.positionClass}">${display.position}</span>
+          <span class="pd-name">${display.name}</span>
         </div>
         <div class="pd-sub-row">
-          <span class="pd-team">${p.team}</span>
+          <span class="pd-team">${display.team}</span>
           <span class="pd-price">&pound;${p.price.toFixed(1)}m</span>
           <span class="pd-own">${p.ownership}% owned</span>
           ${availHtml}
@@ -1578,11 +1604,13 @@ function populateTeamFilter() {
   ).sort((a, b) => a.name.localeCompare(b.name));
   const frag = document.createDocumentFragment();
   teams.forEach(({ name, logo }) => {
+    const safeName = escapePublicHTML(name);
+    const safeLogo = safePublicImageURL(logo);
     const btn = document.createElement("button");
     btn.className =
       "team-logo-btn" + (state.selectedTeams.includes(name) ? " selected" : "");
     btn.title = name;
-    btn.innerHTML = `<img src="${logo}" alt="${name}"><span class="team-abbr">${name}</span>`;
+    btn.innerHTML = `<img src="${safeLogo}" alt="${safeName}"><span class="team-abbr">${safeName}</span>`;
     btn.addEventListener("click", () => {
       if (state.selectedTeams.length === 0) {
         state.selectedTeams = [name];
@@ -1810,6 +1838,7 @@ function renderTable(pfxArg) {
     const ppg = (p[`${pfx}ppg`] ?? 0).toFixed(2);
     const val = p.price > 0 ? (pts / p.price).toFixed(1) : "0.0";
     const own = p.ownership ?? "0.0";
+    const display = safePublicPlayer(p);
 
     // Injury badge
     let injHtml = "";
@@ -1856,17 +1885,17 @@ function renderTable(pfxArg) {
     td.innerHTML = `
       <div class="player-cell">
         <div class="team-logo-wrap">
-          <img src="${p.logo}" alt="${p.team}" class="team-logo">
+          <img src="${display.logo}" alt="${display.team}" class="team-logo">
           <span class="player-price">&pound;${p.price.toFixed(1)}m</span>
           ${trendHtml}
         </div>
         <div class="player-info">
           <div class="player-name-row">
-            <span class="pos-badge pos-${p.position}">${p.position}</span>
-            <span class="player-name-text">${p.name}</span>
+            <span class="pos-badge pos-${display.positionClass}">${display.position}</span>
+            <span class="player-name-text">${display.name}</span>
             ${inSquad ? '<span class="squad-badge">Squad</span>' : ""}
-            <button type="button" class="star-btn ${watched ? "active" : ""}" data-watch="${p.element_id}" title="Watchlist" aria-label="${watched ? "Remove" : "Add"} ${p.name} ${watched ? "from" : "to"} watchlist" aria-pressed="${watched}">&#9733;</button>
-            <button type="button" class="${cmpClass}" data-cmp="${p.element_id}" title="Compare" aria-label="${cmpIdx !== -1 ? `Remove ${p.name} from comparison` : cmpFull ? `Comparison is full; ${p.name} is not selected` : `Add ${p.name} to comparison`}" aria-pressed="${cmpIdx !== -1}" ${cmpFull ? "disabled" : ""}>${cmpTxt}</button>
+            <button type="button" class="star-btn ${watched ? "active" : ""}" data-watch="${p.element_id}" title="Watchlist" aria-label="${watched ? "Remove" : "Add"} ${display.name} ${watched ? "from" : "to"} watchlist" aria-pressed="${watched}">&#9733;</button>
+            <button type="button" class="${cmpClass}" data-cmp="${p.element_id}" title="Compare" aria-label="${cmpIdx !== -1 ? `Remove ${display.name} from comparison` : cmpFull ? `Comparison is full; ${display.name} is not selected` : `Add ${display.name} to comparison`}" aria-pressed="${cmpIdx !== -1}" ${cmpFull ? "disabled" : ""}>${cmpTxt}</button>
           </div>
           <div class="player-meta-row">
             <span class="own-badge">${own}%</span>
