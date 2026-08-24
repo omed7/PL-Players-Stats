@@ -123,7 +123,7 @@ Phase 13 is the recommended next slice because Phase 12 deliberately deferred th
 | Local browser verification complete | Passed on 2026-08-25; see `docs/verification/phase-13-local-smoke-20260825.md` |
 | Deployed-preview verification complete | Passed on 2026-08-25; see `docs/verification/phase-13-preview-smoke-20260825.md` |
 | Data and privacy invariants reviewed | Complete: no snapshot, account, Team ID, fixture, or persistence contract changed |
-| Durable documentation updated | This specification plus `docs/verification/phase-13-local-smoke-20260825.md` and `docs/verification/phase-13-preview-smoke-20260825.md` |
+| Durable documentation updated | This specification plus local, preview, and production smoke records under `docs/verification/` |
 
 ## Decision log
 
@@ -133,3 +133,4 @@ Phase 13 is the recommended next slice because Phase 12 deliberately deferred th
 | 2026-08-24 | Keep UI event handlers and state mutation in `script.js`. | It avoids a broad controller rewrite and preserves current page-reset and accessibility behaviour. | The extracted utility remains independent of browser APIs. |
 | 2026-08-25 | Owner approved Phase 13 and requested focused failing tests first. | The existing pure-helper and test-first delivery pattern applies to the intended seam. | Implementation uses a small UMD/CommonJS utility with controller-owned DOM and state adapters. |
 | 2026-08-25 | Complete local and ready-preview browser smoke before review. | The narrow code seam changes the filtering, sorting, maxima, and pagination handoff while preserving all user-visible behaviour. | Populated, no-results, goalkeeper/season, sorting, pagination, dialog Escape, and FDR round-trip evidence is recorded. |
+| 2026-08-25 | Verify the merged deployment without creating artificial data-publication overlap. | Phase 13 does not change the fetch or publication workflow. | Production verification covers only public browser behaviour and is recorded in `docs/verification/phase-13-production-smoke-20260825.md`. |
