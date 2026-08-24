@@ -24,6 +24,19 @@ function cacheSuccessfulSameOriginResponse(request, response) {
   caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
 }
 
+function networkFirst(request) {
+  return fetch(request)
+    .then((networkResponse) => {
+      cacheSuccessfulSameOriginResponse(request, networkResponse);
+      return networkResponse;
+    })
+    .catch(() =>
+      caches.match(request, { ignoreSearch: true }).then(
+        (cachedResponse) => cachedResponse || Response.error(),
+      ),
+    );
+}
+
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
@@ -34,28 +47,11 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (url.pathname.endsWith("/players.json")) {
-    event.respondWith(
-      fetch(event.request)
-        .then((networkResponse) => {
-          cacheSuccessfulSameOriginResponse(event.request, networkResponse);
-          return networkResponse;
-        })
-        .catch(() =>
-          caches.match(event.request, { ignoreSearch: true }).then(
-            (cachedResponse) => cachedResponse || Response.error(),
-          ),
-        ),
-    );
+    event.respondWith(networkFirst(event.request));
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
-      if (cachedResponse) return cachedResponse;
-      return fetch(event.request).then((networkResponse) => {
-        cacheSuccessfulSameOriginResponse(event.request, networkResponse);
-        return networkResponse;
-      });
-    }),
-  );
+  // Keep the app shell fresh across deployments. Cached same-origin responses are
+  // resilience fallback only, never the preferred response for a returning user.
+  event.respondWith(networkFirst(event.request));
 });

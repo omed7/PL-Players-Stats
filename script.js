@@ -18,6 +18,7 @@ const state = {
   schemaVersion: null,
   dataSource: null,
   loadError: false,
+  isPreseasonDataset: false,
   watchlist: new Set(),
   watchlistOnly: false,
   compareSet: [],
@@ -58,6 +59,7 @@ const maxMFor = () =>
       ? 900
       : (state.currentGW || 38) * 90;
 const uiStateUtils = () => window.FPLUIStateUtils;
+const dashboardDataUtils = () => window.FPLDashboardDataUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -1457,13 +1459,7 @@ function closePlayerModal() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function isPreseasonEmptyDataset() {
-  const deadlineTime = Date.parse(state.deadline || "");
-  return (
-    state.players.length === 0 &&
-    state.currentGW === 1 &&
-    Number.isFinite(deadlineTime) &&
-    deadlineTime > Date.now()
-  );
+  return state.isPreseasonDataset;
 }
 
 function clearLoadedDataset() {
@@ -1475,6 +1471,7 @@ function clearLoadedDataset() {
   state.fetchedAt = null;
   state.schemaVersion = null;
   state.dataSource = null;
+  state.isPreseasonDataset = false;
   state.actualGWs = null;
   clearCountdown();
   clearFreshness();
@@ -1506,31 +1503,30 @@ async function fetchPlayers() {
       return;
     }
 
-    const data = classified.dataset;
-    state.dataSource = classified.source;
-    if (classified.source === "static" && classified.fallbackReason) {
+    const dashboardData = dashboardDataUtils()?.prepareDashboardData({ classified });
+    if (!dashboardData) throw new Error("Dashboard data helper is unavailable");
+
+    state.dataSource = dashboardData.source;
+    if (dashboardData.source === "static" && classified.fallbackReason) {
       console.warn(`Using temporary static player-data fallback: ${classified.fallbackReason}`);
     }
-    state.players = data.players;
+    state.players = dashboardData.players;
     migrateLegacyWatchlist();
     syncWatchlistHeader();
-    state.nextGWs = data.next_gws || [];
-    state.currentGW = data.current_gw || null;
-    state.deadline = data.deadline || null;
-    state.fetchedAt = data.fetched_at || null;
-    state.schemaVersion = classified.schemaVersion;
+    state.nextGWs = dashboardData.nextGWs;
+    state.currentGW = dashboardData.currentGW;
+    state.deadline = dashboardData.deadline;
+    state.fetchedAt = dashboardData.fetchedAt;
+    state.schemaVersion = dashboardData.schemaVersion;
+    state.isPreseasonDataset = dashboardData.isPreseason;
     state.actualGWs = null;
 
-    // Derive price slider range from actual data.
-    const prices = state.players.map((p) => p.price).filter(Boolean);
-    const minPrice = Math.floor(Math.min(...prices, 3.0) * 10);
-    const maxPrice = Math.ceil(Math.max(...prices, 15.0) * 10);
-    el.priceMinSlider.min = minPrice;
-    el.priceMinSlider.value = minPrice;
-    el.priceMaxSlider.max = maxPrice;
-    el.priceMaxSlider.value = maxPrice;
-    state.priceMin = minPrice / 10;
-    state.priceMax = maxPrice / 10;
+    el.priceMinSlider.min = dashboardData.minPriceSlider;
+    el.priceMinSlider.value = dashboardData.minPriceSlider;
+    el.priceMaxSlider.max = dashboardData.maxPriceSlider;
+    el.priceMaxSlider.value = dashboardData.maxPriceSlider;
+    state.priceMin = dashboardData.minPriceSlider / 10;
+    state.priceMax = dashboardData.maxPriceSlider / 10;
     updatePriceFill();
 
     renderFreshness(state.fetchedAt);
