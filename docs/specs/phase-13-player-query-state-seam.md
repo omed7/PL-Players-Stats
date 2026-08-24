@@ -1,6 +1,6 @@
 # Phase 13 — Player Query-State and Pagination Seam
 
-**Status:** Approved — deployed-preview verification pending
+**Status:** Complete — pull request ready for review
 **Owner:** omed7
 **Date:** 24 August 2026
 **Related issue / PR:** N/A
@@ -121,9 +121,9 @@ Phase 13 is the recommended next slice because Phase 12 deliberately deferred th
 | Focused tests fail before implementation | Confirmed on 2026-08-25: utility module and script load tag were absent |
 | Full test suite passes | Passed on 2026-08-25: 19 JavaScript suites / 96 tests and 32 Python tests |
 | Local browser verification complete | Passed on 2026-08-25; see `docs/verification/phase-13-local-smoke-20260825.md` |
-| Deployed-preview verification complete | Pending pull-request preview |
+| Deployed-preview verification complete | Passed on 2026-08-25; see `docs/verification/phase-13-preview-smoke-20260825.md` |
 | Data and privacy invariants reviewed | Complete: no snapshot, account, Team ID, fixture, or persistence contract changed |
-| Durable documentation updated | This specification and `docs/verification/phase-13-local-smoke-20260825.md` |
+| Durable documentation updated | This specification plus `docs/verification/phase-13-local-smoke-20260825.md` and `docs/verification/phase-13-preview-smoke-20260825.md` |
 
 ## Decision log
 
@@ -132,3 +132,4 @@ Phase 13 is the recommended next slice because Phase 12 deliberately deferred th
 | 2026-08-24 | Propose query-state and pagination extraction as Phase 13. | It was explicitly deferred by Phase 12 and is the next high-value pure logic seam. | Controller event and DOM adapters stay stable while query behaviour gains direct regression coverage. |
 | 2026-08-24 | Keep UI event handlers and state mutation in `script.js`. | It avoids a broad controller rewrite and preserves current page-reset and accessibility behaviour. | The extracted utility remains independent of browser APIs. |
 | 2026-08-25 | Owner approved Phase 13 and requested focused failing tests first. | The existing pure-helper and test-first delivery pattern applies to the intended seam. | Implementation uses a small UMD/CommonJS utility with controller-owned DOM and state adapters. |
+| 2026-08-25 | Complete local and ready-preview browser smoke before review. | The narrow code seam changes the filtering, sorting, maxima, and pagination handoff while preserving all user-visible behaviour. | Populated, no-results, goalkeeper/season, sorting, pagination, dialog Escape, and FDR round-trip evidence is recorded. |
