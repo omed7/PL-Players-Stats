@@ -71,6 +71,7 @@ const safePublicPlayer = (player) => ({
   position: escapePublicHTML(player?.position),
   positionClass: safePublicPositionClass(player?.position),
 });
+const playerTableUtils = () => window.FPLPlayerTableUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -1770,27 +1771,28 @@ function renderTable(pfxArg) {
   el.tbody.innerHTML = "";
   const pfx = pfxArg || pfxFor();
   const maxM = maxMFor();
-  const isGK = state.positionFilter === "GK";
-  const isSeason = state.timeframe === "season";
+  const columnVisibility = playerTableUtils().getTableColumnVisibility({
+    positionFilter: state.positionFilter,
+    timeframe: state.timeframe,
+  });
   const maxes = state.columnMaxes;
 
   // Column visibility
   const vis = (id, show) =>
     document.getElementById(id)?.classList.toggle("hidden", !show);
-  vis("col-saves", isGK);
-  vis("col-xg", !isGK);
-  vis("col-xa", !isGK);
-  vis("col-xgi", !isGK);
-  vis("col-influence", !isGK);
-  vis("col-creativity", !isGK);
-  vis("col-threat", !isGK);
-  vis("col-ict", !isGK);
-  vis("col-defcon", !isGK && !isSeason); // DefCon hidden in season (no data)
-  // Season-only columns
-  vis("col-goals", !isGK);
-  vis("col-assists", !isGK);
-  vis("col-cs", isSeason);
-  vis("col-ppg", isSeason);
+  vis("col-saves", columnVisibility.saves);
+  vis("col-xg", columnVisibility.xG);
+  vis("col-xa", columnVisibility.xA);
+  vis("col-xgi", columnVisibility.xGI);
+  vis("col-influence", columnVisibility.influence);
+  vis("col-creativity", columnVisibility.creativity);
+  vis("col-threat", columnVisibility.threat);
+  vis("col-ict", columnVisibility.ict);
+  vis("col-defcon", columnVisibility.defcon);
+  vis("col-goals", columnVisibility.goals);
+  vis("col-assists", columnVisibility.assists);
+  vis("col-cs", columnVisibility.cleanSheets);
+  vis("col-ppg", columnVisibility.ppg);
 
   if (!state.filteredPlayers.length) {
     const dashboardState = uiStateUtils()?.classifyDashboardState({
@@ -1818,26 +1820,33 @@ function renderTable(pfxArg) {
   const frag = document.createDocumentFragment();
 
   page.forEach((p, i) => {
-    const mins = p[`${pfx}minutes`] ?? 0;
-    const minPct = p[`${pfx}min_pct`] ?? Math.round((mins / maxM) * 100);
-    const saves = p[`${pfx}saves`] ?? 0;
-    const defcon = p[`${pfx}defcon`] ?? 0;
-    const xG = (p[`${pfx}xG`] ?? 0).toFixed(2);
-    const xA = (p[`${pfx}xA`] ?? 0).toFixed(2);
-    const xGI = (p[`${pfx}xGI`] ?? 0).toFixed(2);
-    const influence = (p[`${pfx}influence`] ?? 0).toFixed(1);
-    const creat = (p[`${pfx}creativity`] ?? 0).toFixed(1);
-    const threat = (p[`${pfx}threat`] ?? 0).toFixed(1);
-    const ict = (p[`${pfx}ict`] ?? 0).toFixed(1);
-    const bps = p[`${pfx}bps`] ?? 0;
-    const bonus = p[`${pfx}bonus`] ?? 0;
-    const pts = p[`${pfx}points`] ?? 0;
-    const goals = p[`${pfx}goals`] ?? 0;
-    const assists = p[`${pfx}assists`] ?? 0;
-    const cs = p[`${pfx}clean_sheets`] ?? 0;
-    const ppg = (p[`${pfx}ppg`] ?? 0).toFixed(2);
-    const val = p.price > 0 ? (pts / p.price).toFixed(1) : "0.0";
-    const own = p.ownership ?? "0.0";
+    const metrics = playerTableUtils().buildPlayerTableRowMetrics({
+      prefix: pfx,
+      maxMinutes: maxM,
+      player: p,
+    });
+    const {
+      minutes: mins,
+      minPct,
+      saves,
+      defcon,
+      xG,
+      xA,
+      xGI,
+      influence,
+      creativity: creat,
+      threat,
+      ict,
+      bps,
+      bonus,
+      points: pts,
+      goals,
+      assists,
+      cleanSheets: cs,
+      ppg,
+      value: val,
+      ownership: own,
+    } = metrics;
     const display = safePublicPlayer(p);
 
     // Injury badge
@@ -1932,22 +1941,22 @@ function renderTable(pfxArg) {
       return cell;
     };
 
-    tr.appendChild(statTd(saves, maxes.saves, !isGK));
+    tr.appendChild(statTd(saves, maxes.saves, !columnVisibility.saves));
     tr.appendChild(statTd(pts, maxes.points));
     // Season-only columns (hidden unless season mode)
-    tr.appendChild(statTd(goals, maxes.goals, isGK));
-    tr.appendChild(statTd(assists, maxes.assists, isGK));
-    tr.appendChild(statTd(cs, maxes.clean_sheets, !isSeason));
-    tr.appendChild(statTd(ppg, maxes.ppg, !isSeason));
+    tr.appendChild(statTd(goals, maxes.goals, !columnVisibility.goals));
+    tr.appendChild(statTd(assists, maxes.assists, !columnVisibility.assists));
+    tr.appendChild(statTd(cs, maxes.clean_sheets, !columnVisibility.cleanSheets));
+    tr.appendChild(statTd(ppg, maxes.ppg, !columnVisibility.ppg));
     // Standard columns
-    tr.appendChild(statTd(xG, maxes.xG, isGK));
-    tr.appendChild(statTd(xA, maxes.xA, isGK));
-    tr.appendChild(statTd(xGI, maxes.xGI, isGK));
-    tr.appendChild(statTd(influence, maxes.influence, isGK));
-    tr.appendChild(statTd(creat, maxes.creativity, isGK));
-    tr.appendChild(statTd(threat, maxes.threat, isGK));
-    tr.appendChild(statTd(ict, maxes.ict, isGK));
-    tr.appendChild(statTd(defcon, maxes.defcon, isGK || isSeason));
+    tr.appendChild(statTd(xG, maxes.xG, !columnVisibility.xG));
+    tr.appendChild(statTd(xA, maxes.xA, !columnVisibility.xA));
+    tr.appendChild(statTd(xGI, maxes.xGI, !columnVisibility.xGI));
+    tr.appendChild(statTd(influence, maxes.influence, !columnVisibility.influence));
+    tr.appendChild(statTd(creat, maxes.creativity, !columnVisibility.creativity));
+    tr.appendChild(statTd(threat, maxes.threat, !columnVisibility.threat));
+    tr.appendChild(statTd(ict, maxes.ict, !columnVisibility.ict));
+    tr.appendChild(statTd(defcon, maxes.defcon, !columnVisibility.defcon));
     tr.appendChild(statTd(bps, maxes.bps));
     tr.appendChild(statTd(bonus, maxes.bonus));
     tr.appendChild(statTd(val, valMax));
