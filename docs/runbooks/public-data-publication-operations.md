@@ -2,7 +2,7 @@
 
 **Status:** Active pre-launch runbook
 **Owner:** omed7
-**Last reviewed:** 2026-08-20
+**Last reviewed:** 2026-08-24
 **Launch status:** **Public marketing launch remains on hold.**
 
 ## Purpose and operational boundary
@@ -40,6 +40,20 @@ curl --fail --silent --show-error --head https://fpl-omed.vercel.app/
 ```
 
 A successful workflow is necessary but not sufficient evidence: check its individual stages and the browser’s visible data state. Do not treat a missing fixture as an authoritative blank gameweek. The application may display `BGW` only from an explicit authoritative confirmation; incomplete fixtures stay unknown or unavailable.
+
+## Publication concurrency observation
+
+The workflow uses the shared `fpl-data-publication` concurrency group with `cancel-in-progress: false`. A scheduled, manual, or fetcher-triggered workflow that starts while another output-writing publication is active is therefore expected to wait rather than race the snapshot publication or cancel a validated in-flight run.
+
+> **Safety rule:** Do not create an artificial concurrent production run merely to demonstrate queueing. The normal daily schedule or an owner-approved operational need is the evidence source. An in-flight publication remains preferable to a rushed duplicate write.
+
+| Observation | Expected result | Evidence to record | Escalate when |
+|---|---|---|---|
+| One normal scheduled run | The run completes successfully and preserves normal fetch, validation, publish, and commit/no-change behavior. | Run URL, UTC start/end, conclusion, and snapshot timestamp. | The run fails or the public data state is inconsistent. |
+| A natural overlap occurs | The later run appears pending in the same `fpl-data-publication` group until the active run finishes. | Both run URLs, triggering events, queue duration, and final conclusions. | The active run is cancelled, runs overlap their publication steps, or the pending run never progresses. |
+| The queued run starts | It executes the normal validation, fetch, publication, and commit/no-change steps after the earlier run completes. | Job-level outcomes and whether `players.json` changed. | Validation or publication is skipped, or a partial/invalid output appears. |
+
+A passing source-level policy test proves the workflow declaration, not GitHub scheduler behaviour. Close the runtime portion of this check when the next ordinary scheduled run has completed after the Phase 11 merge; record any natural queued run separately when it occurs.
 
 ## Failure triage
 

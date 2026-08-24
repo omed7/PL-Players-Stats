@@ -27,3 +27,19 @@ The P2 branch was served locally through a temporary static host. It loaded the 
 The local P2 FDR heatmap rendered populated team and fixture data and returned to the player table without a navigation error. This confirms the fixture and team encoding changes preserve the existing source-observed FDR journey.
 
 The local P2 player-detail dialog rendered its expected data and fixtures. `Escape` dismissed the dialog and returned to the populated table, preserving the existing keyboard/focus behavior through the renderer changes.
+
+## Post-merge production confirmation
+
+After PR #68 merged to `main` (`f6e9ac15c57a28e4964f642f7570ba9ca37e5620`), the live dashboard loaded the compatible 279-player snapshot with the expected £3.0m–£15.5m range and an age label consistent with the published snapshot. The normal populated state was preserved after the render-safety release.
+
+The post-merge production FDR heatmap rendered populated, source-observed fixtures and returned to the populated player dashboard without a navigation or data error. This confirms the merged safe fixture and team rendering preserves the live FDR journey.
+
+A merged-production player-detail dialog rendered its normal player, history, and fixture content. `Escape` dismissed the dialog and returned focus to the dashboard table, preserving the accessibility behavior through the deployed render-safety change.
+
+After a forced production refresh, the populated dashboard remained available. The browser reported an active, controlling worker at `https://fpl-omed.vercel.app/sw.js` with the production scope, confirming the live application shell is controlled after the merged release.
+
+The post-refresh production console contained only the explicit service-worker inspection and no observed client-side error output.
+
+## Publication-concurrency assessment
+
+The merged workflow declares the shared `fpl-data-publication` concurrency group with `cancel-in-progress: false`; the associated source-level regression test passed before merge. The six most recent observed `Update FPL Data` runs were successful, and the current schema-v2 snapshot remained consistent at 279 players. No artificial overlapping production dispatch was created solely for this verification. Runtime queue behaviour remains an observation item for the next ordinary scheduled run or any naturally occurring overlap; the runbook now defines the evidence and escalation criteria.
