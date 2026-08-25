@@ -74,6 +74,7 @@ const safePublicPlayer = (player) => ({
 const playerTableUtils = () => window.FPLPlayerTableUtils;
 const playerQueryUtils = () => window.FPLPlayerQueryUtils;
 const fdrViewUtils = () => window.FPLFdrViewUtils;
+const comparisonViewUtils = () => window.FPLComparisonViewUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -904,11 +905,12 @@ const CMP_STAT_DEFS = [
 ];
 
 function toggleCompare(elementId) {
-  if (!persistenceUtils()?.isValidElementId(elementId)) return;
-  const idx = state.compareSet.indexOf(elementId);
-  if (idx !== -1) state.compareSet.splice(idx, 1);
-  else if (state.compareSet.length < 3) state.compareSet.push(elementId);
-  else return;
+  const transition = comparisonViewUtils()?.updateComparisonSelection({
+    selectedElementIds: state.compareSet,
+    elementId,
+  });
+  if (!transition || transition.action === "ignored" || transition.action === "full") return;
+  state.compareSet = transition.selectedElementIds;
   syncAllCmpButtons();
   syncCmpBar();
 }
@@ -976,79 +978,79 @@ const RADAR_STATS = [
   { key: "saves", lbl: "SVS" },
 ];
 
-function buildRadarSVG(players, pfx) {
-  const n = RADAR_STATS.length;
-  const S = 200,
-    cx = S / 2,
-    cy = S / 2,
-    r = 72;
-  const angle = (i) => (i / n) * 2 * Math.PI - Math.PI / 2;
-  const px = (i, sc) => (cx + r * sc * Math.cos(angle(i))).toFixed(1);
-  const py = (i, sc) => (cy + r * sc * Math.sin(angle(i))).toFixed(1);
-  const maxes = {};
-  RADAR_STATS.forEach(({ key }) => {
-    maxes[key] = Math.max(
-      ...players.map((p) => parseFloat(p[`${pfx}${key}`] ?? 0)),
-      0.01,
-    );
-  });
-  let grid = [0.25, 0.5, 0.75, 1]
-    .map((sc) => {
-      const pts = RADAR_STATS.map((_, i) => `${px(i, sc)},${py(i, sc)}`).join(
-        " ",
-      );
-      return `<polygon points="${pts}" fill="none" stroke="rgba(220,232,245,0.07)" stroke-width="0.8"/>`;
-    })
-    .join("");
-  let axes = RADAR_STATS.map(
-    (_, i) =>
-      `<line x1="${cx}" y1="${cy}" x2="${px(i, 1)}" y2="${py(i, 1)}" stroke="rgba(220,232,245,0.07)" stroke-width="0.8"/>`,
-  ).join("");
-  let lbls = RADAR_STATS.map(({ lbl }, i) => {
-    const lx = (cx + (r + 16) * Math.cos(angle(i))).toFixed(1);
-    const ly = (cy + (r + 16) * Math.sin(angle(i))).toFixed(1);
-    return `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="8" font-family="'JetBrains Mono',monospace" fill="rgba(78,102,133,0.9)">${lbl}</text>`;
-  }).join("");
-  let polys = "";
-  [...players].reverse().forEach((p, ri) => {
-    const i = players.length - 1 - ri;
-    const c = CMP[i];
-    const pts = RADAR_STATS.map(({ key }, si) => {
-      const v = parseFloat(p[`${pfx}${key}`] ?? 0);
-      const norm = Math.min(v / maxes[key], 1);
-      return `${px(si, norm)},${py(si, norm)}`;
-    }).join(" ");
-    polys += `<polygon points="${pts}" fill="${c.fill}" stroke="${c.color}" stroke-width="1.6" stroke-linejoin="round"/>`;
-    RADAR_STATS.forEach(({ key }, si) => {
-      const v = parseFloat(p[`${pfx}${key}`] ?? 0);
-      const norm = Math.min(v / maxes[key], 1);
-      polys += `<circle cx="${px(si, norm)}" cy="${py(si, norm)}" r="2.5" fill="${c.color}"/>`;
-    });
-  });
-  const legend = players
+function buildRadarSVG({ radar, selectedPlayers }) {
+  const pointList = (points) =>
+    points.map(({ x, y }) => `${x},${y}`).join(" ");
+  const { size, center, grid, axes, players: radarPlayers } = radar;
+  const gridHtml = grid
     .map(
-      (p, i) =>
-        `<g><circle cx="10" cy="${S - 24 + i * 14}" r="5" fill="${CMP[i].fill}" stroke="${CMP[i].color}" stroke-width="1.5"/>
-    <text x="20" y="${S - 21 + i * 14}" font-size="8.5" font-family="'Barlow Condensed',sans-serif" font-weight="700" fill="${CMP[i].color}">${escapePublicHTML(p.name)}</text></g>`,
+      (points) =>
+        `<polygon points="${pointList(points)}" fill="none" stroke="rgba(220,232,245,0.07)" stroke-width="0.8"/>`,
     )
     .join("");
-  return `<svg viewBox="0 0 ${S} ${S}" xmlns="http://www.w3.org/2000/svg" width="${S}" height="${S}" overflow="visible">${grid}${axes}${lbls}${polys}${legend}</svg>`;
+  const axesHtml = axes
+    .map(
+      ({ end }) =>
+        `<line x1="${center.x}" y1="${center.y}" x2="${end.x}" y2="${end.y}" stroke="rgba(220,232,245,0.07)" stroke-width="0.8"/>`,
+    )
+    .join("");
+  const labelsHtml = axes
+    .map(
+      ({ label, labelPosition }) =>
+        `<text x="${labelPosition.x}" y="${labelPosition.y}" text-anchor="middle" dominant-baseline="middle" font-size="8" font-family="'JetBrains Mono',monospace" fill="rgba(78,102,133,0.9)">${label}</text>`,
+    )
+    .join("");
+  const polygonsHtml = [...radarPlayers]
+    .reverse()
+    .map(({ slotIndex, points }) => {
+      const color = CMP[slotIndex];
+      return `<polygon points="${pointList(points)}" fill="${color.fill}" stroke="${color.color}" stroke-width="1.6" stroke-linejoin="round"/>${points
+        .map(
+          ({ x, y }) =>
+            `<circle cx="${x}" cy="${y}" r="2.5" fill="${color.color}"/>`,
+        )
+        .join("")}`;
+    })
+    .join("");
+  const legendHtml = selectedPlayers
+    .map(({ slotIndex, player }, index) => {
+      const color = CMP[slotIndex];
+      return `<g><circle cx="10" cy="${size - 24 + index * 14}" r="5" fill="${color.fill}" stroke="${color.color}" stroke-width="1.5"/>
+    <text x="20" y="${size - 21 + index * 14}" font-size="8.5" font-family="'Barlow Condensed',sans-serif" font-weight="700" fill="${color.color}">${escapePublicHTML(player.name)}</text></g>`;
+    })
+    .join("");
+  return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" overflow="visible">${gridHtml}${axesHtml}${labelsHtml}${polygonsHtml}${legendHtml}</svg>`;
 }
 
 function openCompareModal() {
-  const players = state.compareSet
-    .map((elementId) => playerByElementId(elementId))
-    .filter(Boolean);
-  if (players.length < 2) return;
   const pfx = pfxFor();
+  const comparisonModel = comparisonViewUtils()?.buildComparisonViewModel({
+    selectedElementIds: state.compareSet,
+    players: state.players,
+    prefix: pfx,
+    statDefinitions: CMP_STAT_DEFS.map(({ key, lbl, bestLow }) => ({
+      key,
+      label: lbl,
+      bestLow,
+    })),
+    radarStats: RADAR_STATS.map(({ key, lbl }) => ({ key, label: lbl })),
+  });
+  if (!comparisonModel) return;
+
+  const { selectedPlayers, statRows, radar } = comparisonModel;
   const body = document.getElementById("cmp-modal-body");
 
+  const pointsByElementId = new Map(
+    (statRows.find(({ key }) => key === "points")?.values || []).map(
+      ({ elementId, value }) => [elementId, value],
+    ),
+  );
   let colsHtml = '<div class="cmp-player-cols">';
-  players.forEach((p, i) => {
-    const c = CMP[i],
-      pts = p[`${pfx}points`] ?? 0;
-    const val = p.price > 0 ? (pts / p.price).toFixed(1) : "—";
-    const display = safePublicPlayer(p);
+  selectedPlayers.forEach(({ elementId, slotIndex, player }) => {
+    const c = CMP[slotIndex],
+      pts = pointsByElementId.get(elementId) ?? 0;
+    const val = player.price > 0 ? (pts / player.price).toFixed(1) : "—";
+    const display = safePublicPlayer(player);
     colsHtml += `<div class="cmp-player-col">
       <div class="cmp-col-accent" style="background:${c.color}"></div>
       <div class="cmp-col-hdr">
@@ -1058,55 +1060,39 @@ function openCompareModal() {
             <span class="pos-badge pos-${display.positionClass}">${display.position}</span>
             <span class="cmp-col-name">${display.name}</span>
           </div>
-          <div class="cmp-col-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% &middot; ${pts} pts &middot; ${val} pts/&pound;m</div>
+          <div class="cmp-col-sub">&pound;${player.price.toFixed(1)}m &middot; ${player.ownership}% &middot; ${pts} pts &middot; ${val} pts/&pound;m</div>
         </div>
       </div></div>`;
   });
   colsHtml += "</div>";
 
-  const statMaxes = {};
-  CMP_STAT_DEFS.forEach(({ key, bestLow }) => {
-    const vals = players.map((p) => parseFloat(p[`${pfx}${key}`] ?? 0));
-    statMaxes[key] = bestLow ? Math.min(...vals) : Math.max(...vals, 0.01);
-  });
-  const cols = `120px ${players.map(() => "1fr").join(" ")} 14px`;
+  const cols = `120px ${selectedPlayers.map(() => "1fr").join(" ")} 14px`;
 
   let tableHtml = `<div class="cmp-stat-table">
     <div class="cmp-stat-row-header" style="grid-template-columns:${cols}">
       <div class="cmp-stat-key-cell"></div>
-      ${players.map((p, i) => `<div style="font-family:var(--f-d);font-size:0.75rem;font-weight:700;color:${CMP[i].color};padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapePublicHTML(p.name)}</div>`).join("")}
+      ${selectedPlayers.map(({ player, slotIndex }) => `<div style="font-family:var(--f-d);font-size:0.75rem;font-weight:700;color:${CMP[slotIndex].color};padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapePublicHTML(player.name)}</div>`).join("")}
       <div></div>
     </div>`;
-  CMP_STAT_DEFS.forEach(
-    ({ key, lbl, bestLow }) => {
-      const vals = players.map((p) => parseFloat(p[`${pfx}${key}`] ?? 0));
-      const max = statMaxes[key] || 0.01;
-      const best = bestLow ? Math.min(...vals) : Math.max(...vals);
-      tableHtml += `<div class="cmp-stat-row" style="grid-template-columns:${cols}">
-      <div class="cmp-stat-key-cell">${lbl}</div>
-      ${vals
-        .map((v, i) => {
-          const c = CMP[i];
-          const pct =
-            max > 0
-              ? (bestLow ? (max / (v || 0.01)) * 100 : (v / max) * 100).toFixed(
-                  1,
-                )
-              : "0";
-          const disp = Number.isInteger(v) ? v : v.toFixed(2);
+  statRows.forEach(({ label, bestIndex, allTied, values }) => {
+    tableHtml += `<div class="cmp-stat-row" style="grid-template-columns:${cols}">
+      <div class="cmp-stat-key-cell">${label}</div>
+      ${values
+        .map(({ value, barPercent, slotIndex }) => {
+          const color = CMP[slotIndex];
+          const displayValue = Number.isInteger(value) ? value : value.toFixed(2);
           return `<div class="cmp-stat-val-cell">
-          <div class="cmp-stat-bar-wrap"><div class="cmp-stat-bar-fill" style="width:${pct}%;background:${c.color}"></div></div>
-          <span class="cmp-stat-num" style="color:${c.color}">${disp}</span>
+          <div class="cmp-stat-bar-wrap"><div class="cmp-stat-bar-fill" style="width:${barPercent}%;background:${color.color}"></div></div>
+          <span class="cmp-stat-num" style="color:${color.color}">${displayValue}</span>
         </div>`;
         })
         .join("")}
-      <div class="cmp-best-dot${vals.every((v) => v === best) ? " hidden-dot" : ""}" style="background:${CMP[vals.indexOf(best)].color}"></div>
+      <div class="cmp-best-dot${allTied ? " hidden-dot" : ""}" style="background:${CMP[selectedPlayers[bestIndex].slotIndex].color}"></div>
     </div>`;
-    },
-  );
+  });
   tableHtml += "</div>";
 
-  body.innerHTML = `<div class="cmp-layout">${colsHtml}<div class="cmp-radar-wrap">${buildRadarSVG(players, pfx)}</div>${tableHtml}</div>`;
+  body.innerHTML = `<div class="cmp-layout">${colsHtml}<div class="cmp-radar-wrap">${buildRadarSVG({ radar, selectedPlayers })}</div>${tableHtml}</div>`;
   document.getElementById("cmp-overlay").classList.remove("hidden");
   activateDialog("cmp-overlay", "#btn-cmp-modal-close");
 }
