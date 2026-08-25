@@ -112,8 +112,8 @@ No data refresh, migration, environment variable, cache rule, social metadata, a
 | Browser/manual verification complete | Fresh-origin local smoke passed on 2026-08-25. | `docs/verification/phase-18-local-smoke-20260825.md` |
 | Accessibility check complete | Drawer and player-detail Escape dismissal passed in local smoke; watchlist-only reset remained intact after final removal. | Local browser smoke |
 | Data invariants reviewed | Complete: the helper resolves only already-numeric positive element IDs, omits stale IDs, and makes no fixture/FDR, account, persistence, or rendering-safety decision. | Focused tests and scope review |
-| Deployment/release check complete | PR CI passed for implementation commit `8b5bcf3`; deployment-preview discovery is unavailable, while merge and production smoke remain pending. | `docs/verification/phase-18-preview-smoke-20260825.md` |
-| Durable documentation updated if needed | Local verification record added. | This specification and local smoke record |
+| Deployment/release check complete | PR #78 merged as `75e7b2e`; canonical production smoke passed. Deployment-preview discovery remains unavailable through the current integration. | `docs/verification/phase-18-production-smoke-20260825.md` and `docs/verification/phase-18-preview-smoke-20260825.md` |
+| Durable documentation updated if needed | Local, preview-limitation, and production verification records added. | This specification and verification records |
 
 ## Decision log
 
@@ -125,4 +125,4 @@ No data refresh, migration, environment variable, cache rule, social metadata, a
 | 2026-08-25 | Start with utility and script-order red tests. | The approved delivery protocol requires test-first evidence. | The focused command failed exactly because `watchlist_view_utils.js` and its ordered `index.html` script tag were absent. |
 | 2026-08-25 | Use strict numeric element-ID inputs in the new helper. | `persistence_utils.normalizeElementIds` accepts only positive integer values and does not coerce strings. | Drawer behavior stays consistent with persisted watchlist semantics; test coverage rejects string coercion. |
 | 2026-08-25 | Verify the changed drawer on a fresh local origin before creating the pull request. | A stale service worker could conceal browser code changes. | Port 4198 smoke covered populated and empty drawer states, remove, watchlist-only/reset, Escape, detail dialog, FDR return, and an empty console. |
-| 2026-08-25 | Treat canonical production smoke as the hosted verification source when preview discovery is denied. | The deployment context exposed only an unrelated project and FPL deployment listing returned 403; no verifiable preview URL was available. | PR CI and fresh-origin local smoke form the pre-merge gate, followed by mandatory canonical production smoke. |
+| 2026-08-25 | Treat canonical production smoke as the hosted verification source when preview discovery is denied. | The deployment context exposed only an unrelated project and FPL deployment listing returned 403; no verifiable preview URL was available. | PR CI and fresh-origin local smoke formed the pre-merge gate; canonical production smoke passed after merge `75e7b2e`. |
