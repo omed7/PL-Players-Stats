@@ -108,8 +108,8 @@ No data refresh, migration, environment variable, cache rule, or social metadata
 | Browser/manual verification complete | Fresh-origin local smoke passed on 2026-08-25. | `docs/verification/phase-17-local-smoke-20260825.md` |
 | Accessibility check complete | Existing metric controls and Escape dismissal remained available in local smoke. | Local browser smoke |
 | Data invariants reviewed | Complete: chart utility reads supplied history metric values only and makes no fixture/FDR, player-identity, or account decision. | Focused unit and local browser checks |
-| Deployment/release check complete | Pending | Pending |
-| Durable documentation updated if needed | This specification | Pending |
+| Deployment/release check complete | Canonical production smoke passed on 2026-08-25 after PR #76 merged as `3881e5a`; PR-preview discovery was unavailable because deployment access returned 403. | `docs/verification/phase-17-production-smoke-20260825.md` |
+| Durable documentation updated if needed | Production record added on 2026-08-25. | This specification and production smoke record |
 
 ## Decision log
 
@@ -120,3 +120,4 @@ No data refresh, migration, environment variable, cache rule, or social metadata
 | 2026-08-25 | Keep labels, escaping, markup, controls, and dialog lifecycle in the controller. | The pure helper must remain DOM-free and not bypass render-safety. | Existing safety and accessibility ownership remains unchanged. |
 | 2026-08-25 | Start with utility and script-order red tests. | The approved delivery protocol requires test-first evidence. | The focused command failed exactly because `player_detail_chart_utils.js` and its ordered `index.html` script tag are absent; controller behavior remains unchanged. |
 | 2026-08-25 | Verify the dialog path on a fresh local origin before creating the pull request. | A stale service worker could conceal browser code changes. | The local smoke on port 4195 covered populated detail, xG metric switching, Escape dismissal, FDR return navigation, and an empty console. |
+| 2026-08-25 | Treat the canonical production smoke as the hosted verification source after PR-preview discovery failed. | The deployment integration denied deployment reads (403), the predicted branch URL did not resolve, and the available browser session did not expose the GitHub PR. | PR CI and fresh-origin local smoke passed before merge; production verified the changed user-facing path after the merge. |
