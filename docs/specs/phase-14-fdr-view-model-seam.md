@@ -106,8 +106,8 @@ No data refresh, migration, deployment configuration, cache policy, external sec
 | Browser/manual verification complete | Local FDR smoke passed on 2026-08-25. | `docs/verification/phase-14-local-smoke-20260825.md` |
 | Accessibility check complete | Existing FDR control labels and Players return action remained available in the local smoke. | Local browser smoke |
 | Data invariants reviewed | Complete: source-observed gameweeks only; no inferred blank or BGW behavior introduced. | Focused unit and local browser checks |
-| Deployment/release check complete | Pending | Pending |
-| Durable documentation updated if needed | This specification | Pending |
+| Deployment/release check complete | Ready PR #74 preview smoke passed on 2026-08-25. | `docs/verification/phase-14-preview-smoke-20260825.md` |
+| Durable documentation updated if needed | Specification plus local and preview smoke records are complete. | `docs/verification/phase-14-*.md` |
 
 ## Decision log
 
@@ -118,3 +118,4 @@ No data refresh, migration, deployment configuration, cache policy, external sec
 | 2026-08-25 | Treat absent fixture data as unknown, never as a blank or `BGW`. | Core FPL data-truthfulness invariant. | The helper may produce no gameweeks or an empty per-cell fixture collection but must make no football assertion. |
 | 2026-08-25 | Start implementation with utility and script-order tests that fail while both integration points are absent. | The approved test-first plan requires observable pre-change evidence. | The focused command failed exactly because `fdr_view_utils.js` and the `index.html` helper tag have not yet been added. |
 | 2026-08-25 | Verify FDR locally from a fresh origin before opening the implementation pull request. | A stale service worker can conceal current browser code. | The local smoke used port 4184 and covered populated FDR, alphabetical sort, selected-team filtering, and the Players return path. |
+| 2026-08-25 | Complete a ready-preview FDR smoke before review. | The source-observed fixture model must remain visibly intact in the deployed browser. | PR #74 preview covered populated FDR, alphabetical sort, selected-team filtering, return navigation, and an empty console. |
