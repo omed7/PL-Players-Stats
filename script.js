@@ -77,6 +77,7 @@ const fdrViewUtils = () => window.FPLFdrViewUtils;
 const comparisonViewUtils = () => window.FPLComparisonViewUtils;
 const playerDetailChartUtils = () => window.FPLPlayerDetailChartUtils;
 const watchlistViewUtils = () => window.FPLWatchlistViewUtils;
+const playerDetailSnapshotUtils = () => window.FPLPlayerDetailSnapshotUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -1110,45 +1111,12 @@ function openPlayerModal(p) {
   const body = document.getElementById("pd-body");
   const display = safePublicPlayer(p);
 
-  // Availability badge
-  let availHtml = "";
-  if (p.status_pct < 100) {
-    const cls =
-      p.status_pct === 0
-        ? "inj-0"
-        : p.status_pct <= 25
-          ? "inj-25"
-          : p.status_pct <= 50
-            ? "inj-50"
-            : "inj-75";
-    availHtml = `<span class="inj-badge ${cls}">&#9888; ${p.status_pct}% chance</span>`;
-  } else {
-    availHtml = `<span class="avail-ok">✓ Available</span>`;
-  }
-
-  // Season stats tiles
-  const isSeason = state.timeframe === "season";
+  // Keep player-detail markup and HTML escaping in the controller.
   const statTile = (label, value, sub) =>
     `<div class="pd-stat-tile">
       <span class="pd-stat-val">${escapePublicHTML(value)}</span>
       <span class="pd-stat-lbl">${escapePublicHTML(label)}</span>
       ${sub ? `<span class="pd-stat-sub">${escapePublicHTML(sub)}</span>` : ""}
-    </div>`;
-
-  const seasonTiles = `
-    <div class="pd-season-grid">
-      ${statTile("Goals", p.season_goals ?? "—")}
-      ${statTile("Assists", p.season_assists ?? "—")}
-      ${statTile("CS", p.season_clean_sheets ?? "—")}
-      ${statTile("Total Pts", p.season_points ?? "—")}
-      ${statTile("PPG", (p.season_ppg ?? 0).toFixed(2))}
-      ${statTile("Form", (p.season_form ?? 0).toFixed(1))}
-      ${statTile("xG", (p.season_xG ?? 0).toFixed(2))}
-      ${statTile("xA", (p.season_xA ?? 0).toFixed(2))}
-      ${statTile("xGI", (p.season_xGI ?? 0).toFixed(2))}
-      ${statTile("ICT", (p.season_ict ?? 0).toFixed(1))}
-      ${p.position === "GK" ? statTile("Saves", p.season_saves ?? "—") : statTile("Bonus", p.season_bonus ?? "—")}
-      ${statTile("BPS", p.season_bps ?? "—")}
     </div>`;
 
   // Recent form: completed-match bar chart (with toggle). Schema v2 carries
@@ -1172,6 +1140,13 @@ function openPlayerModal(p) {
   const labelForMatch =
     historyUtils?.matchLabel || ((record) => `GW${record?.gw ?? "?"}`);
   const safeLabelForMatch = (record) => escapePublicHTML(labelForMatch(record));
+  const snapshot = playerDetailSnapshotUtils()?.buildPlayerDetailSnapshot({
+    player: p,
+    prefix: pfx,
+    timeframe: state.timeframe,
+    matchHistory: matchHist,
+  });
+  if (!snapshot) throw new Error("Player-detail snapshot helper is unavailable");
 
   // Attach the selected history to state for detail-chart consumers.
   state.currentPDMatchHist = matchHist;
@@ -1247,20 +1222,20 @@ function openPlayerModal(p) {
     : "";
 
   // Completed-match history table
-  const histRows = matchHist
+  const histRows = snapshot.matchLogRows
     .map(
-      (g) => `
+      ({ record, points, pointsClass, xgDisplay, xaDisplay, minutesDisplay, bonus }) => `
     <tr>
-      <td>${safeLabelForMatch(g)}</td>
-      <td class="${g.pts >= 9 ? "pts-high" : g.pts >= 6 ? "pts-med" : ""}">${g.pts}</td>
-      <td>${g.xG.toFixed(2)}</td>
-      <td>${g.xA.toFixed(2)}</td>
-      <td>${g.minutes}'</td>
-      <td>${g.bonus ?? 0}</td>
+      <td>${safeLabelForMatch(record)}</td>
+      <td class="${pointsClass}">${points}</td>
+      <td>${xgDisplay}</td>
+      <td>${xaDisplay}</td>
+      <td>${minutesDisplay}</td>
+      <td>${bonus}</td>
     </tr>`,
     )
     .join("");
-  const histTable = matchHist.length
+  const histTable = snapshot.matchLogRows.length
     ? `<div class="pd-table-wrap">
         <table class="pd-hist-table">
           <thead><tr><th>Match</th><th>Pts</th><th>xG</th><th>xA</th><th>Mins</th><th>Bonus</th></tr></thead>
@@ -1268,19 +1243,16 @@ function openPlayerModal(p) {
         </table>
       </div>`
     : "";
-
-  // Current period stats
-  const curPts = p[`${pfx}points`] ?? 0;
-  const curXGI = (p[`${pfx}xGI`] ?? 0).toFixed(2);
-  const curMins = p[`${pfx}minutes`] ?? 0;
-  const curMinPct = p[`${pfx}min_pct`] ?? 0;
-  const curVal = p.price > 0 ? (curPts / p.price).toFixed(1) : "—";
-  const periodLabel =
-    state.timeframe === "last_5"
-      ? "Last 5 Matches"
-      : state.timeframe === "last_10"
-        ? "Last 10 Matches"
-        : "This Season";
+  const availabilityHtml =
+    snapshot.availability.kind === "injured"
+      ? `<span class="inj-badge ${snapshot.availability.className}">&#9888; ${snapshot.availability.percent}% chance</span>`
+      : '<span class="avail-ok">✓ Available</span>';
+  const seasonTiles = `
+    <div class="pd-season-grid">
+      ${snapshot.seasonTiles
+        .map((tile) => statTile(tile.label, tile.displayValue))
+        .join("")}
+    </div>`;
 
   body.innerHTML = `
     <!-- Header -->
@@ -1295,19 +1267,19 @@ function openPlayerModal(p) {
           <span class="pd-team">${display.team}</span>
           <span class="pd-price">&pound;${p.price.toFixed(1)}m</span>
           <span class="pd-own">${p.ownership}% owned</span>
-          ${availHtml}
+          ${availabilityHtml}
         </div>
       </div>
     </div>
 
     <!-- Current period snapshot -->
     <div class="pd-section">
-      <div class="pd-section-title">${periodLabel}</div>
+      <div class="pd-section-title">${snapshot.periodLabel}</div>
       <div class="pd-period-row">
-        ${statTile("Pts", curPts)}
-        ${statTile("xGI", curXGI)}
-        ${statTile("Mins", curMins, `${curMinPct}%`)}
-        ${statTile("Pts/£m", curVal)}
+        ${statTile("Pts", snapshot.period.points)}
+        ${statTile("xGI", snapshot.period.xgiDisplay)}
+        ${statTile("Mins", snapshot.period.minutes, `${snapshot.period.minutesPercent}%`)}
+        ${statTile("Pts/£m", snapshot.period.pointsPerMillionDisplay)}
       </div>
     </div>
 
