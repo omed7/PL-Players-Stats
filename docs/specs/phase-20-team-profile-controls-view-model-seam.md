@@ -105,8 +105,8 @@ Run the focused red command before implementation, then focused green tests, `np
 | Browser/manual verification complete | Fresh-origin local smoke passed on 2026-08-25. | `docs/verification/phase-20-local-smoke-20260825.md` |
 | Accessibility check complete | Player-detail Escape dismissal and FDR return passed in local smoke. | Local browser smoke |
 | Data invariants reviewed | Complete: the helper receives no raw picks, player IDs, credentials, session, storage, loader, or network access and makes no persistence or privacy decision. | Focused tests and scope review |
-| Deployment/release check complete | Preview discovery is unavailable through the current integration; pull-request CI, merge, and canonical production smoke remain pending. | `docs/verification/phase-20-preview-smoke-20260825.md` |
-| Durable documentation updated if needed | Specification and local verification record added. | This specification and local smoke record |
+| Deployment/release check complete | Implementation PR #82 merged; canonical production helper and functional smoke passed. Preview discovery remains unavailable through the current integration. | `docs/verification/phase-20-production-smoke-20260825.md` and `docs/verification/phase-20-preview-smoke-20260825.md` |
+| Durable documentation updated if needed | Specification plus local, preview, and production verification records added. | Phase 20 evidence records |
 
 ## Decision log
 
@@ -117,3 +117,4 @@ Run the focused red command before implementation, then focused green tests, `np
 | 2026-08-25 | Start with direct helper and script-order red tests. | The approved delivery protocol requires focused failing evidence before implementation. | The focused command failed exactly because `team_profile_controls_view_utils.js` and its `index.html` script tag were absent. |
 | 2026-08-25 | Verify only signed-out local controls in the browser; cover connected/signed-in states through pure tests. | Submitting a real Team ID or signing in is outside Phase 20’s extracted presentation boundary. | Browser smoke remains privacy-neutral while focused tests lock every helper output state. |
 | 2026-08-25 | Treat canonical production smoke as the hosted verification source when preview discovery is denied. | The deployment context exposed only an unrelated project and FPL deployment listing returned 403; no verifiable preview URL was available. | Local browser smoke and PR CI form the pre-merge gate, followed by mandatory canonical production smoke. |
+| 2026-08-25 | Verify the canonical helper export before accepting production control-state smoke. | A browser UI alone cannot establish that this phase’s newly added helper is deployed. | The helper script and callable global were confirmed before signed-out controls, modal, FDR, and console smoke. |
