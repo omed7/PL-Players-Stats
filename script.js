@@ -81,6 +81,7 @@ const playerDetailSnapshotUtils = () => window.FPLPlayerDetailSnapshotUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 const teamProfileControlsViewUtils = () => window.FPLTeamProfileControlsViewUtils;
+const teamFilterViewUtils = () => window.FPLTeamFilterViewUtils;
 
 const focusableSelector = [
   "button:not([disabled])",
@@ -1483,37 +1484,42 @@ function updatePriceFill() {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function populateTeamFilter() {
+  const teamFilterModel = teamFilterViewUtils()?.buildTeamFilterViewModel({
+    players: state.players,
+    selectedTeams: state.selectedTeams,
+  });
+  if (!teamFilterModel) return;
+
   el.teamGrid.innerHTML = "";
-  const teams = Array.from(
-    new Map(
-      state.players.map((p) => [p.team, { name: p.team, logo: p.logo }]),
-    ).values(),
-  ).sort((a, b) => a.name.localeCompare(b.name));
   const frag = document.createDocumentFragment();
-  teams.forEach(({ name, logo }) => {
+  teamFilterModel.teams.forEach(({ name, logo, selected }) => {
     const safeName = escapePublicHTML(name);
     const safeLogo = safePublicImageURL(logo);
     const btn = document.createElement("button");
-    btn.className =
-      "team-logo-btn" + (state.selectedTeams.includes(name) ? " selected" : "");
+    btn.className = "team-logo-btn" + (selected ? " selected" : "");
     btn.title = name;
     btn.innerHTML = `<img src="${safeLogo}" alt="${safeName}"><span class="team-abbr">${safeName}</span>`;
     btn.addEventListener("click", () => {
-      if (state.selectedTeams.length === 0) {
-        state.selectedTeams = [name];
+      const previousSelection = state.selectedTeams;
+      const transition = teamFilterViewUtils()?.toggleTeamFilterSelection({
+        selectedTeams: previousSelection,
+        teamName: name,
+      });
+      if (!transition) return;
+
+      state.selectedTeams = transition.selectedTeams;
+      if (!previousSelection.length) {
         document
           .querySelectorAll(".team-logo-btn")
-          .forEach((b) => b.classList.remove("selected"));
+          .forEach((button) => button.classList.remove("selected"));
         btn.classList.add("selected");
-      } else if (state.selectedTeams.includes(name)) {
-        state.selectedTeams = state.selectedTeams.filter((t) => t !== name);
+      } else if (previousSelection.includes(name)) {
         btn.classList.remove("selected");
         if (!state.selectedTeams.length)
           document
             .querySelectorAll(".team-logo-btn")
-            .forEach((b) => b.classList.remove("selected"));
+            .forEach((button) => button.classList.remove("selected"));
       } else {
-        state.selectedTeams.push(name);
         btn.classList.add("selected");
       }
       state.currentPage = 1;
@@ -1531,17 +1537,17 @@ function populateTeamFilter() {
 }
 
 function syncTeamFilterUI() {
-  const n = state.selectedTeams.length;
+  const teamFilterModel = teamFilterViewUtils()?.buildTeamFilterViewModel({
+    selectedTeams: state.selectedTeams,
+  });
+  const selection = teamFilterModel?.selection;
+  if (!selection) return;
+
   const lbl = document.getElementById("team-filter-label");
   const cnt = document.getElementById("team-selection-count");
-  el.teamToggleBtn.classList.toggle("has-selection", n > 0);
-  lbl.textContent =
-    n === 0
-      ? "Filter by Team"
-      : n === 1
-        ? `Team: ${state.selectedTeams[0]}`
-        : "Filter by Team";
-  cnt.textContent = n > 1 ? `${n} selected` : "";
+  el.teamToggleBtn.classList.toggle("has-selection", selection.hasSelection);
+  lbl.textContent = selection.label;
+  cnt.textContent = selection.countLabel;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
