@@ -117,7 +117,7 @@ Use a fresh localhost port/origin for browser smoke so an older service worker c
 | Browser/manual verification complete | Fresh-origin local smoke passed on 2026-08-25. | `docs/verification/phase-19-local-smoke-20260825.md` |
 | Accessibility check complete | Detail dialog Escape dismissal and FDR return passed in local smoke. | Local browser smoke |
 | Data invariants reviewed | Complete: the helper uses only supplied player/history data, preserves existing labels/valid value rules, and makes no fixture/FDR, identity, account, persistence, or privacy decision. | Focused tests and scope review |
-| Deployment/release check complete | Pending pull-request CI, preview attempt, merge, and canonical production smoke. | Pending |
+| Deployment/release check complete | Preview discovery is unavailable through the current integration; pull-request CI, merge, and canonical production smoke remain pending. | `docs/verification/phase-19-preview-smoke-20260825.md` |
 | Durable documentation updated if needed | Specification and local verification record added. | This specification and local smoke record |
 
 ## Decision log
@@ -129,3 +129,4 @@ Use a fresh localhost port/origin for browser smoke so an older service worker c
 | 2026-08-25 | Preserve current visible rules and improve only malformed-data safety. | This is maintenance extraction, not a product-rule change. | Normal valid data keeps the same user-visible output. |
 | 2026-08-25 | Start with direct helper and script-order red tests. | The approved delivery protocol requires focused failing evidence before implementation. | The focused command failed exactly because `player_detail_snapshot_utils.js` and its `index.html` script tag were absent. |
 | 2026-08-25 | Verify the changed modal on a fresh local origin before opening the pull request. | A stale service worker could conceal browser code changes. | Port 4199 smoke covered Last 5/Last 10 summaries, season tiles, match log, xG chart integration, Escape, FDR return, and an empty console. |
+| 2026-08-25 | Treat canonical production smoke as the hosted verification source when preview discovery is denied. | The deployment context exposed only an unrelated project and FPL deployment listing returned 403; no verifiable preview URL was available. | Local browser smoke and PR CI form the pre-merge gate, followed by mandatory canonical production smoke. |
