@@ -75,6 +75,7 @@ const playerTableUtils = () => window.FPLPlayerTableUtils;
 const playerQueryUtils = () => window.FPLPlayerQueryUtils;
 const fdrViewUtils = () => window.FPLFdrViewUtils;
 const comparisonViewUtils = () => window.FPLComparisonViewUtils;
+const playerDetailChartUtils = () => window.FPLPlayerDetailChartUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -1180,44 +1181,22 @@ function openPlayerModal(p) {
   const formBarsHtml = () => {
     if (!matchHist.length)
       return '<p class="pd-empty">No match history available.</p>';
-    const m = state.currentPDChartMetric;
-    const maxVal = Math.max(...matchHist.map((g) => g[m] ?? 0), 0.01);
+    const chartModel = playerDetailChartUtils()?.buildFormChart({
+      matches: matchHist,
+      metric: state.currentPDChartMetric,
+    });
+    if (!chartModel) return '<p class="pd-empty">No match history available.</p>';
 
     return `<div class="pd-form-bars" id="pd-form-bars-inner">
-      ${matchHist
-        .map((g) => {
-          const val = g[m] ?? 0;
-          const pct = ((val / maxVal) * 100).toFixed(1);
-          let barCls = "bar-low";
-          if (m === "pts")
-            barCls =
-              val >= 9
-                ? "bar-high"
-                : val >= 6
-                  ? "bar-med"
-                  : val >= 2
-                    ? "bar-low"
-                    : "bar-zero";
-          else if (m === "minutes")
-            barCls = val >= 60 ? "bar-high" : val > 0 ? "bar-med" : "bar-zero";
-          else
-            barCls =
-              val > maxVal * 0.6
-                ? "bar-high"
-                : val > maxVal * 0.2
-                  ? "bar-med"
-                  : val > 0
-                    ? "bar-low"
-                    : "bar-zero";
-
-          const dispVal = Number.isInteger(val) ? val : val.toFixed(2);
-
-          return `<div class="pd-form-col">
-          <span class="pd-form-pts">${dispVal}</span>
-          <div class="pd-form-bar ${barCls}" style="height:${pct}%" title="${safeLabelForMatch(g)}: ${dispVal}"></div>
-          <span class="pd-form-gw">${safeLabelForMatch(g)}</span>
-        </div>`;
-        })
+      ${chartModel.bars
+        .map(
+          ({ record, heightPercent, barClass, displayValue }) =>
+            `<div class="pd-form-col">
+          <span class="pd-form-pts">${displayValue}</span>
+          <div class="pd-form-bar ${barClass}" style="height:${heightPercent}%" title="${safeLabelForMatch(record)}: ${displayValue}"></div>
+          <span class="pd-form-gw">${safeLabelForMatch(record)}</span>
+        </div>`,
+        )
         .join("")}
     </div>`;
   };
