@@ -73,6 +73,7 @@ const safePublicPlayer = (player) => ({
 });
 const playerTableUtils = () => window.FPLPlayerTableUtils;
 const playerQueryUtils = () => window.FPLPlayerQueryUtils;
+const fdrViewUtils = () => window.FPLFdrViewUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -440,28 +441,12 @@ function renderFDRHeatmap() {
   const theadRow = document.getElementById("fdr-thead-row");
   const tbody = document.getElementById("fdr-table-body");
 
-  // Build a unique set of all upcoming fixtures by team
-  const teamFixtures = {};
-  const teamLogos = {};
-
-  state.players.forEach((p) => {
-    if (!teamFixtures[p.team]) {
-      teamFixtures[p.team] = [];
-      teamLogos[p.team] = p.logo;
-    }
-    // Just grab one player's fixtures per team (since they're the same for the team)
-    if (teamFixtures[p.team].length === 0 && p.fixtures) {
-      teamFixtures[p.team] = p.fixtures;
-    }
-  });
-
-  // Render only gameweeks observed in the source data. Do not manufacture a
-  // numeric range: absence of a fixture is not evidence of a blank gameweek.
-  const allGWs = new Set();
-  Object.values(teamFixtures).forEach((fixtures) => {
-    fixtures.forEach((fixture) => allGWs.add(fixture.gw));
-  });
-  const gws = Array.from(allGWs).sort((a, b) => a - b);
+  const { gameweeks: gws, teams: filteredTeams } =
+    fdrViewUtils().buildFdrViewModel({
+      players: state.players,
+      selectedTeams: state.selectedTeams,
+      sortMode: state.fdrSortMode,
+    });
 
   if (gws.length === 0) {
     tbody.innerHTML =
@@ -474,47 +459,6 @@ function renderFDRHeatmap() {
     '<th class="sticky-col" style="text-align:left;">Team</th>';
   gws.forEach((gw) => {
     theadRow.innerHTML += `<th>GW${escapePublicHTML(gw)}</th>`;
-  });
-
-  // Process data for sorting
-  const teamsData = Object.keys(teamFixtures).map((team) => {
-    const fixtures = teamFixtures[team];
-    const byGW = {};
-    let totalFDR = 0;
-    let matchCount = 0;
-
-    fixtures.forEach((f) => {
-      if (!byGW[f.gw]) byGW[f.gw] = [];
-      byGW[f.gw].push(f);
-      totalFDR += f.difficulty;
-      matchCount++;
-    });
-
-    const avgFDR = matchCount > 0 ? totalFDR / matchCount : 0;
-
-    return {
-      name: team,
-      logo: teamLogos[team],
-      byGW,
-      avgFDR,
-    };
-  });
-
-  // Apply Team Filter if any
-  let filteredTeams = teamsData;
-  if (state.selectedTeams && state.selectedTeams.length > 0) {
-    filteredTeams = teamsData.filter((t) =>
-      state.selectedTeams.includes(t.name),
-    );
-  }
-
-  // Sort
-  filteredTeams.sort((a, b) => {
-    if (state.fdrSortMode === "avg") {
-      return a.avgFDR - b.avgFDR; // easiest (lowest FDR) first
-    } else {
-      return a.name.localeCompare(b.name);
-    }
   });
 
   // Render rows
@@ -538,7 +482,7 @@ function renderFDRHeatmap() {
     // GW Cols
     gws.forEach((gw) => {
       const td = document.createElement("td");
-      const fixes = t.byGW[gw] || [];
+      const fixes = t.fixturesByGameweek[gw] || [];
 
       td.innerHTML = renderFixtureSlotHTML(fixes, gw);
       tr.appendChild(td);
