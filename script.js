@@ -76,6 +76,7 @@ const playerQueryUtils = () => window.FPLPlayerQueryUtils;
 const fdrViewUtils = () => window.FPLFdrViewUtils;
 const comparisonViewUtils = () => window.FPLComparisonViewUtils;
 const playerDetailChartUtils = () => window.FPLPlayerDetailChartUtils;
+const watchlistViewUtils = () => window.FPLWatchlistViewUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
 
@@ -844,23 +845,21 @@ function renderWatchlistDrawer() {
   const countEl = document.getElementById("wl-drawer-count");
   const emptyEl = document.getElementById("wl-empty");
   if (!body) return;
-  countEl.textContent = state.watchlist.size;
+  const watchlistModel = watchlistViewUtils()?.buildWatchlistViewModel({
+    players: state.players,
+    watchlistElementIds: [...state.watchlist],
+    prefix: pfxFor(),
+  });
+  const cards = watchlistModel?.cards || [];
+  countEl.textContent = watchlistModel?.count || 0;
   body.querySelectorAll(".wl-card").forEach((c) => c.remove());
-  if (!state.watchlist.size) {
+  if (!cards.length) {
     emptyEl?.classList.remove("hidden");
     return;
   }
   emptyEl?.classList.add("hidden");
-  const pfx = pfxFor();
   const frag = document.createDocumentFragment();
-  const playerMap =
-    persistenceUtils()?.indexPlayersByElementId(state.players) || new Map();
-  [...state.watchlist].forEach((elementId) => {
-    const p = playerMap.get(elementId);
-    if (!p) return;
-    const pts = p[`${pfx}points`] ?? 0;
-    const xgi = (p[`${pfx}xGI`] ?? 0).toFixed(2);
-    const val = p.price > 0 ? (pts / p.price).toFixed(1) : "—";
+  cards.forEach(({ elementId, player: p, points, xgiDisplay, pointsPerMillion }) => {
     const display = safePublicPlayer(p);
     const fixtureChips = buildFixtureChipsHTML(p);
     const card = document.createElement("div");
@@ -873,7 +872,7 @@ function renderWatchlistDrawer() {
             <span class="pos-badge pos-${display.positionClass}">${display.position}</span>
             <span class="wl-card-name">${display.name}</span>
           </div>
-          <div class="wl-card-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% owned &middot; ${pts} pts &middot; ${val} pts/&pound;m &middot; xGI ${xgi}</div>
+          <div class="wl-card-sub">&pound;${p.price.toFixed(1)}m &middot; ${p.ownership}% owned &middot; ${points} pts &middot; ${pointsPerMillion} pts/&pound;m &middot; xGI ${xgiDisplay}</div>
         </div>
         <button type="button" class="wl-card-remove" title="Remove" aria-label="Remove ${display.name} from watchlist">&times;</button>
       </div>
