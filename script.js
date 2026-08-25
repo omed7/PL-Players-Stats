@@ -80,6 +80,7 @@ const watchlistViewUtils = () => window.FPLWatchlistViewUtils;
 const playerDetailSnapshotUtils = () => window.FPLPlayerDetailSnapshotUtils;
 const accountSyncUtils = () => window.FPLAccountSyncUtils;
 const teamProfileUtils = () => window.FPLTeamProfileUtils;
+const teamProfileControlsViewUtils = () => window.FPLTeamProfileControlsViewUtils;
 
 const focusableSelector = [
   "button:not([disabled])",
@@ -680,20 +681,24 @@ function syncTeamProfileUI() {
   const connectButton = document.getElementById("btn-fpl-team-connect");
   const mySquadButton = document.getElementById("btn-my-squad");
   const note = document.getElementById("fpl-team-note");
-  const connected = Boolean(state.teamProfile?.teamId);
-  const hasSquad = state.squadElementIds.size > 0;
-  if (input && connected) input.value = String(state.teamProfile.teamId);
-  if (note) {
-    note.textContent = state.accountSession
-      ? "Public lookup only. Team ID and supported preferences sync with this Google account."
-      : "Public lookup only. Team and preferences stay on this device.";
+  const controlsModel = teamProfileControlsViewUtils()?.buildTeamProfileControlsViewModel({
+    teamId: state.teamProfile?.teamId,
+    isSignedIn: Boolean(state.accountSession),
+    hasSquad: state.squadElementIds.size > 0,
+    mySquadOnly: state.mySquadOnly,
+  });
+  if (!controlsModel) return;
+
+  if (input && controlsModel.teamIdInputValue !== null) {
+    input.value = controlsModel.teamIdInputValue;
   }
-  actions?.classList.toggle("hidden", !connected);
-  if (connectButton) connectButton.textContent = connected ? "Update" : "Connect";
+  if (note) note.textContent = controlsModel.note;
+  actions?.classList.toggle("hidden", controlsModel.actionsHidden);
+  if (connectButton) connectButton.textContent = controlsModel.connectLabel;
   if (mySquadButton) {
-    mySquadButton.disabled = !hasSquad;
-    mySquadButton.classList.toggle("active", state.mySquadOnly);
-    mySquadButton.setAttribute("aria-pressed", String(state.mySquadOnly));
+    mySquadButton.disabled = controlsModel.mySquad.disabled;
+    mySquadButton.classList.toggle("active", controlsModel.mySquad.active);
+    mySquadButton.setAttribute("aria-pressed", controlsModel.mySquad.ariaPressed);
   }
 }
 
