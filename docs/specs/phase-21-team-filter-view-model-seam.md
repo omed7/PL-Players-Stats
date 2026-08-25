@@ -1,6 +1,6 @@
 # Phase 21 — Team Filter View-Model and Selection Seam
 
-**Status:** Approved — in progress  
+**Status:** Implemented — production verified  
 **Owner:** omed7  
 **Date:** 25 August 2026  
 **Related issue / PR:** Pending
@@ -107,8 +107,8 @@ Run focused red tests before implementation, then focused green tests, `npm test
 | Browser/manual verification complete | Fresh-origin local smoke passed on 2026-08-25. | `docs/verification/phase-21-local-smoke-20260825.md` |
 | Accessibility check complete | Player-detail Escape dismissal and FDR return passed in local smoke. | Local browser smoke |
 | Data invariants reviewed | Complete: the helper has no credentials, Team ID, account, raw-pick, durable-ID, storage, network, DOM, query, fixture, or FDR access and makes no persistence or data-classification decision. | Focused tests and scope review |
-| Deployment/release check complete | Preview discovery attempted on 2026-08-25; current deployment access exposed only an unrelated project and returned 403 for the known FPL project deployment list. PR CI, merge, and canonical production smoke remain pending. | `docs/verification/phase-21-preview-smoke-20260825.md` |
-| Durable documentation updated if needed | Specification and local verification record added. | This specification and local smoke record |
+| Deployment/release check complete | Implementation PR #84 merged after passing CI. Preview discovery remained unavailable (unrelated project exposed; known FPL deployment list returned 403), but canonical production smoke passed after normal propagation. | `docs/verification/phase-21-preview-smoke-20260825.md`; `docs/verification/phase-21-production-smoke-20260825.md` |
+| Durable documentation updated if needed | Specification, local smoke, preview limitation, and canonical production smoke are recorded. | Phase 21 specification and verification records |
 
 ## Decision log
 
@@ -119,3 +119,4 @@ Run focused red tests before implementation, then focused green tests, `npm test
 | 2026-08-25 | Start with direct helper and script-order red tests. | The approved delivery protocol requires focused failing evidence before implementation. | The focused command failed exactly because `team_filter_view_utils.js` and its `index.html` script tag were absent. |
 | 2026-08-25 | Verify public Team selection and clearing directly in the browser. | Team filtering is publicly observable and outside the sensitive Team ID/account path. | Fresh-origin smoke proved BHA selection and clear while preserving dialog/FDR paths. |
 | 2026-08-25 | Do not infer or claim a preview URL when the deployment integration cannot expose the FPL project. | Read-only context exposed only an unrelated project and known FPL deployment listing returned 403. | Preview limitation is durable release evidence; canonical production smoke is required after merge. |
+| 2026-08-25 | Treat the first production response without the new helper as propagation, not acceptance. | The first canonical response after merge lacked the helper; a fresh reload 45 seconds later loaded it and exposed the expected global. | Production smoke accepted only after helper presence and public Team selection/clear passed. |
