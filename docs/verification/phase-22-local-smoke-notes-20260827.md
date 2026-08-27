@@ -1,7 +1,0 @@
-# Phase 22 Local Smoke Notes — 2026-08-27
-
-A fresh local static origin at `http://localhost:4272/` loaded the FPL Omed dashboard and FDR heatmap using the current validated player snapshot. The existing official five-level FDR heatmap rendered while signed out, and the new **Customize ratings** control was visible alongside the existing Average FDR and Alphabetical sort controls.
-
-The local browser session was signed out. This is the expected pre-authentication state: the custom per-user rating editor must not read or write personal rows until a Google-authenticated session is available. The visible data source still preserved only known FPL fixture gameweeks; no blank gameweeks were inferred during this smoke.
-The **Customize ratings** control expanded an accessible personal-rating editor on the same fresh local origin. While signed out, the editor rendered its explicit Google-account requirement, showed no personal team rows, and kept **Save personal ratings** disabled. This confirms the client does not expose an anonymous write path. A signed-in browser verification and live owner-isolation test remain pending the FPL Supabase project connection.
-The same fresh local session produced no browser-console output while opening the heatmap and expanding the signed-out personal-rating editor. Read-only deployment discovery was also attempted through the configured deployment integration: it exposed only the unrelated `omed7/OPM` project, so no FPL preview URL was guessed or claimed.

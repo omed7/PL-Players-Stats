@@ -384,28 +384,6 @@
         >
           Sort: Alphabetical
         </button>
-        <button
-          class="fdr-sort-btn"
-          id="btn-fdr-customize"
-          type="button"
-          aria-expanded="false"
-          aria-controls="fdr-personal-editor"
-          style="
-            font-family: var(--f-d);
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 8px 16px;
-            background: var(--bg-1);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-2);
-            cursor: pointer;
-            transition: all 0.13s;
-          "
-        >
-          Customize ratings
-        </button>
       </div>
       <div class="table-container">
         <table id="fdr-table">
@@ -418,33 +396,6 @@
           <tbody id="fdr-table-body"></tbody>
         </table>
       </div>
-
-      <section id="fdr-personal-editor" class="fdr-personal-editor hidden" aria-labelledby="fdr-personal-editor-title">
-        <div class="fdr-personal-editor-heading">
-          <div>
-            <p class="eyebrow">Personal account ratings</p>
-            <h2 id="fdr-personal-editor-title">Set 1–7 Home and Away difficulty</h2>
-            <p>Rate each opponent separately. <strong>Home</strong> applies when you play at that opponent’s ground; <strong>Away</strong> applies when you host them.</p>
-          </div>
-          <p id="fdr-personal-status" class="fdr-personal-status" role="status" aria-live="polite"></p>
-        </div>
-        <div class="table-container fdr-personal-table-wrap">
-          <table class="fdr-personal-table">
-            <thead>
-              <tr>
-                <th scope="col">Opponent</th>
-                <th scope="col">Their Home</th>
-                <th scope="col">Their Away</th>
-              </tr>
-            </thead>
-            <tbody id="fdr-personal-editor-body"></tbody>
-          </table>
-        </div>
-        <div class="fdr-personal-editor-actions">
-          <p>1 is very easy and 7 is very hard. Use — when you do not want to set a personal rating.</p>
-          <button id="btn-fdr-personal-save" class="fdr-sort-btn" type="button" disabled>Save personal ratings</button>
-        </div>
-      </section>
     </main>
 
     <!-- ── Watchlist Drawer ───────────────────────────────────────── -->
@@ -526,7 +477,6 @@
   <script src="player_table_utils.js"></script>
   <script src="player_query_utils.js"></script>
   <script src="fdr_view_utils.js"></script>
-  <script src="personal_fdr_utils.js"></script>
   <script src="comparison_view_utils.js"></script>
   <script src="player_detail_chart_utils.js"></script>
   <script src="watchlist_view_utils.js"></script>

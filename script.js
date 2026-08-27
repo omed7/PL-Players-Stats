@@ -25,11 +25,6 @@ const state = {
   priceMin: 3.0,
   priceMax: 15.0,
   fdrSortMode: "avg", // 'avg' | 'alpha'
-  personalFdrRatings: new Map(),
-  personalFdrDrafts: new Map(),
-  personalFdrEditorOpen: false,
-  personalFdrSaveInFlight: false,
-  usesPersonalFdr: false,
   accountSession: null,
   teamProfile: null,
   teamPicks: [],
@@ -79,7 +74,6 @@ const safePublicPlayer = (player) => ({
 const playerTableUtils = () => window.FPLPlayerTableUtils;
 const playerQueryUtils = () => window.FPLPlayerQueryUtils;
 const fdrViewUtils = () => window.FPLFdrViewUtils;
-const personalFdrUtils = () => window.FPLPersonalFdrUtils;
 const comparisonViewUtils = () => window.FPLComparisonViewUtils;
 const playerDetailChartUtils = () => window.FPLPlayerDetailChartUtils;
 const watchlistViewUtils = () => window.FPLWatchlistViewUtils;
@@ -251,24 +245,14 @@ function restoreTeamProfileFromAccount(teamId, fdrSortMode) {
 function refreshAccountDependentUI() {
   syncWatchlistHeader();
   renderWatchlistDrawer();
-  renderPersonalFdrEditor();
   if (state.players.length) applyFiltersAndSort();
-  if (!document.getElementById("fdr-container")?.classList.contains("hidden")) {
-    renderFDRHeatmap();
-  }
 }
 
 async function applyAccountSession(session) {
   state.accountSession = session || null;
   renderAccountControls();
   syncTeamProfileUI();
-  if (!state.accountSession || !accountSync) {
-    state.usesPersonalFdr = false;
-    state.personalFdrRatings = new Map();
-    state.personalFdrDrafts = new Map();
-    refreshAccountDependentUI();
-    return;
-  }
+  if (!state.accountSession || !accountSync) return;
 
   try {
     const synced = await accountSync.syncInitialPreferences({
@@ -280,9 +264,6 @@ async function applyAccountSession(session) {
     });
     state.watchlist = new Set(synced.watchlistElementIds);
     state.fdrSortMode = synced.effectiveFdrSortMode;
-    state.personalFdrRatings = synced.personalFdrRatings || new Map();
-    state.personalFdrDrafts = new Map(state.personalFdrRatings);
-    state.usesPersonalFdr = true;
     saveWatchlist({ sync: false });
     applyTheme(synced.effectiveTheme, { sync: false });
     if (synced.effectiveTeamId) {
@@ -312,11 +293,7 @@ function initialiseAccount() {
     return;
   }
 
-  accountSync = syncApi.createAccountSync({
-    client: accountAuth.client,
-    utils,
-    personalFdrUtils: personalFdrUtils(),
-  });
+  accountSync = syncApi.createAccountSync({ client: accountAuth.client, utils });
   const signInButton = document.getElementById("btn-account-sign-in");
   const signOutButton = document.getElementById("btn-account-sign-out");
   signInButton?.addEventListener("click", async () => {
@@ -406,21 +383,6 @@ async function initCountdown(storedDeadline, storedGW) {
 
 // ─── Data freshness ───────────────────────────────────────────────────────────
 
-function personalDifficultyForFixture(fixture) {
-  if (!state.usesPersonalFdr) return null;
-  return personalFdrUtils()?.resolvePersonalFixtureDifficulty(
-    fixture,
-    state.personalFdrRatings,
-  ) ?? null;
-}
-
-function displayDifficultyForFixture(fixture) {
-  if (Object.prototype.hasOwnProperty.call(fixture || {}, "displayDifficulty")) {
-    return fixture.displayDifficulty;
-  }
-  return state.usesPersonalFdr ? personalDifficultyForFixture(fixture) : fixture?.difficulty;
-}
-
 function renderFixtureSlotHTML(fixtures, gameweek) {
   const classifier = window.FPLFixtureUtils?.classifyFixtureSlot;
   const slot = classifier
@@ -436,18 +398,13 @@ function renderFixtureSlotHTML(fixtures, gameweek) {
       const homeAway = fixture.is_home ? "H" : "A";
       const opponent = escapePublicHTML(fixture.opponent);
       const opponentLogo = safePublicImageURL(fixture.opponent_logo);
-      const difficulty = Number(displayDifficultyForFixture(fixture));
-      const maxDifficulty = state.usesPersonalFdr || Object.prototype.hasOwnProperty.call(fixture, "displayDifficulty") ? 7 : 5;
-      const safeDifficulty = Number.isInteger(difficulty) && difficulty >= 1 && difficulty <= maxDifficulty
+      const difficulty = Number(fixture.difficulty);
+      const safeDifficulty = Number.isInteger(difficulty) && difficulty >= 1 && difficulty <= 5
         ? difficulty
         : "unknown";
-      const difficultyLabel = safeDifficulty === "unknown" ? "—" : safeDifficulty;
-      const ratingKind = state.usesPersonalFdr || Object.prototype.hasOwnProperty.call(fixture, "displayDifficulty")
-        ? "Personal FDR"
-        : "FDR";
-      html += `<div class="fix-chip diff-${safeDifficulty}" title="GW${safeGameweek} vs ${opponent} (${homeAway}) ${ratingKind}:${difficultyLabel}">
+      html += `<div class="fix-chip diff-${safeDifficulty}" title="GW${safeGameweek} vs ${opponent} (${homeAway}) FDR:${safeDifficulty}">
         <img src="${opponentLogo}" alt="${opponent}">
-        <span class="fix-ha">${homeAway}${difficultyLabel}</span>
+        <span class="fix-ha">${homeAway}</span>
       </div>`;
     });
   }
@@ -471,7 +428,6 @@ function openFDRHeatmap() {
   document.getElementById("fdr-container").classList.remove("hidden");
   document.getElementById("btn-fdr-sort-avg").classList.toggle("active", state.fdrSortMode === "avg");
   document.getElementById("btn-fdr-sort-alpha").classList.toggle("active", state.fdrSortMode === "alpha");
-  renderPersonalFdrEditor();
   renderFDRHeatmap();
 }
 
@@ -487,179 +443,6 @@ function closeFDRHeatmap() {
   document.getElementById("fdr-container").classList.add("hidden");
 }
 
-function personalFdrRows() {
-  return personalFdrUtils()?.buildPersonalFdrEditorRows(
-    state.players,
-    state.personalFdrDrafts,
-  ) || [];
-}
-
-function personalFdrChanges() {
-  return personalFdrRows()
-    .filter((row) => {
-      const saved = state.personalFdrRatings.get(row.teamId);
-      return (
-        row.homeRating !== (saved?.homeRating ?? null) ||
-        row.awayRating !== (saved?.awayRating ?? null)
-      );
-    })
-    .map((row) => ({
-      teamId: row.teamId,
-      homeRating: row.homeRating,
-      awayRating: row.awayRating,
-    }));
-}
-
-function setPersonalFdrStatus(message = "", isError = false) {
-  const status = document.getElementById("fdr-personal-status");
-  if (!status) return;
-  status.textContent = message;
-  status.classList.toggle("is-error", isError);
-}
-
-function updatePersonalFdrDraft(teamId, field, rating) {
-  const current = state.personalFdrDrafts.get(teamId) || {
-    teamId,
-    homeRating: null,
-    awayRating: null,
-  };
-  state.personalFdrDrafts.set(teamId, { ...current, [field]: rating });
-  renderPersonalFdrEditor();
-}
-
-function buildPersonalFdrRatingControl({ team, field, rating }) {
-  const group = document.createElement("div");
-  group.className = "fdr-rating-control";
-  group.setAttribute("role", "group");
-  group.setAttribute("aria-label", `${team.name} ${field === "homeRating" ? "their Home" : "their Away"} difficulty`);
-
-  [null, 1, 2, 3, 4, 5, 6, 7].forEach((value) => {
-    const button = document.createElement("button");
-    const isSelected = value === rating;
-    button.type = "button";
-    button.className = `fdr-rating-btn${value === null ? " clear" : ""}${isSelected ? " selected" : ""}`;
-    button.textContent = value === null ? "—" : String(value);
-    button.setAttribute("aria-pressed", String(isSelected));
-    button.title = value === null
-      ? `Clear ${team.name} ${field === "homeRating" ? "Home" : "Away"} difficulty`
-      : `Set ${team.name} ${field === "homeRating" ? "Home" : "Away"} difficulty to ${value} of 7`;
-    button.addEventListener("click", () => updatePersonalFdrDraft(team.teamId, field, value));
-    group.appendChild(button);
-  });
-  return group;
-}
-
-function renderPersonalFdrEditor() {
-  const editor = document.getElementById("fdr-personal-editor");
-  const toggle = document.getElementById("btn-fdr-customize");
-  const body = document.getElementById("fdr-personal-editor-body");
-  const saveButton = document.getElementById("btn-fdr-personal-save");
-  if (!editor || !toggle || !body || !saveButton) return;
-
-  editor.classList.toggle("hidden", !state.personalFdrEditorOpen);
-  toggle.setAttribute("aria-expanded", String(state.personalFdrEditorOpen));
-  toggle.classList.toggle("active", state.personalFdrEditorOpen);
-  if (!state.personalFdrEditorOpen) return;
-
-  body.innerHTML = "";
-  saveButton.disabled = true;
-  if (!state.accountSession || !accountSync) {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
-    cell.colSpan = 3;
-    cell.className = "fdr-personal-empty";
-    cell.textContent = "Sign in with Google to set and synchronise your personal FDR ratings.";
-    row.appendChild(cell);
-    body.appendChild(row);
-    setPersonalFdrStatus("Personal ratings are available only to signed-in users.");
-    return;
-  }
-
-  const rows = personalFdrRows();
-  if (!rows.length) {
-    const row = document.createElement("tr");
-    const cell = document.createElement("td");
-    cell.colSpan = 3;
-    cell.className = "fdr-personal-empty";
-    cell.textContent = "Team data is not available yet, so personal ratings cannot be edited.";
-    row.appendChild(cell);
-    body.appendChild(row);
-    setPersonalFdrStatus("Waiting for validated team data.");
-    return;
-  }
-
-  rows.forEach((team) => {
-    const row = document.createElement("tr");
-    const teamCell = document.createElement("td");
-    teamCell.className = "fdr-personal-team";
-    if (team.logo) {
-      const logo = document.createElement("img");
-      logo.src = safePublicImageURL(team.logo);
-      logo.alt = "";
-      logo.width = 24;
-      logo.height = 24;
-      teamCell.appendChild(logo);
-    }
-    const name = document.createElement("span");
-    name.textContent = team.name;
-    teamCell.appendChild(name);
-    row.appendChild(teamCell);
-
-    const homeCell = document.createElement("td");
-    homeCell.appendChild(buildPersonalFdrRatingControl({ team, field: "homeRating", rating: team.homeRating }));
-    row.appendChild(homeCell);
-
-    const awayCell = document.createElement("td");
-    awayCell.appendChild(buildPersonalFdrRatingControl({ team, field: "awayRating", rating: team.awayRating }));
-    row.appendChild(awayCell);
-    body.appendChild(row);
-  });
-
-  const changes = personalFdrChanges();
-  saveButton.disabled = state.personalFdrSaveInFlight || changes.length === 0;
-  saveButton.textContent = state.personalFdrSaveInFlight
-    ? "Saving personal ratings…"
-    : changes.length
-      ? `Save ${changes.length} team rating${changes.length === 1 ? "" : "s"}`
-      : "Personal ratings saved";
-  setPersonalFdrStatus(
-    changes.length
-      ? `${changes.length} team rating${changes.length === 1 ? "" : "s"} ready to save.`
-      : "All personal ratings are saved.",
-  );
-}
-
-async function savePersonalFdrRatings() {
-  if (!state.accountSession || !accountSync) {
-    setPersonalFdrStatus("Sign in with Google before saving personal ratings.", true);
-    return;
-  }
-  const changes = personalFdrChanges();
-  if (!changes.length) return;
-
-  state.personalFdrSaveInFlight = true;
-  renderPersonalFdrEditor();
-  try {
-    const savedChanges = await accountSync.savePersonalFdrChanges({
-      session: state.accountSession,
-      changes,
-    });
-    const nextRatings = new Map(state.personalFdrRatings);
-    savedChanges.forEach((rating, teamId) => nextRatings.set(teamId, rating));
-    state.personalFdrRatings = nextRatings;
-    state.personalFdrDrafts = new Map(nextRatings);
-    state.usesPersonalFdr = true;
-    renderFDRHeatmap();
-    if (state.players.length) applyFiltersAndSort();
-    setPersonalFdrStatus("Personal ratings saved and synchronized.");
-  } catch (error) {
-    setPersonalFdrStatus(error?.message || "Personal rating synchronization is unavailable.", true);
-  } finally {
-    state.personalFdrSaveInFlight = false;
-    renderPersonalFdrEditor();
-  }
-}
-
 function renderFDRHeatmap() {
   const theadRow = document.getElementById("fdr-thead-row");
   const tbody = document.getElementById("fdr-table-body");
@@ -669,7 +452,6 @@ function renderFDRHeatmap() {
       players: state.players,
       selectedTeams: state.selectedTeams,
       sortMode: state.fdrSortMode,
-      resolveDifficulty: state.usesPersonalFdr ? personalDifficultyForFixture : null,
     });
 
   if (gws.length === 0) {
@@ -2104,13 +1886,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("btn-fdr-sort-avg").classList.remove("active");
       renderFDRHeatmap();
     });
-  document.getElementById("btn-fdr-customize").addEventListener("click", () => {
-    state.personalFdrEditorOpen = !state.personalFdrEditorOpen;
-    renderPersonalFdrEditor();
-  });
-  document.getElementById("btn-fdr-personal-save").addEventListener("click", () => {
-    savePersonalFdrRatings();
-  });
 
   // ── Theme + local personalisation ──
   loadTheme();

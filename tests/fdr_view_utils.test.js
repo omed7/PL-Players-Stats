@@ -1,10 +1,9 @@
 const { buildFdrViewModel } = require("../fdr_view_utils.js");
 
-function fixture({ gw, opponent, opponentId = null, difficulty, isHome = true }) {
+function fixture({ gw, opponent, difficulty, isHome = true }) {
   return {
     gw,
     opponent,
-    opponent_id: opponentId,
     difficulty,
     is_home: isHome,
   };
@@ -146,45 +145,6 @@ describe("FDR view-model utilities", () => {
       "BOU",
       "CHE",
     ]);
-  });
-
-  test("resolves distinct personal venue ratings for every fixture in a double gameweek", () => {
-    const resolveDifficulty = jest.fn((fixture) => {
-      if (fixture.opponent_id === 2 && fixture.is_home) return 2;
-      if (fixture.opponent_id === 3 && !fixture.is_home) return 7;
-      return null;
-    });
-    const homeFixture = fixture({ gw: 4, opponent: "CHE", opponentId: 2, difficulty: 3, isHome: true });
-    const awayFixture = fixture({ gw: 4, opponent: "LIV", opponentId: 3, difficulty: 4, isHome: false });
-
-    const result = buildFdrViewModel({
-      players: [player({ team: "ARS", logo: "ars.png", fixtures: [homeFixture, awayFixture] })],
-      selectedTeams: [],
-      sortMode: "avg",
-      resolveDifficulty,
-    });
-
-    expect(resolveDifficulty).toHaveBeenCalledTimes(2);
-    expect(result.teams[0].fixturesByGameweek[4]).toEqual([
-      { ...homeFixture, displayDifficulty: 2 },
-      { ...awayFixture, displayDifficulty: 7 },
-    ]);
-    expect(result.teams[0].averageDifficulty).toBe(4.5);
-  });
-
-  test("places teams without configured personal ratings after teams with a personal average", () => {
-    const result = buildFdrViewModel({
-      players: [
-        player({ team: "UNRATED", logo: "unrated.png", fixtures: [fixture({ gw: 2, opponent: "CHE", opponentId: 2, difficulty: 3 })] }),
-        player({ team: "RATED", logo: "rated.png", fixtures: [fixture({ gw: 2, opponent: "ARS", opponentId: 1, difficulty: 3 })] }),
-      ],
-      selectedTeams: [],
-      sortMode: "avg",
-      resolveDifficulty: (fixture) => fixture.opponent_id === 1 ? 4 : null,
-    });
-
-    expect(result.teams.map((team) => team.name)).toEqual(["RATED", "UNRATED"]);
-    expect(result.teams[1].averageDifficulty).toBeNull();
   });
 
   test("does not manufacture gameweeks when no source team has fixtures", () => {
