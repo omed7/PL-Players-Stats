@@ -61,6 +61,14 @@ describe("pre-launch public metadata", () => {
     expect(helperIndex).toBeLessThan(controllerIndex);
   });
 
+  test("loads the personal FDR helper before the browser controller", () => {
+    const helperIndex = indexHtml.indexOf('<script src="personal_fdr_utils.js"></script>');
+    const controllerIndex = indexHtml.indexOf('<script src="script.js"></script>');
+
+    expect(helperIndex).toBeGreaterThan(-1);
+    expect(helperIndex).toBeLessThan(controllerIndex);
+  });
+
   test("loads the comparison view-model helper before the browser controller", () => {
     const helperIndex = indexHtml.indexOf('<script src="comparison_view_utils.js"></script>');
     const controllerIndex = indexHtml.indexOf('<script src="script.js"></script>');
