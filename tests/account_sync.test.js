@@ -1,5 +1,6 @@
 const { createAccountSync } = require("../account_sync.js");
 const utils = require("../account_sync_utils.js");
+const personalFdrUtils = require("../personal_fdr_utils.js");
 
 function resolved(data, error = null) {
   return Promise.resolve({ data, error });
@@ -8,6 +9,7 @@ function resolved(data, error = null) {
 function makeClient({
   cloudPreferences = { theme: "green", fpl_team_id: null, fdr_sort_mode: null },
   cloudIds = [2, 3],
+  cloudFdrRatings = [],
 } = {}) {
   const calls = [];
   const client = {
@@ -28,6 +30,20 @@ function makeClient({
               return resolved(null);
             }),
           })),
+        };
+      }
+      if (table === "user_fdr_ratings") {
+        return {
+          select: jest.fn(() => ({
+            eq: jest.fn((column, value) => {
+              calls.push({ table, action: "select", column, value });
+              return resolved(cloudFdrRatings);
+            }),
+          })),
+          upsert: jest.fn((rows, options) => {
+            calls.push({ table, action: "upsert", rows, options });
+            return resolved(null);
+          }),
         };
       }
       if (table === "watchlist_items") {
@@ -80,6 +96,7 @@ describe("Supabase account preference adapter", () => {
       effectiveTheme: "green",
       effectiveTeamId: 222,
       effectiveFdrSortMode: "alpha",
+      personalFdrRatings: new Map(),
     });
 
     expect(calls).toEqual(
@@ -118,6 +135,7 @@ describe("Supabase account preference adapter", () => {
       effectiveTheme: "lightblue",
       effectiveTeamId: 88,
       effectiveFdrSortMode: "alpha",
+      personalFdrRatings: new Map(),
     });
 
     expect(calls).toEqual(
@@ -170,6 +188,38 @@ describe("Supabase account preference adapter", () => {
     );
   });
 
+  test("loads and saves personal FDR ratings through rows scoped to the authenticated user", async () => {
+    const { client, calls } = makeClient({
+      cloudFdrRatings: [{ team_id: 2, home_rating: 7, away_rating: 2 }],
+    });
+    const sync = createAccountSync({ client, utils, personalFdrUtils });
+
+    await expect(sync.syncInitialPreferences({ session })).resolves.toEqual(
+      expect.objectContaining({
+        personalFdrRatings: new Map([[2, { teamId: 2, homeRating: 7, awayRating: 2 }]]),
+      }),
+    );
+    await sync.savePersonalFdrChanges({
+      session,
+      changes: [{ teamId: 3, homeRating: 4, awayRating: 6 }],
+    });
+
+    expect(calls).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        table: "user_fdr_ratings",
+        action: "select",
+        column: "user_id",
+        value: session.user.id,
+      }),
+      expect.objectContaining({
+        table: "user_fdr_ratings",
+        action: "upsert",
+        rows: [{ user_id: session.user.id, team_id: 3, home_rating: 4, away_rating: 6 }],
+        options: { onConflict: "user_id,team_id" },
+      }),
+    ]));
+  });
+
   test("synchronises an individual watchlist membership by stable element ID", async () => {
     const { client, calls } = makeClient();
     const sync = createAccountSync({ client, utils });
@@ -204,6 +254,9 @@ describe("Supabase account preference adapter", () => {
       "authenticated session",
     );
     await expect(sync.clearTeamId({ session: null })).rejects.toThrow("authenticated session");
+    await expect(sync.savePersonalFdrChanges({ session: null, changes: [{ teamId: 3, homeRating: 4, awayRating: 4 }] })).rejects.toThrow(
+      "authenticated session",
+    );
     expect(client.from).not.toHaveBeenCalled();
   });
 });

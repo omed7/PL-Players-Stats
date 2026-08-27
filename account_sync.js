@@ -16,7 +16,7 @@
     return result?.data;
   }
 
-  function createAccountSync({ client, utils } = {}) {
+  function createAccountSync({ client, utils, personalFdrUtils } = {}) {
     if (!client?.from) throw new Error("A Supabase browser client is required");
     if (
       !utils?.planInitialPreferenceSync ||
@@ -27,6 +27,10 @@
       throw new Error("Account sync utilities are required");
     }
 
+    function normalizePersonalRows(rows) {
+      return personalFdrUtils?.normalizePersonalFdrRows?.(rows) || new Map();
+    }
+
     async function ensureProfile(userId) {
       const result = await client
         .from("profiles")
@@ -35,7 +39,7 @@
     }
 
     async function readCloudPreferences(userId) {
-      const [themeResult, watchlistResult] = await Promise.all([
+      const [themeResult, watchlistResult, personalFdrResult] = await Promise.all([
         client
           .from("user_preferences")
           .select("theme,fpl_team_id,fdr_sort_mode")
@@ -45,14 +49,20 @@
           .from("watchlist_items")
           .select("element_id")
           .eq("user_id", userId),
+        client
+          .from("user_fdr_ratings")
+          .select("team_id,home_rating,away_rating")
+          .eq("user_id", userId),
       ]);
       const themeRow = assertNoError(themeResult, "Theme retrieval");
       const watchlistRows = assertNoError(watchlistResult, "Watchlist retrieval") || [];
+      const personalFdrRows = assertNoError(personalFdrResult, "Personal FDR retrieval") || [];
       return {
         cloudTheme: themeRow?.theme || null,
         cloudTeamId: themeRow?.fpl_team_id || null,
         cloudFdrSortMode: themeRow?.fdr_sort_mode || null,
         cloudWatchlistElementIds: watchlistRows.map((row) => row.element_id),
+        personalFdrRatings: normalizePersonalRows(personalFdrRows),
       };
     }
 
@@ -73,7 +83,7 @@
       localFdrSortMode,
     } = {}) {
       const userId = sessionUserId(session);
-      const [{ cloudTheme, cloudTeamId, cloudFdrSortMode, cloudWatchlistElementIds }] = await Promise.all([
+      const [{ cloudTheme, cloudTeamId, cloudFdrSortMode, cloudWatchlistElementIds, personalFdrRatings }] = await Promise.all([
         readCloudPreferences(userId),
         ensureProfile(userId),
       ]);
@@ -105,6 +115,7 @@
         effectiveTheme: plan.effectiveTheme,
         effectiveTeamId: plan.effectiveTeamId,
         effectiveFdrSortMode: plan.effectiveFdrSortMode,
+        personalFdrRatings,
       };
     }
 
@@ -158,6 +169,31 @@
       assertNoError(result, "FDR preference synchronisation");
     }
 
+    async function savePersonalFdrChanges({ session, changes } = {}) {
+      const userId = sessionUserId(session);
+      if (!personalFdrUtils?.normalizePersonalFdrChanges) {
+        throw new Error("Personal FDR utilities are required");
+      }
+      const normalizedChanges = personalFdrUtils.normalizePersonalFdrChanges(changes);
+      const result = await client.from("user_fdr_ratings").upsert(
+        normalizedChanges.map((change) => ({
+          user_id: userId,
+          team_id: change.teamId,
+          home_rating: change.homeRating,
+          away_rating: change.awayRating,
+        })),
+        { onConflict: "user_id,team_id" },
+      );
+      assertNoError(result, "Personal FDR synchronisation");
+      return normalizePersonalRows(
+        normalizedChanges.map((change) => ({
+          team_id: change.teamId,
+          home_rating: change.homeRating,
+          away_rating: change.awayRating,
+        })),
+      );
+    }
+
     async function clearTeamId({ session } = {}) {
       const userId = sessionUserId(session);
       const result = await client
@@ -182,6 +218,7 @@
       setWatchlistMembership,
       saveTeamPreferences,
       saveFdrSortMode,
+      savePersonalFdrChanges,
       clearTeamId,
       saveTheme,
     };
