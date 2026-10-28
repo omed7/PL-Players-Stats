@@ -2,8 +2,9 @@
 
 **Status:** Active pre-launch runbook
 **Owner:** omed7
-**Last reviewed:** 2026-08-24
+**Last reviewed:** 2026-10-28
 **Launch status:** **Public marketing launch remains on hold.**
+**Publication security status:** Code policy and owner environment/credential cutover are separate; live setup remains pending and blocks full security completion.
 
 ## Purpose and operational boundary
 
@@ -11,7 +12,7 @@ This runbook covers the existing public player-data pipeline: the scheduled GitH
 
 | Layer | Current responsibility | Credential/data boundary |
 |---|---|---|
-| GitHub Actions `Update FPL Data` | Runs daily at `03:00 UTC`, validates through `npm test`, fetches a snapshot, publishes it, then commits changed `players.json`. | The Supabase service-role key is available only as the `SUPABASE_SERVICE_ROLE_KEY` GitHub Actions secret. |
+| GitHub Actions `Update FPL Data` | Main-only guarded job runs daily at `03:00 UTC`, validates through `npm test`, checks credential presence, fetches a snapshot, publishes it, then commits changed `players.json`. | Target boundary after owner cutover: `SUPABASE_SERVICE_ROLE_KEY` in `fpl-data-production`, available only to the presence-check and publication steps. Live setup is pending below. |
 | `fpl_fetcher.py` | Fetches official public FPL responses, validates completed history and output completeness, and atomically replaces `players.json` only after a complete successful run. | Uses no FPL user account, password, cookie, or token. |
 | `supabase_publisher.py` | Validates schema-v2 snapshot fields and publishes through `publish_fpl_snapshot`. | Uses the service-role key at runtime only; never place it in browser code, Vercel configuration, documentation, or a commit. |
 | Browser reader | Reads Supabase snapshots first and retains `players.json` as a static fallback during observation. | Receives only public player data and non-secret browser configuration. |
@@ -19,13 +20,46 @@ This runbook covers the existing public player-data pipeline: the scheduled GitH
 
 > **Data-safety rule:** Do not manually edit, fabricate, or force-publish a snapshot to clear an alert. Preserve the last known good snapshot and repair the cause through a tested pull request.
 
+## Production publication policy and pending owner cutover
+
+The workflow declaration restricts fetcher-path pushes to `main` and guards the entire `update-data` job with the exact `refs/heads/main` ref and the `push`, `workflow_dispatch`, or `schedule` event types. The job declares `fpl-data-production` and owns the content-write permission; existing PR validation remains read-only and has no production-secret binding. This policy takes effect when the workflow PR is merged.
+
+| Event/ref | Production-writing job policy | Validation |
+|---|---|---|
+| Main push changing `fpl_fetcher.py` | Eligible, subject to environment rules | Existing main CI also runs. |
+| Feature-branch push changing `fpl_fetcher.py` | Excluded by push branch filter; job guard also rejects non-main refs | A pull request receives existing PR CI. |
+| Manual dispatch on `main` | Eligible, subject to environment rules | Data-contract tests precede fetch. |
+| Manual dispatch on a feature branch | Blocked by job guard | No production-writing steps run. |
+| Manual dispatch on a tag | Blocked: a tag is not `refs/heads/main` | No production-writing steps run. |
+| Normal scheduled main run (`0 3 * * *` UTC) | Eligible, subject to environment rules | Data-contract tests precede fetch. |
+| Pull request | No publication trigger; job event/ref guard excludes it | Existing test workflow runs with `contents: read`, without production secrets. |
+
+Static regression tests verify the actual workflow declaration and isolated missing-credential behavior. They do **not** prove GitHub's live environment protections, secret isolation, scheduler behavior, or production rollout. A public fork PR is not known to receive these secrets; this repair addresses experimental branch publication, not an anonymous exploit.
+
+**Owner/reviewer checklist — pending, separately approved release work:**
+
+Before merge:
+
+- [ ] Review green PR CI and the source policy above; do not dispatch the data workflow to demonstrate the guard.
+- [ ] Create the dedicated `fpl-data-production` environment and restrict deployments to the **main branch only**, with **no allowed tag rule**. Verify the rule type as well as the name; a tag named `main` must not qualify. Do not repurpose the existing Vercel-style Production/Preview environments or infer protections from their names.
+- [ ] Configure the publishing credential in that environment as `SUPABASE_SERVICE_ROLE_KEY`. Verify only its name and scope; never request or expose its value in chat, a PR, or logs.
+- [ ] Approve a coordinated cutover plan covering the merge, the next schedule, and any old in-flight jobs. Keep the current credential available to the old scheduled workflow until the transition is ready; do not remove it prematurely and break that workflow.
+
+During the owner-approved cutover:
+
+- [ ] Confirm the reviewed workflow is on `main`, all production-writing steps belong to the guarded environment-bound job, and the environment's main-branch-only/no-tag rules and credential are ready. Adding `environment:` in YAML does not configure protections and may create an unprotected environment.
+- [ ] Coordinate removal of **all equivalent unrestricted repository/organization secret access** for this repository when the new path is ready and old jobs are accounted for. A main-only condition does not stop a repository writer from changing branch workflow code to consume an unrestricted secret. Do not call the credential boundary complete while such an equivalent remains accessible.
+- [ ] Record owner verification of environment rule metadata, credential name/scope, unrestricted-equivalent removal, and the cutover timing without reading secret values. Observe the next ordinary scheduled run (or a separately authorized operational run) and record its ref, event, environment, stage outcomes, and commit/no-change result. This task authorizes no merge, dispatch, rollout, or settings changes.
+
+If the resolved publishing credential is absent, the preflight fails clearly **before fetch/publication**. If environment protections or secret isolation are missing, the owner must block merge/cutover: the preflight checks only the resolved value's presence and cannot detect missing protections or fallback to an unrestricted repository/organization secret. Preserve the current `players.json` and last known good Supabase snapshot. Do not bypass the check, substitute a browser/publishable key, skip publication, or restore unrestricted secret access as a shortcut. Full security completion remains blocked until the owner records the live setup and cutover evidence.
+
 ## Normal operating check
 
-Perform this check after the scheduled run and before any future public-launch decision. The daily schedule is `0 3 * * *` UTC; manual workflow dispatch is also available for controlled verification.
+Perform this check after the scheduled run and before any future public-launch decision. The daily schedule is `0 3 * * *` UTC; owner-approved manual workflow dispatch on `main` is also available, subject to the environment rules and cutover checklist above.
 
 | Check | Expected healthy result | Evidence to record |
 |---|---|---|
-| GitHub Actions workflow | The latest `Update FPL Data` run has conclusion **success**. Its `npm test`, fetch, publication, and no-change-or-commit steps finish successfully. | Run URL, start time, conclusion, and commit SHA if data changed. |
+| GitHub Actions workflow | The latest `Update FPL Data` run has conclusion **success**. Its `npm test`, credential-presence check, fetch, publication, and no-change-or-commit steps finish successfully. | Run URL, start time, conclusion, main ref, event, environment, and commit SHA if data changed. |
 | Regression suite | Test workflow or data workflow shows the current JavaScript and Python suites passing. | CI run URL and test summary. |
 | Snapshot update | A changed `players.json` is committed only after a successful publication; a no-change run says so explicitly. | Commit SHA or no-change log line. |
 | Browser state | The public site loads public data from Supabase when available. During preseason, a valid zero-player snapshot renders the explicit season-not-started state—not a load error or empty filter result. | Timestamped deployed-page observation. |
@@ -62,6 +96,7 @@ When the scheduled workflow is red, first preserve evidence. Note the run URL, j
 | Failing stage or symptom | Likely safe interpretation | Immediate action | Prohibited action |
 |---|---|---|---|
 | `npm test` fails | A regression or test-environment issue blocks the data run before fetch/publish. | Inspect the failing test, reproduce locally, make the smallest tested PR repair, and merge only after CI is green. | Do not bypass or delete failing tests. |
+| Environment blocks the job or publishing credential is absent | Required production configuration is unavailable; no fetch/publication should occur. | Preserve existing data and ask the owner to complete the separately approved environment/cutover checklist. Check presence and metadata only. | Do not expose the key, substitute a browser key, skip publication, or bypass environment rules. |
 | FPL bootstrap/history request fails, times out, or returns malformed data | An upstream/API availability or contract issue; data completeness is unknown. | Preserve the last good snapshot. Check the FPL response read-only, wait for recovery or adapt through a tested PR if the contract changed. | Do not publish partial player data or infer football facts. |
 | Fetcher schema/completeness/output-write error | The new candidate snapshot is invalid or incomplete; the atomic write should preserve existing `players.json`. | Confirm the working-tree diff does not include a partial file, then repair the validation/data-contract cause through a PR. | Do not commit a temporary empty or partial `players.json`. |
 | Supabase publication error | A completed local snapshot was not confirmed by the server-side publisher. | Verify the secret is present without displaying it, inspect HTTP/RPC failure logs, and create a tested PR only if code needs repair. The prior Supabase snapshot remains the intended public source. | Do not paste, rotate, or expose the service-role key in logs, Vercel, browser code, or Git history. |
@@ -82,12 +117,12 @@ When the scheduled workflow is red, first preserve evidence. Note the run URL, j
 
 For a code or static-metadata regression, revert the responsible pull request through a new pull request, run the full test suite, and verify CI. Do not push directly to `main`.
 
-For a data-pipeline regression, keep the last valid `players.json` commit and prior Supabase snapshot in place. Revert the implementation PR if it changes pipeline code, workflow behaviour, or reader logic. The current browser reader’s static fallback is a temporary resilience boundary during the Supabase observation period; do not remove it until the owner has separately approved cutover criteria after normal completed-gameweek publication has been observed.
+For a data-pipeline regression, keep the last valid `players.json` commit and prior Supabase snapshot in place. Revert the smallest responsible implementation change through a new PR, while retaining the main-only publication guard, the `fpl-data-production` environment binding, and credential isolation. Do not blindly revert this protection change after the environment-only credential cutover: removing its environment binding prevents the old workflow from accessing the publishing credential; it does not restore access to that environment secret. If the protection itself needs repair, preserve current data and use an owner-reviewed fix-forward or an explicitly approved publication pause. Never restore an unrestricted repository/organization secret as a rollback shortcut. The current browser reader's static fallback remains available until its removal is separately approved.
 
 | Scenario | Rollback state | Verification |
 |---|---|---|
 | Static front-end change | Revert the PR; Vercel deploys the prior application state from `main`. | Green CI plus deployed-page check. |
-| Fetcher/publisher/workflow code change | Revert the PR; retain the last known good JSON/Supabase snapshot. | Green CI plus next controlled workflow outcome. |
+| Fetcher/publisher/workflow code change | Revert the smallest responsible change through a PR; retain main-only publication, the environment binding, isolated credentials, and last known good data. | Green CI plus owner-approved normal-run observation; never restore unrestricted credentials. |
 | Bad external FPL response | No code rollback needed unless code misclassified the response. Preserve last valid output and wait or repair validation by PR. | Confirm no invalid snapshot was committed or published. |
 | Supabase availability incident | Leave static fallback available; do not expose the service role key to the browser. | Confirm browser’s source/error state and service recovery. |
 
