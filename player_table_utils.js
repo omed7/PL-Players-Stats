@@ -8,6 +8,12 @@
     return Number.isFinite(number) ? number : 0;
   }
 
+  function getPlayerMinutesPercentage({ prefix, maxMinutes, player }) {
+    return player[`${prefix}min_pct`] ?? Math.round(
+      numberOrZero(player[`${prefix}minutes`]) / Math.max(numberOrZero(maxMinutes), 1) * 100,
+    );
+  }
+
   function getTableColumnVisibility({ positionFilter, timeframe }) {
     const isGK = positionFilter === "GK";
     const isSeason = timeframe === "season";
@@ -31,15 +37,12 @@
   function buildPlayerTableRowMetrics({ prefix, maxMinutes, player }) {
     const field = (name) => player[`${prefix}${name}`];
     const minutes = field("minutes") ?? 0;
-    const derivedMinPct = Math.round(
-      (numberOrZero(minutes) / Math.max(numberOrZero(maxMinutes), 1)) * 100,
-    );
     const points = field("points") ?? 0;
     const price = numberOrZero(player.price);
 
     return {
       minutes,
-      minPct: field("min_pct") ?? derivedMinPct,
+      minPct: getPlayerMinutesPercentage({ prefix, maxMinutes, player }),
       saves: field("saves") ?? 0,
       defcon: field("defcon") ?? 0,
       xG: numberOrZero(field("xG")).toFixed(2),
@@ -61,5 +64,5 @@
     };
   }
 
-  return { getTableColumnVisibility, buildPlayerTableRowMetrics };
+  return { getPlayerMinutesPercentage, getTableColumnVisibility, buildPlayerTableRowMetrics };
 });

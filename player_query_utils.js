@@ -1,8 +1,11 @@
 (function (root, factory) {
-  const api = factory();
+  const tableUtils = typeof module === "object" && module.exports
+    ? require("./player_table_utils.js")
+    : root.FPLPlayerTableUtils;
+  const api = factory(tableUtils);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.FPLPlayerQueryUtils = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (tableUtils) {
   const COLUMN_NAMES = [
     "xG",
     "xA",
@@ -66,7 +69,7 @@
       if (!minutes) return false;
       if (
         usePercentageMinutes
-          ? Math.round((minutes / maxMinutes) * 100) < minMinutes
+          ? tableUtils.getPlayerMinutesPercentage({ prefix, maxMinutes, player }) < minMinutes
           : minutes < minMinutes
       ) {
         return false;
