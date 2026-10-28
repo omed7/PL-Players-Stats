@@ -40,6 +40,77 @@ def calc_stats(match_list):
     }
 
 
+def validate_bootstrap_response(payload):
+    """Reject malformed starting data before deriving season or eligibility state."""
+    def invalid(reason):
+        raise RuntimeError(f"Invalid FPL bootstrap: {reason}")
+
+    if not isinstance(payload, dict):
+        invalid("response must be an object")
+
+    ids = {}
+    for name in ("teams", "events", "elements"):
+        records = payload.get(name)
+        if not isinstance(records, list) or not records:
+            invalid(f"{name} must be a non-empty list")
+        seen = set()
+        for record in records:
+            if not isinstance(record, dict):
+                invalid(f"{name} records must be objects")
+            record_id = record.get("id")
+            if type(record_id) is not int or record_id <= 0:
+                invalid(f"{name} records require positive integer IDs")
+            if record_id in seen:
+                invalid(f"{name} contains duplicate IDs")
+            seen.add(record_id)
+        ids[name] = seen
+
+    for team in payload["teams"]:
+        name = team.get("short_name")
+        if not isinstance(name, str) or not name.strip():
+            invalid("teams require a non-empty short_name")
+        code = team.get("code")
+        if type(code) is not int or code <= 0:
+            invalid("teams require a positive integer code")
+
+    for player in payload["elements"]:
+        team_id = player.get("team")
+        if type(team_id) is not int or team_id not in ids["teams"]:
+            invalid("elements must reference a known integer team ID")
+        minutes = player.get("minutes")
+        if type(minutes) is not int or minutes < 0:
+            invalid("elements require non-negative integer minutes")
+
+    events = payload["events"]
+    for event in events:
+        for flag in ("is_current", "is_next", "finished"):
+            if type(event.get(flag)) is not bool:
+                invalid(f"events require a boolean {flag}")
+        deadline = event.get("deadline_time")
+        if not isinstance(deadline, str):
+            invalid("events require an ISO deadline_time with a timezone")
+        try:
+            parsed_deadline = datetime.fromisoformat(deadline.replace("Z", "+00:00"))
+        except ValueError:
+            invalid("events require an ISO deadline_time with a timezone")
+        if parsed_deadline.utcoffset() is None:
+            invalid("events require an ISO deadline_time with a timezone")
+        # A current gameweek can legitimately already be finished. A next one cannot.
+        if event["is_next"] and (event["is_current"] or event["finished"]):
+            invalid("a next event cannot also be current or finished")
+
+    if sum(event["is_current"] for event in events) > 1:
+        invalid("multiple current events are ambiguous")
+    next_events = [event for event in events if event["is_next"]]
+    if len(next_events) > 1:
+        invalid("multiple next events are ambiguous")
+    season_is_live = any(event["is_current"] or event["finished"] for event in events)
+    if not season_is_live and (len(next_events) != 1 or next_events[0]["id"] != 1):
+        invalid("preseason requires explicit first-gameweek next-event confirmation")
+
+    return payload
+
+
 def fetch_json(session, url, timeout, label):
     """Fetch one JSON resource and raise a contextual error on any failure."""
     try:
@@ -201,6 +272,7 @@ def get_fpl_data():
         req_timeout,
         "FPL bootstrap data",
     )
+    validate_bootstrap_response(response)
 
     teams = {
         team["id"]: {
