@@ -5,11 +5,13 @@ on:
     - cron: '0 3 * * *'
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'fpl_fetcher.py'
 
 permissions:
-  contents: write
+  contents: read
 
 # The workflow writes the shared public snapshot and players.json. Queue a later
 # schedule, dispatch, or fetcher-triggered run instead of overlapping or cancelling
@@ -20,6 +22,14 @@ concurrency:
 
 jobs:
   update-data:
+    if: >-
+      ${{ github.ref == 'refs/heads/main' &&
+          (github.event_name == 'schedule' ||
+           github.event_name == 'workflow_dispatch' ||
+           github.event_name == 'push') }}
+    environment: fpl-data-production
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
 
     steps:
@@ -45,6 +55,16 @@ jobs:
 
       - name: Run data-contract tests
         run: npm test
+
+      - name: Check publication credential
+        shell: bash
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+            echo '::error::Missing SUPABASE_SERVICE_ROLE_KEY in fpl-data-production; publication cannot proceed.' >&2
+            exit 1
+          fi
 
       - name: Run FPL fetcher script
         run: python fpl_fetcher.py
